@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Diverse Kaleidoscopes</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script type="x-shader/x-fragment">#version 300 es
+/*********
+* made by Matthias Hurrle (@atzedent)
+*/   
+precision highp float;
+out vec4 O;
+uniform float time;
+uniform vec2 resolution;
+#define FC gl_FragCoord.xy
+#define R resolution
+#define T (time+2.5)
+#define S smoothstep
+#define hue(a) (.6+.6*cos(6.3*(a)+vec3(0,83,21)))
+void pR(inout vec2 p, float a) {
+	p=cos(a)*p+sin(a)*vec2(-p.y,p.x);}
+float poly(vec2 p, float n) {
+	float
+	a=atan(p.x,p.y),
+	b=6.28318/n;
+	return cos(floor(.5+a/b)*b-a)*length(p);
+}
+vec3 pattern0(vec2 uv) {
+	vec2 p=uv*3.;
+	vec3 col=vec3(0);
+	for (float i=.0; i++<4.;) {
+		pR(p,.785398);
+		p=fract(p)-.5;
+		float d=length(p*p);
+		d=sin(12.*d+i*T*.5)*.62;
+		d=abs(d);
+		col+=pow(.05/d,1.2)*hue(dot(p,uv)*i+T*.2);
+	}
+	return col;
+}
+vec3 pattern1(vec2 uv) {
+	vec2 p=uv*2.;
+	vec3 col=vec3(0);
+	for (float i=.0; i++<4.;) {
+		pR(p,.785398);
+		p=fract(p)-.5;
+		float d=length(p);
+		d=sin(14.*d+T)*.8;
+		d=abs(d);
+		col+=(.05/d)*hue(dot(uv,uv)+i*.125+T*.2);
+		p*=1.618;
+	}
+	return col;
+}
+vec3 pattern2(vec2 uv) {
+	vec2 p=uv*1.5;
+  vec3 col = vec3(0);
+  const float n = 3.5;
+  for (float i = .0; i < 6.; i++) {
+    p *= 2.;
+    p = p-n*clamp(round(p/n), -1.,1.);
+    float d = exp(-length(p*.2));
+    d = log(1e-5*d);
+    d = pow(sin(d*20.+T*1.4), 2.)*.125;
+    d = abs(d);
+    d = pow(5e-3/d, .25);
+    col += d * hue(-length(uv)+i*.1-T*.7);
+    col = pow(col, vec3(1.28));
+  }
+  col *= exp(-125e-5*(length(uv)));
+  col = pow(S(.0, 20.,col), vec3(.4545));
+  return col;
+}
+vec3 pattern3(vec2 uv) {
+	vec2 p=uv*.25;
+	vec3 col=vec3(0);
+	for (float i=.0; i<5.; i++) {
+		p=fract(p*2.05)-.5;
+		float d=poly(p,8.)/(.25+dot(p,p));
+		d=sin(d*9.+T+i)*.25;
+		d=abs(d);
+		col+=.02/d*hue(length(uv)+i*.125-T*.125);
+	}
+	return col;
+}
+void main(void) {
+	vec2 uv=(FC-.5*R)/min(R.x,R.y);
+	vec3 col=pattern1(uv);
+	float proc=T*.1;
+	int pre =int(floor(mod(proc+.5,4.)));
+	switch (pre) {
+		case 0: proc-=abs(abs(uv.x)-abs(uv.y))*.2; break;
+		case 1: proc-=max(abs(uv.x),abs(uv.y))*.2; break;
+		case 2: proc-=length(uv)*.2; break;
+		case 3: proc-=min(abs(uv.x),abs(uv.y))*.2; break;
+	}
+	int scene=int(floor(mod(proc,4.)));
+	switch (scene) {
+		case 0: col=pattern0(uv); break;
+		case 1: col=pattern1(uv); break;
+		case 2: col=pattern2(uv); break;
+		case 3: col=pattern3(uv); break;
+	}
+	
+	O=vec4(col,1);
+}</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

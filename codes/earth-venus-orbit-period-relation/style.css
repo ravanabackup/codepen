@@ -1,0 +1,35 @@
+* {
+   margin:0; padding:0;
+}
+
+html {
+   overflow:hidden;
+}
+
+#pause_btn {
+   width:70px;
+   height:20px;
+   position:absolute;
+   right:10px;
+   bottom:10px;
+   border:none;
+   background:rgba(255,255,255,.5);
+   color:#000;
+   line-height:20px;
+   font-family:verdana;
+   font-weight:bold;
+   outline:none;
+   cursor:pointer;
+   transition:
+      background .2s linear
+      color .2s linear;
+}
+
+#pause_btn:hover {
+   background:rgba(255,255,255,1);
+   color:#222;
+}
+
+#pause_btn:active {
+   transform:scale(.95);
+}

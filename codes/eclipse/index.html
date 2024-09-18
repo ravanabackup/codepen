@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - eclipse</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="glcanvas"></canvas>
+  <script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec2 a_position;
+    void main() {
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+  </script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+}
+
+float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    
+    return mix(mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+               mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+               u.y);
+}
+float sdf_circle(vec2 p, vec2 c, float r) {
+    return length(p - c) - r;
+}
+
+float oscillate(float time, float minVal, float maxVal) {
+    float sineWave = sin(time);
+    float normalizedSine = (sineWave + 1.0) / 2.0;
+    return mix(minVal, maxVal, normalizedSine);
+}
+
+void main() {
+    vec2 st = gl_FragCoord.xy / u_resolution.xy * 2.0 - 1.0;
+    st.x *= u_resolution.x / u_resolution.y;
+
+    vec3 color = vec3(0.0);
+
+    vec2 sunPos = vec2(0.0, 0.0);
+    float sunRadius = 0.3;
+
+    float noiseFactor = noise(st * 15.0 + u_time) * 0.02;
+    float sun = sdf_circle(st, sunPos, sunRadius + noiseFactor);
+
+    float sunGlow = 0.04 / abs(sun);
+    
+    vec2 planetPos = vec2(0.0, 0.0);
+    float planet = sdf_circle(st, planetPos, 0.32);
+
+    if (sun < 0.0) {
+        float intensity = 1.0 + noise(st * 10.0 + u_time) * 0.9;
+        color = vec3(1.0, 0.4, 0.0) * intensity ;
+    }
+    color += vec3(1.0, 0.8, 0.4) * sunGlow;
+
+    if (planet < 0.0) {
+        color = vec3(0.0);
+    }
+
+    gl_FragColor = vec4(color, 1.0);
+}
+</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
