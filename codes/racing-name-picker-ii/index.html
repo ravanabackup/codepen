@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Racing Name Picker II 🚴‍♂️🚴‍♀️</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<main>
+  <h1>Random Picker Racing</h1>
+  <ol id="lanes"></ol>
+  <p>
+    <span id="commentary" aria-live="polite"></span>
+  </p>
+  <div class="button-panel">
+    <button type="button" id="go" hidden>GO</button>
+    <button type="button" id="reset" hidden>Again, again!</button>
+  </div>
+</main>
+<aside>
+  <h2>Settings</h2>
+  <form action="">
+    <p>
+      <label for="names">Add racer names<br>(one per line)</label><br>
+      <textarea id="names" cols="10" rows="10"></textarea>
+    </p>
+    <p>
+      <label for="emoji">Emoji to use<br>(Windows key + .)</label><br>
+      <input type="text" id="emoji" value="🚴">
+    </p>
+  </form>
+</aside>
+<!-- partial -->
+  <script src='https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+:root{
+	--maincolor: hsla(7, 17%, 30%, 100% );
+	--secondcolor: hsl(22, 29%, 51%); 
+	--textcolor:  hsl(35, 50%, 80%);
+}	
+
+	body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	height: 90vh;
+	background-color: hsl(35, 50%, 80%);
+	font-family: Lato, sans-serif;
+	font-weight: 700;
+	font-style: normal;
+}
+
+text {
+	text-anchor: middle;
+	dominant-baseline: middle;
+	font-size: 16px;
+	fill: var(--textcolor);
+}
+
+#bas {
+  fill: var(--secondcolor);
+}
+
+#gonggong {
+  fill: var(--maincolor);
+}
+
+.inputs {
+	text-align: center;
+}
+
+.slider {
+	margin: 20px 0px;
+}
+
+.slider {
+	-webkit-appearance: none;
+	width: 300px;
+	height: 3px;
+	border-radius: 1px;
+	background: var(--maincolor);
+	outline: none;
+	opacity: 0.7;
+	-webkit-transition: 0.2s;
+	transition: opacity 0.2s;
+	display: block;
+}
+
+.slider:hover {
+	opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--maincolor);
+	cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--maincolor);
+	cursor: pointer;
+}
+
+button {
+	background-color: transparent;
+	border: 1px solid var(--maincolor);
+	color: var(--maincolor);
+	padding: 8px 16px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+	font-size: 10px;
+	text-transform: uppercase;
+	border-radius: 5px;
+	transition: 0.4s;
+}
+
+#button:disabled,
+#slider:disabled {
+  pointer-events: none;
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Meditation timer with Gong Gong </title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,400i,700"><link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<mask id="mask">
+			<circle cx="150" cy="150" r="140" fill="#fff" />
+		</mask>
+	</defs>
+	<circle id="bas" cx="150" cy="150" r="150" />
+	<g mask="url(#mask)">
+		<rect id="gonggong" x="0" y="0" width="500" height="500" />
+	</g>
+	<text x="150" y="220" id="x">MEDITATION TIME</text>
+	<text x="150" y="240" id="countdown"></text>
+</svg>
+
+<div class="inputs">
+	<input type="range" id="slider" name="slider" min="60" max="360" step="1" value="60" class="slider">
+	<button id="button">Start</button>
+</div>
+<!-- partial -->
+  <script src='https://unpkg.com/gsap@3/dist/gsap.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - It Is All Just a Reflection</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+<textarea id="codeEditor" class="editor" spellcheck="false" autocorrect="off" autocapitalize="off" translate="no" oninput="render()"></textarea>
+<pre id="error"></pre>
+<div id="indicator"></div>
+<div id="controls">
+  <div class="controls">
+    <input id="btnToggleView" class="icon" type="checkbox" name="toggleView" onclick="toggleView()">
+    <input id="btnToggleResolution" class="icon" type="checkbox" name="toggleResolution" onchange="toggleResolution()">
+    <input id="btnReset" class="icon" type="checkbox" name="reset" onclick="reset()">
+  </div>
+</div>
+<script type="x-shader/x-fragment">#version 300 es
+/*********
+* made by Matthias Hurrle (@atzedent)
+*/ 
+precision highp float;
+out vec4 O;
+uniform float time;
+uniform vec2 resolution;
+uniform vec2 touch;
+uniform vec2 move;
+#define FC gl_FragCoord.xy
+#define R resolution
+#define T (.5*time)
+#define S smoothstep
+#define N normalize
+#define rot(a) mat2(cos(a-vec4(0,11,33,0)))
+float rnd(vec2 p) { return fract(sin(dot(p,vec2(12.9898,78.233)))*345678.); }
+float noise(vec2 p) { vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f); float a=rnd(i),b=rnd(i+vec2(1,0)),c=rnd(i+vec2(0,1)),d=rnd(i+1.); return mix(mix(a,b,u.x),mix(c,d,u.x),u.y); }
+float fbm(vec2 p) { float t=.0,a=1.; for(int i=0;i<5;i++) { t+=a*noise(p+T*.2);p*=2.;a*=.5; } return t; }
+vec3 sky(vec3 r, vec3 l) {
+	float t=T*.1,
+	v=pow(max(.0,dot(r,l)),3.),
+	w=pow(clamp(-dot(r,l),.0,1.),.8);
+	vec2 uv=vec2(abs(atan(r.z,r.x)),atan(r.y,dot(r.xz,r.xz))-t)*9./6.28318;
+	
+	float
+	a=fbm(uv*vec2(1,3)),
+	b=fbm(uv*vec2(2,5));
+	b=S(.3,.7,b);
+
+  vec3
+	col=mix(vec3(.6,.8,.9),vec3(.1),a*b);
+	col=mix(col,vec3(1,.8,.3)*b,v);
+	col=mix(col*.2,mix(vec3(.1,.1,.162),vec3(1.,.7,.4),v),v);
+	col-=mix(vec3(0),vec3(.16,.12,.1),w)*(2.-dot(r.xz,r.xz));
+
+	return col;
+}
+void cam(inout vec3 p) {
+	p.yz*=rot(move.y*6.3/min(R.x,R.y)+sin(T*.02)*.5);
+	p.xz*=rot(-move.x*6.3/min(R.x,R.y)+T*.05-3.14);
+}
+float map(vec3 p) {
+	p.xz*=rot(.7853981); // rotate 45° for the cube below to not reflect the mirror image of the sky.
+	//return length(max(abs(p)-.75,.0))+min(.0,max(max(abs(p.x)-.75,abs(p.y)-.75),abs(p.z)-.75))-.025; // a cube
+	return length(p)-1.; // the sphere
+}
+void main() {
+	vec2 uv=(FC-.5*R)/min(R.x,R.y);
+	vec3 col=vec3(0),
+	p=vec3(0,0,-6),
+	rd=N(vec3(uv,2));
+	cam(p); cam(rd);
+	float a=1.;
+	for (float i=.0; i++<400.;) {
+		float d=map(p);
+		if (d<1e-3) {
+			vec3 n=N(p); // simple sphere normal... Comment this out and uncomment the next line if you've got something other than a sphere.
+			//vec2 e=vec2(1e-3,0); vec3 n=N(map(p)-vec3(map(p-e.xyy),map(p-e.yxy),map(p-e.yyx))); // normal calculation for arbitrary geometries.
+			
+			a=mix(5e-3,.85,clamp(1.-dot(rd,n),.0,1.));
+			rd=reflect(rd,n);
+			d=6e-2;
+		}
+		if (d>12.) {
+			col=mix(vec3(.25),sky(rd, N(vec3(0,1,0)))*1.5+.2,a);
+			break;
+		}
+		p+=rd*d;
+	}
+  O = vec4(col, 1);
+}</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

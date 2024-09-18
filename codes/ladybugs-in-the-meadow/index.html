@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Ladybugs in the Meadow</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+precision highp float;
+in vec4 vPosition;
+void main() {
+	gl_Position = vPosition;
+}
+</script>
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 fragColor;
+  
+uniform vec4 mouse;
+uniform vec2 resolution;
+uniform float time;
+
+#define R           resolution
+#define T           time
+#define M           mouse
+
+#define PI  3.14159265359
+#define PI2 6.28318530718
+
+#define MAX_DIST    120.
+#define MIN_DIST    .0005
+
+float hash21(vec2 p) { return fract(sin(dot(p,vec2(23.86,48.32)))*4374.432); }
+vec2  hash2( vec2 p) { return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453); }
+vec3  hash3( vec2 p) {
+    vec3 q = vec3( dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)), dot(p,vec2(419.2,371.9)) );
+	return fract(sin(q)*43758.5453);
+}
+
+mat2 rot(float a) { return mat2(cos(a),sin(a),-sin(a),cos(a)); }
+vec3 noised( in vec2 x ){
+    vec2 f = fract(x);
+    vec2 u = f*f*(3.0-2.0*f);
+    vec2 p = vec2(floor(x));
+    float a = hash21( p+vec2(0,0) );
+	float b = hash21( p+vec2(1,0) );
+	float c = hash21( p+vec2(0,1) );
+	float d = hash21( p+vec2(1,1) );
+	return vec3(a+(b-a)*u.x+(c-a)*u.y+(a-b-c+d)*u.x*u.y,
+		   6.0*f*(1.0-f)*(vec2(b-a,c-a)+(a-b-c+d)*u.yx));
+}
+
+float fbm( vec2 p, float freq ) {	
+	float h = -1.,w = 2.6,m = .35;
+	for (float i = 0.; i < freq; i++) {
+		h += w * noised((p * m)).x;
+		w *= .5;
+		m *= 2.;
+	}
+	return h;
+}
+
+vec2 truchet(vec2 uv, float scale) {
+    uv *= scale;   
+    vec2 grid = fract(uv)-.5;
+    vec2 id = floor(uv);
+    float hs = hash21(id);
+    if(hs>.5) grid.x*=-1.;
+    vec2 d2 = vec2(length(grid-.5), length(grid+.5));
+    vec2 gx = d2.x<d2.y? vec2(grid-.5) : vec2(grid+.5);
+    float circle = length(gx)-.5;
+    circle=abs(circle)-.095;
+    return vec2(clamp(circle,0.,1.),hs);
+}
+
+//@iq Voronoi Distances
+//https://www.shadertoy.com/view/ldl3W8
+vec4 voronoi( in vec2 x){
+    vec2 n = floor(x);
+    vec2 f = fract(x);
+    float ox = 0.;
+	float wave = 323.23123;
+	vec2 mg, mr;
+
+    float md = 8.;
+    for( float j=-1.; j<=1.; j++ )
+    for( float i=-1.; i<=1.; i++ )
+    {
+        vec2 g = vec2(i,j);
+		vec2 o = hash2( n + g );
+
+		o = .35 + .35 *sin(o * wave + PI2);
+        vec2 r = g + o - f;
+        float d = dot(r,r);
+        if( d<md ){
+            md = d;
+            mr = r;
+            mg = g;
+        }
+    }
+
+    md = 8.;
+    for( float j=-2.; j<=2.; j++ )
+    for( float i=-2.; i<=2.; i++ )
+    {
+        vec2 g = mg + vec2(i,j);
+		vec2 o = hash2( n + g );
+        ox = o.x;
+		o = .35 + .35 *sin(o * wave + PI2);
+        vec2 r = g + o - f;
+        if( dot(mr-r,mr-r)>.00001 )
+        md = min( md, dot( .5*(mr+r), normalize(r-mr) ) );
+    }
+    return vec4( md, mr, ox );
+}
+
+//globals
+vec3 hitPoint,hit;
+mat2 rotA,rotB,rotC;
+
+float box(vec3 p,vec3 s) {
+    p=abs(p)-s; return max(p.x,max(p.y,p.z));
+}
+
+float box(vec2 p, vec2 b) {
+    vec2 d = abs(p)-b; return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+}
+
+// Field created watching @nusans shader livestream
+// with some improvisations on some things
+
+float blade(vec3 p, float sc) {
+    p/=sc; p.y-=1.5;
+    p.zx+= abs(p.xz)*.1;
+    float wd = sin((p.y+1.5)*1.5)*.1;
+    float d = box(p,vec3(wd,1.5,wd));
+    return d*sc*.8;
+}
+
+vec2 field(vec3 p, float rp) {
+    vec2 res=vec2(1e5,0);
+    vec2 id=floor(p.xz/rp-.5);
+    float hs = hash21(id);
+    p.xz=(fract(p.xz/rp-.5)-.5)*rp;
+
+    p.xz*=rot(hs*PI2);
+    float fs = hash21(id+3.4);
+    float sc = .5+hs*.8;
+    float b = blade(p,sc);
+    if(b<res.x) res =vec2(b,1.);
+    
+    if(fs>.9) {
+        float fb=length(p-vec3(0,sc*2.,0))-(sc*.075);
+        if(fb<res.x) res =vec2(fb,6.);
+    }
+    return res;
+}
+
+vec2 grass(vec3 p) {
+    vec2 res = vec2(1e5,0),d;
+    
+    p.xz +=sin(p.zx*.15+p.y*.1+T*3.)*.3*max(0.,p.y)*.5;
+    d = field(p,1.75);
+    if(d.x<res.x) res = d;
+    
+    p.xz*=rotA;
+    p.x+=45.35;
+    d = field(p,1.15);
+    if(d.x<res.x) res = d;
+  
+    p.xz*=rotB;
+    p.x+=141.5;
+    d = field(p,.75);
+    if(d.x<res.x) res = d;
+ 
+    return res;
+}
+
+float specks(vec3 p,float rp) {
+    p.z+=T*5.+abs(sin(T*.5-p.z*.01))*10.;
+    p.xyz+=sin(p.zxy*vec3(.02,0,.07)+vec3(.1,.07,.05)*T)*5.5;
+    p = (fract(p/rp-.5)-.5)*rp;   
+    return length(p)-.05;
+}
+
+float mst=0.;
+float mist(vec3 p) {  
+    vec3 q = p;
+    float d = specks(p,11.);
+    p.xz*=rotC;
+    p.yz*=rotB;
+    d = min(specks(p,7.),d);
+    
+    d += max(.0,-(6.-q.y)*.025);
+    return d; 
+}
+
+// The truchet path is something I made up, however I haven't
+// found a good way of implimenting yet - tried some other 
+// multi-tap systems so prevent the cutoff but not smart enough
+// mathwise to know what I'm trying to do.
+// well its not perfect but looks ok if you squint.
+
+float gid,sid;
+vec2 map(vec3 p, float sd) {
+	  vec2 res = vec2(1e5,0.);
+    p.x+=T;
+    vec3 pbk = p;
+    float gnd = fbm(p.xz*.15,.1)*1.95;
+    p.y+=gnd;
+    
+    vec2 uv = p.xz*.05;
+    float py = p.y+.5;
+    vec2 tc = truchet(p.xz,.05);
+    float cc = tc.x;
+    vec2 dx = grass(p);
+    if(dx.x<res.x) {
+        if(cc<.03){
+           dx.x += max(.1,.15-cc*.25);
+        }
+       res = vec2(dx.x,dx.y);
+       hit=p;
+    }
+   
+    float mt3 = mist(p);
+
+    if(mt3<res.x && sd>0.) {
+       res = vec2(mt3,3.);
+       mst +=clamp(.0025/(.00025+mt3*mt3) ,.0, max(.0, (gnd)*.015) );
+       //mst += .0025/(.00025+mt3*mt3);
+    }
+    
+    vec2 id = floor(p.xz*.05);
+    vec2 guv= fract(p.xz*.05)-.5;
+    
+    float hs = hash21(id);
+    if(hs>.5) guv.x*=-1.;
+    
+    float dir = mod(id.x+id.y,2.)<.5? -1. : 1.;
+    
+    vec2 x2 = vec2(length(guv-.5), length(guv+.5)); 
+    vec2 pp = x2.x<x2.y? vec2(guv-.5) : vec2(guv+.5);
+    
+    pp *= rot(T*.125*dir);
+    
+    float amt = 3.,dbl = 6.;
+    
+    float a = atan(pp.y, pp.x);
+    float ai = floor(dir*a-.5/PI*dbl);
+    a = (floor(a/PI2*dbl) + .5)/dbl;
+    float ws = mod(ai,3.);
+    gid=ws;
+    vec2 qr = rot(-a*PI2)*pp; 
+    qr.x -= .5;
+    vec3 np = vec3(qr.x/.05, py, qr.y/.05);
+    
+    //ladybugs
+    float d6=box(np,vec3(2.5,.6,2.5));
+    float d5=length(np-vec3(0,.5,0))-.75;
+    d5=max(d5,-d6);
+    if(d5<res.x) {
+       res = vec2(d5,5.);
+       hit=vec3(np.x,np.y,dir*np.z);
+    }
+    float d7=length(np-vec3(0,.75,dir*.6))-.35;
+    d7=max(d7,-d6);
+    if(d7<res.x) {
+       res = vec2(d7,4.);
+       hit=vec3(np.x,np.y,np.z-(dir*.6));
+    }
+
+    float d2=p.y;
+    if(d2<res.x) {
+       res = vec2(d2,2.);
+       hit=pbk;
+    }
+
+    return res;
+}
+
+// Normal
+vec3 normal(vec3 p, float t) {
+    float e = MIN_DIST*t;
+    vec2 h = vec2(1.0,-1.0)*0.5773;
+    return normalize( 
+        h.xyy*map( p + h.xyy*e,0. ).x + 
+        h.yyx*map( p + h.yyx*e,0. ).x + 
+        h.yxy*map( p + h.yxy*e,0. ).x + 
+        h.xxx*map( p + h.xxx*e,0. ).x );
+}
+
+vec3 render(vec3 ro, vec3 rd, vec2 uv) {
+
+    vec3 C = vec3(0);
+    vec3 p = ro;
+    
+    // Sky
+    vec3 sky = mix(
+    max(vec3(.03),vec3(0.5,0.6,1.)-rd.y*2.),
+    vec3(0.9,0.7,0.5)*10.,
+    pow(max(.03, dot(rd,normalize(vec3(4.,15,4.)) )),10.));
+    vec2 vuv = (rd.xz/(rd.y+.075))-vec2(0,T*.75)*.75;
+    sky = mix(sky,vec3(.9), .25+.25*smoothstep(.01,.75,fbm(vuv,2.)) );
+
+    // Marcher
+    float d =0.,m = 0.;
+    for (int i = 0; i<192;i++) {
+     	p = ro + rd * d;
+        vec2 ray = map(p,1.);
+        if(abs(ray.x)<d*MIN_DIST || d>MAX_DIST)break;
+        d += i<32? ray.x*.25 : ray.x*.85;  
+        m = ray.y;
+    }
+    
+    hitPoint=hit;
+    sid=gid;
+    float alpha = 0.;
+    
+    if(d<MAX_DIST){
+      	vec3 n = normal(p, d);
+        vec3 lpos = vec3(15.,35,10.);
+        vec3 l = normalize(lpos-p); 
+
+        // Diffused and Shadow
+        float diff = clamp(dot(n,l),0.,1.);
+
+        float shdw = 1., t = .01;
+        for(int i=0; i<25; i++){
+            float h = map(p + l*t,0.).x;
+            if( h<MIN_DIST ) {shdw = 0.; break;}
+            shdw = min(shdw, 25.*h/t);
+            t += h;
+            if( shdw<MIN_DIST || t>32. ) break;
+        }
+        diff = mix(diff,diff*shdw,.35);
+
+        // Materials
+        vec3 h = vec3(.0);
+        if(m==1.) h = vec3(0.192,0.490,0.07);
+        if(m==2.) {
+            
+            vec2 uv = hitPoint.xz;
+            float px = fwidth(uv.x);
+            float circle = truchet(uv, .05).x;
+            circle=smoothstep(px,-px,circle);
+            
+            float dmp = hash21(floor(uv*25.))*.175;
+            h = vec3(0.059,0.196+dmp,0.004);
+            h = mix(h, h*vec3(0.020,0.055,0.004),circle);
+            
+            uv*=.05;
+            
+            vec2 guv = fract(uv)-.5;
+            vec2 id = floor(uv);
+
+            float hs = hash21(id);
+            if(hs>.5) guv.x*=-1.;
+            float dir = mod(id.y + id.x,2.) * 2. - 1.;
+
+            vec2 d2 = vec2(length(guv-.5), length(guv+.5));
+            vec2 gx = d2.x<d2.y? vec2(guv-.5) : vec2(guv+.5);
+
+            float width = .125;
+    
+            vec2 arc = guv-sign(guv.x+guv.y)*.5;
+            float angle = atan(arc.x, arc.y);
+
+            float d = length(arc);
+
+            vec2 tuv = vec2(fract(dir*angle/1.570796),(d-(.5-width))/(2.*width)*2.);
+            tuv.y-=.5;
+            vec2 tid = vec2(floor(dir*angle/1.570796),floor(d-(.5-width))/(2.*width));
+
+
+            if(hs<.5 ^^ dir>0.) tuv.y=1.-tuv.y;
+            if(mod(tid.x,2.)==0.) tuv.x = 1.-tuv.x;
+
+            tuv.xy*=vec2(2.5,.75);
+            tuv.x=mod(tuv.x+.5,1.)-.5;
+
+            vec4 c = voronoi(dir*tuv*6.);
+            float dx = c.x;
+            dx=smoothstep(.15+px,-px,dx);
+            
+            float clip = box(tuv-vec2(0,.35),vec2(.345,.375))-.1;
+            clip=smoothstep(-px,px,clip);
+            dx=max(clip,dx);
+            dmp = hash21(floor(uv*575.))*.175;
+            h = mix(vec3(0.525,0.408,0.294)-dmp,h,clip);
+            h = mix(h,vec3(0.200,0.137,0.082),dx-clip);
+            h = mix(h,vec3(0.031,0.020,0.008),clamp((c.y+c.z)-clip,0.,1.));
+            C += h * diff;
+        }
+        if(m==3.) h = vec3(0.831,0.961,0.780);
+        if(m==4.) {
+            vec2 uv = hitPoint.xz;
+            float px = fwidth(uv.x)*.5;
+            float d= length(abs(uv)-vec2(.15,.25))-.035;
+            d=smoothstep(px,-px,d);
+            
+            h = vec3(.001);
+            h = mix(h,vec3(.9),d); 
+        }
+        if(m==5.) {
+            vec2 uv = hitPoint.xz;
+            float px = fwidth(uv.x)*.5;
+            h = sid==2.? vec3(0.957,0.043,0.043) : sid==1.?vec3(0.604,0.035,0.035) :vec3(0.757,0.525,0.525) ;
+            if(uv.x>-.025&&uv.x<.025) h=vec3(.003);
+            float d= length(vec2(abs(uv.x)-.2,uv.y+.5))-.08;
+            d= min(length(vec2(abs(uv.x)-.475,uv.y+.15))-.175,d);
+            d= min(length(vec2(abs(uv.x)-.275,uv.y-.275))-.125,d);
+            d=smoothstep(px,-px,d);
+            h = mix(h,vec3(.003),d);
+        }
+        if(m==6.) h = vec3(0.941,0.820,0.039);
+        if(m==7.) h = vec3(0.733,0.925,0.922);
+
+        C += (m==3.) ? h : h * diff;
+        
+        C += mst*vec3(0.843,0.902,0.976);
+        C = mix(sky,C,  exp(-.0000020*d*d*d));
+
+        ro = p+n*.1;
+        rd = reflect(rd,n);
+       
+    } else {
+        C = sky;
+    }
+    return C;
+}
+
+void main() {
+    // precal
+    rotA = rot(.8511);
+    rotB = rot(.3851);
+    rotC = rot(.2851);
+    // uv + ro + rd
+    vec2 F = gl_FragCoord.xy;
+    vec2 uv = (2.*F.xy-R.xy)/max(R.x,R.y);
+    vec3 ro = vec3(0,2.,35.);
+    vec3 rd = normalize(vec3(uv,-1));
+    
+    // mouse
+    float x = M.xy == vec2(0) ? .0 : (M.y/R.y *  1. - .5) * PI;
+    float y = M.xy == vec2(0) ? .0 : -(M.x/R.x * 1. - .5) * PI;
+    if(x<-.05)x=-.05;
+    mat2 rx = rot(x+(.15+.11*sin(T*.2))+.1); mat2 ry = rot(y+T*2.*PI/180.);
+    ro.yz *= rx; ro.xz *= ry;
+    rd.yz *= rx; rd.xz *= ry;
+
+    vec3 C = vec3(0);
+    C = render(ro, rd, uv);
+
+    C = pow(C, vec3(.4545));
+    fragColor = vec4(C,1.0);
+}
+</script>
+<div id="container" />
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
