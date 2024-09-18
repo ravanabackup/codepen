@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - TRAPPIST-1 System - CSS</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<input type="checkbox" name="desc" id="show-desc">
+
+<header>
+	<h1>TRAPPIST-1 SYSTEM <label for="show-desc"></label></h1>
+	<div class="desc">
+		<p>TRAPPIST-1 is a cool red dwarf star with seven known exoplanets. It lies in the constellation Aquarius about 40.66 light-years away from Earth. It is estimated to be 7.6 billion years old, making it older than the Solar System.</p>
+		<p>The planets are in orbital resonances. The durations of their orbits have ratios of 8:5, 5:3, 3:2, 3:2, 4:3 and 3:2 between neighbouring planet pairs, and each set of three is in a Laplace resonance. Simulations have shown such resonances can remain stable over billions of years but that their stability is strongly dependent on initial conditions.</p>
+		<p>More info: <a href="https://en.wikipedia.org/wiki/TRAPPIST-1" target="_blank">Wikipedia</a></p>
+		<p><a href="http://www.trappist.one/" target="_blank">TRAPPIST-1 Website</a></p>
+	</div>
+</header>
+
+<div class="content">
+
+	<div class="planet"></div>
+	<div class="planet"></div>
+	<div class="planet"></div>
+	<div class="planet"></div>
+	<div class="planet"></div>
+	<div class="planet"></div>
+	<div class="planet"></div>
+
+	<div class="resonance"></div>
+
+</div>
+
+<div class="system">
+	<div class="star"><span></span></div>	
+	<div class="plan"></div>	
+	<div class="plan"></div>	
+	<div class="plan"></div>	
+	<div class="plan"></div>	
+	<div class="plan"></div>	
+	<div class="plan"></div>	
+	<div class="plan"></div>
+	<div class="plan"></div>	
+	<div class="resonance"></div>	
+</div>
+
+<input type="range" name="speed" id="speed" min="2" max="100" value="12" step="0.1" onclick="document.body.style.setProperty('--s', this.value + 's'); document.body.style.setProperty('--p', this.value + '%');" oninput="document.body.style.setProperty('--s', this.value + 's'); document.body.style.setProperty('--p', this.value + '%');">
+
+<div class="time"></div>
+<!-- partial -->
+  
+</body>
+</html>

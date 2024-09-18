@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Sky Acrobat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+<textarea id="codeEditor" class="editor" autocapitalize="false" spellcheck="false" oninput="render()"></textarea>
+<pre id="error"></pre>
+<div id="indicator"></div>
+<div id="controls">
+  <input id="btnToggleView" type="checkbox" name="toggleView" onclick="toggleView()">
+  <input id="btnToggleResolution" type="checkbox" name="toggleResolution" onchange="toggleResolution()">
+  <input id="btnReset" type="checkbox" name="reset" onclick="reset()">
+</div>
+<script type="x-shader/x-vertex" id="vertexShader">#version 300 es
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+
+in vec4 position;
+
+void main(void) {
+    gl_Position = position;
+}
+  </script>
+<script type="x-shader/x-fragment" id="fragmentShader">#version 300 es
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+out vec4 O;
+uniform float time;
+uniform vec2 resolution;
+uniform vec2 touch;
+uniform int pointerCount;
+#define mouse (touch/R)
+#define FC gl_FragCoord.xy
+#define R resolution
+#define T (time*.5)
+#define P pointerCount
+#define S smoothstep
+#define N normalize
+#define rot(a) mat2(cos(a-vec4(0,11,33,0)))
+#define hue(a) (.6+.6*cos(6.3*(a)+vec3(0,23,21)))
+#define mapto(x,a,b,c,d) (((x)-(a))/((b)-(a))*((d)-(c))+(c))
+float map(vec3 p);
+float smin(float a,float b,float k) { float h=clamp(.5+.5*(b-a)/k,.0,1.); return mix(b,a,h)-k*h*(1.-h); }
+float tor(vec3 p, vec2 s) { vec2 c=vec2(length(p.xz)-s.x,p.y); return length(c)-s.y; }
+vec3 norm(vec3 p) { float h=1e-3;vec2 k=vec2(-1,1); return N(k.xyy*map(p+k.xyy*h)+k.yxy*map(p+k.yxy*h)+k.yyx*map(p+k.yyx*h)+k.xxx*map(p+k.xxx*h)); }
+void cam(inout vec3 p) { if (P>0) { p.yz*=rot(-mouse.y*6.3+3.14); p.xz*=rot(3.14-mouse.x*6.3); } else { p.yz*=rot(sin(T)-.5*cos(tanh(T))); } }
+float rnd(vec2 p) { return fract(sin(dot(p,vec2(12.9898,78.233)))*345678.); }
+float noise(vec2 p) { vec2 i=floor(p),f=fract(p),u=S(.0,1.,f); float a=rnd(i),b=rnd(i+vec2(1,0)),c=rnd(i+vec2(0,1)),d=rnd(i+1.); return mix(mix(a,b,u.x),mix(c,d,u.x),u.y); }
+float fbm(vec2 p) { float t=.0,a=1.; for(int i=0;i<5;i++) { t+=a*noise(p+T*.2);p*=2.;a*=.5; } return t; }
+vec3 sky(vec3 r, vec3 l) {
+	float t=T*.1,
+	v=pow(max(.0,dot(r,l)),3.);
+	vec2 uv=vec2(abs(atan(r.z,r.x))+t,t-atan(r.y,length(r.xz)));
+	
+	float
+	a=fbm(uv*vec2(1,3)),
+	b=fbm(uv*vec2(2,5));
+	b=S(.3,.7,b);
+
+  vec3
+	col=mix(vec3(.6,.8,.9),vec3(.1),a*b);
+	col=mix(col,vec3(1,.8,.3)*b,v);
+	col=mix(col*.2,mix(vec3(.1,.1,.162),vec3(1.,.7,.4),v),v);
+
+	return col;
+}
+float map(vec3 p) {
+  const float n=5.; // number of rings
+  float d=5e5, v=floor(n*.5);
+  for (float i=.0; i<n; i++) {
+    float k=i-v;
+    d=smin(d,tor(p-vec3(0,k*sin(T),0),vec2(1.-abs(mapto(i*i,.0,pow(n,2.2),-1.,1.)),.2)),.125);
+  }
+  return d;
+}
+void main(void) {
+  vec2 uv = (FC-.5*R)/min(R.x,R.y);
+  vec3 col = vec3(0),
+  p=vec3(0,0,-6),
+  rd=N(vec3(uv,1)),
+	l=N(vec3(0,10,0));
+  cam(p);
+  cam(rd);
+  const float steps=400., maxd=12.;
+  for (float i=.0; i<steps; i++) {
+    float d=map(p);
+    if (d<1e-3) {
+      vec3 n=norm(p),
+      r=reflect(rd,n);
+      col=hue(p.y*.3)*4.;
+			col*=pow(r.y,7.);
+			col=pow(col,vec3(.4545));
+      break;
+    }
+    if (d>maxd) {
+			col=sky(rd,l)*1.5+.2;
+			break;
+		}
+    p+=rd*d;
+  }
+  O = vec4(col,1);
+} 
+  </script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
