@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful Landing Page with Buttons (5x Format)</title>
+    <style>
+        /* Overall Page Style */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* Container to hold buttons in table format */
+        #buttons-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Button rows */
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        /* Button style */
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            margin: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Button hover effects */
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Button focus effects */
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Make sure the last row of buttons isn't stretched oddly if fewer than 5 */
+        .button-row:last-child {
+            justify-content: flex-start;
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            button {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+
+            .button-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="buttons-container">
+        <!-- Buttons will be dynamically added here in 5x unlimited format -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('https://raw.githubusercontent.com/ravanabackup/codepen/refs/heads/main/source.txt')
+                .then(response => response.text())
+                .then(text => {
+                    const urls = text.split('\n').filter(url => url.trim().length > 0);
+                    const buttonsContainer = document.getElementById('buttons-container');
+                    const buttonsPerRow = 5; // Number of buttons per row
+
+                    for (let i = 0; i < urls.length; i += buttonsPerRow) {
+                        const row = document.createElement('div');
+                        row.classList.add('button-row');
+                        
+                        // Create a row with up to 5 buttons
+                        for (let j = i; j < i + buttonsPerRow && j < urls.length; j++) {
+                            const buttonCell = document.createElement('div');
+                            const button = document.createElement('button');
+                            const url = urls[j].trim();
+                            const parts = url.split('/');
+
+                            // Extract the folder name before 'index.html', e.g., 'advent-season'
+                            const displayText = parts[parts.length - 2];
+
+                            button.textContent = displayText;
+                            button.addEventListener('click', function() {
+                                window.location.href = url; // Redirect to the URL on button click
+                            });
+
+                            row.appendChild(button);
+                        }
+
+                        buttonsContainer.appendChild(row);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching URLs:', error);
+                });
+        });
+    </script>
+</body>
+</html>
