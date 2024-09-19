@@ -79,3 +79,8 @@ https://ravanabackup.github.io/codepen/codes/sierpinski-texture/index.html
 https://ravanabackup.github.io/codepen/codes/sky-acrobat/index.html
 https://ravanabackup.github.io/codepen/codes/skywalker/index.html
 https://ravanabackup.github.io/codepen/codes/solar-eclipse-lume/index.html
+https://ravanabackup.github.io/codepen/codes/julia-set-ice-flame-animation/index.html
+https://ravanabackup.github.io/codepen/codes/random-lego-background/index.html
+https://ravanabackup.github.io/codepen/codes/scatter/index.html
+https://ravanabackup.github.io/codepen/codes/binary-synapsis-julia-set/index.html
+https://ravanabackup.github.io/codepen/codes/editable-barnsley-snowflake/index.html
