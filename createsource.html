@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index HTML Path Filter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .output-container {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .output-container pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .output-container button {
+            background-color: #007bff;
+            margin-top: 10px;
+        }
+
+        .output-container button:hover {
+            background-color: #0069d9;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Filter for Index HTML Paths</h1>
+    <p>Enter your paths (one per line), then click "Run" to filter only those with <code>index.html</code> and generate URLs.</p>
+    <textarea id="inputData" placeholder="Enter your paths here..."></textarea>
+    <button onclick="filterPaths()">Run</button>
+
+    <div class="output-container hidden" id="outputContainer">
+        <h2>Filtered URLs</h2>
+        <pre id="outputData"></pre>
+        <button onclick="copyToClipboard()">Copy to Clipboard</button>
+    </div>
+
+    <script>
+        function filterPaths() {
+            const baseURL = "https://ravanabackup.github.io/codepen/codes";
+            const inputData = document.getElementById("inputData").value;
+            const lines = inputData.split('\n');
+            let filteredLines = [];
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.endsWith("/index.html")) {
+                    filteredLines.push(baseURL + line);
+                }
+            });
+
+            const outputData = filteredLines.join("\n");
+
+            if (filteredLines.length > 0) {
+                document.getElementById("outputData").textContent = outputData;
+                document.getElementById("outputContainer").classList.remove("hidden");
+            } else {
+                document.getElementById("outputData").textContent = "";
+                document.getElementById("outputContainer").classList.add("hidden");
+            }
+        }
+
+        function copyToClipboard() {
+            const outputData = document.getElementById("outputData").textContent;
+            navigator.clipboard.writeText(outputData).then(() => {
+                alert("URLs copied to clipboard!");
+            }).catch(err => {
+                alert("Failed to copy: " + err);
+            });
+        }
+    </script>
+
+</body>
+</html>
