@@ -136,3 +136,5 @@ https://ravanabackup.github.io/codepen/codes/cuboid-warptunnel-audio-visualizer/
 https://ravanabackup.github.io/codepen/codes/discoid/index.html
 https://ravanabackup.github.io/codepen/codes/dotify-your-pictures/index.html
 https://ravanabackup.github.io/codepen/codes/embroidery-3/index.html
+https://ravanabackup.github.io/codepen/codescanvas-orbital-trails-v2/index.html
+https://ravanabackup.github.io/codepen/codes/diffusion-limited-aggregation-v1/index.html
