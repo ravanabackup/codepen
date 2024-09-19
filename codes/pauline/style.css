@@ -1,0 +1,50 @@
+body {
+  font-family: Arial, Helvetica, "Liberation Sans", FreeSans, sans-serif;
+  background-color: #000;
+  margin: 0;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  caret-color: transparent;
+}
+canvas {
+  position : absolute;
+}
+#menu {
+  font-size: 80%;
+  margin: 0;
+  padding: 5px;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 128, 0.9);
+  color: black;
+  z-index: 10
+}
+
+#menu.hidden #showhide{
+  display: none;
+}
+
+#controls {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+#menu button {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+/*
+#menu input[type=range] {
+  width : 15em;
+}
+*/
+#huesample {
+  display: inline-block;
+  margin-left: 1em;
+  width: 3em;
+  height:1em;
+  background-color: #f00;
+  border: 1px solid black;
+}
