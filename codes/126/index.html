@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - 126.</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.4.3/dist/es-module-shims.js" crossorigin="anonymous"></script>
+<script type='importmap-shim'>
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.139.0/build/three.module.js",
+      "three/": "https://unpkg.com/three@0.139.0/",
+      "omega/": "https://cdn.jsdelivr.net/gh/ycw/omega@0.0.2/"
+    }
+  }
+</script>
+<script defer type='module-shim'>
+import * as THREE from 'three'
+import { Strip, StripGeometry, StripHelper, UvPreset } from 'omega/dist/Strip.js'
+import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+
+// ----
+// main
+// ----
+
+const renderer = new THREE.WebGLRenderer();
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, 2, .1, 100);
+const controls = new OrbitControls(camera, renderer.domElement);
+
+scene.background = new THREE.Color('lightblue');
+scene.fog = new THREE.FogExp2(scene.background, .2);
+scene.add(new THREE.AmbientLight('white', .1));
+scene.add(new THREE.DirectionalLight('white', 1));
+camera.position.set(0, 0, 5);
+
+const [strip_mesh] = (() => {
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-10, 0, -10),
+    new THREE.Vector3(-2, 1, 0),
+    new THREE.Vector3(2, -1, 0),
+    new THREE.Vector3(10, 0, -10),
+  ]);
+  const strip = new Strip(curve, .2, (i, I) => i / I * Math.PI * 2);
+  const geom = new StripGeometry(strip, [120 * 5 - 40, [80, 40]]); // dashed
+  // pattern: [(a+b)*N-b, [a,b]] (minus b for centering)
+  const mat = new THREE.MeshLambertMaterial({ side: THREE.DoubleSide, color: 'black' });
+  const mesh = new THREE.Mesh(geom, mat);
+  scene.add(mesh);
+  return [mesh];
+})();
+
+const [grass_mesh, tex] = (() => { // grass // texture by Lena Albers - https://unsplash.com/photos/px-JsA27fbQ
+  const url = 'https://images.unsplash.com/photo-1628071616999-0660c371c465?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4MXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60';
+  const tex = new THREE.TextureLoader().load(url);
+  tex.wrapT = THREE.MirroredRepeatWrapping;
+  const N_INST = 2000;
+  const strip = new Strip(new THREE.CatmullRomCurve3([ // origin->z+
+    new THREE.Vector3(.5, 0, 5),
+    new THREE.Vector3(1, 0, 1),
+    new THREE.Vector3(0, 0, .5),
+    new THREE.Vector3(0, 0, 0),
+  ]), (i, I) => .5 * (i / I), (i, I) => Math.PI * 0.4 * i / I);
+  const geom = new StripGeometry(strip, 16, UvPreset.strip[0]);
+  const mat = new THREE.MeshLambertMaterial({ side: THREE.DoubleSide, alphaMap: tex, alphaTest: .1 });
+  const mesh = new THREE.InstancedMesh(geom, mat, N_INST);
+  const sampler = new MeshSurfaceSampler(strip_mesh).build();
+  const $pos = new THREE.Vector3();
+  const $norm = new THREE.Vector3();
+  const $obj = new THREE.Object3D();
+  const $mat_r = new THREE.Matrix4();
+  const $col = new THREE.Color();
+  for (let i = 0; i < N_INST; ++i) {
+    sampler.sample($pos, $norm);
+    $obj.scale.set(.5 + Math.random(), 1 + Math.random(), .1 + Math.random() * .5);
+    $obj.position.copy($pos);
+    $obj.lookAt($norm.add($pos));
+    $obj.updateMatrix();
+    $mat_r.makeRotationZ(Math.PI * Math.random()); // rz
+    mesh.setMatrixAt(i, $obj.matrix.multiply($mat_r));
+    mesh.setColorAt(i, $col.setHSL(0, 1, .5));
+  }
+  scene.add(mesh);
+  return [mesh, tex];
+})();
+
+strip_mesh.add(grass_mesh);
+
+// ----
+// render
+// ----
+
+renderer.setAnimationLoop((t) => {
+  renderer.render(scene, camera);
+  controls.update();
+  strip_mesh.rotation.x = Math.pow((t * .1) % 1000 / 1000, 2) * Math.PI * 2 - Math.PI / 2;
+  tex.offset.y += 0.01;
+});
+
+// ----
+// view
+// ----
+
+function resize(w, h, dpr = devicePixelRatio) {
+  renderer.setPixelRatio(dpr);
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', () => resize(innerWidth, innerHeight));
+dispatchEvent(new Event('resize'));
+document.body.prepend(renderer.domElement);
+</script>
+<!-- partial -->
+  
+</body>
+</html>

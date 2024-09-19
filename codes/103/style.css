@@ -1,0 +1,27 @@
+canvas {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+body {
+  background: radial-gradient(circle at top left, black 20vh, brown 0);
+}
+a {
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  color: white;
+  padding: 1rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background: black padding-box;
+  height: 5ch;
+  width: 5ch;
+  display: grid;
+  place-content: center;
+  font: 1rem monospace;
+  border: 5px solid #fff1;
+  outline: 5px solid black;
+}

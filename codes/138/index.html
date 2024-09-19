@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - 138.</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id='el_hero'>
+  <a href='https://twitter.com/ycwhk' target='_top'>138.</a>
+  <a href='https://codepen.io/ycw/pen/wvpZyYW' target='_top'>[ref 137.]</a>
+</div>
+
+<!-- -->
+
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.4.3/dist/es-module-shims.js" crossorigin="anonymous"></script>
+<script type='importmap-shim'>
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.139.0/build/three.module.js",
+      "three/": "https://unpkg.com/three@0.139.0/"
+    }
+  }
+</script>
+
+<!-- -->
+
+<script defer type='module-shim'>
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+
+// ----
+// main
+// ----
+
+const renderer = new THREE.WebGLRenderer();
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, 2, .1, 100);
+const controls = new OrbitControls(camera, renderer.domElement);
+
+scene.background = new THREE.Color('white');
+camera.position.set(0, 2, 8);
+controls.autoRotate = true;
+controls.autoRotateSpeed *= 10;
+controls.enableDamping = true;
+
+const light = new THREE.DirectionalLight();
+light.position.set(1, 2, 2);
+scene.add(light);
+
+const [mat0, mat1] = (() => {
+  const shdr0 = THREE.ShaderLib.basic;
+  const mat0 = new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    uniforms: THREE.UniformsUtils.merge([shdr0.uniforms, {
+      diffuse: { value: new THREE.Color('black') }
+    }]),
+    vertexShader: shdr0.vertexShader.replace('#include <begin_vertex>', `
+    vec3 transformed = vec3( position ) + normal * 0.01;
+    `),
+    fragmentShader: shdr0.fragmentShader
+  });
+
+  const shdr1 = THREE.ShaderLib.toon;
+  const mat1 = new THREE.ShaderMaterial({
+    lights: true,
+    side: THREE.DoubleSide,
+    uniforms: THREE.UniformsUtils.clone(shdr1.uniforms),
+    vertexShader: shdr1.vertexShader,
+    fragmentShader: shdr1.fragmentShader.replace('#include <output_fragment>', `
+    #include <output_fragment>
+    gl_FragColor.rgb *= step( 
+      cos(radians(50.0)),
+      dot( 
+        normalize(vNormal),
+        vec3(0.0, 0.0, 1.0)
+      )
+    );
+  `)
+  });
+  return [mat0, mat1];
+})();
+
+// https://github.com/mrdoob/three.js/blob/r139/examples/models/gltf/LeePerrySmith/LeePerrySmith_License.txt
+const gltf_url = 'https://rawcdn.githack.com/mrdoob/three.js/r139/examples/models/gltf/LeePerrySmith/LeePerrySmith.glb';
+const gltf = await new GLTFLoader().loadAsync(gltf_url);
+const mesh = gltf.scene.children[0];
+mesh.geometry.addGroup(0, Infinity, 0);
+mesh.geometry.addGroup(0, Infinity, 1);
+mesh.material = [mat0, mat1];
+
+const sz = 10, col = 5, row = 3;
+const n_inst = col * row;
+const inst_mesh = new THREE.InstancedMesh(mesh.geometry, mesh.material, n_inst);
+const $pos = [];
+for (let i = 0; i < n_inst; ++i) {
+  const x = (-0.5 * col * sz) + 0.5 * sz + (i % col) * sz;
+  const z = (-0.5 * row * sz) + 0.5 * sz + (i / col | 0) * sz;
+  const y = (-row / 2) + z / 2;
+  $pos.push(new THREE.Vector3(x, y, z));
+}
+scene.add(inst_mesh);
+
+// ----
+// render
+// ----
+
+const $mat = new THREE.Matrix4();
+const $up = new THREE.Vector3(0, 1, 0);
+renderer.setAnimationLoop(() => {
+  controls.update();
+  renderer.render(scene, camera);
+
+  for (let i = 0; i < n_inst; ++i) {
+    inst_mesh.setMatrixAt(i, $mat.lookAt(camera.position, $pos[i], $up).setPosition($pos[i]));
+  }
+  inst_mesh.instanceMatrix.needsUpdate = true;
+});
+
+// ----
+// view
+// ----
+
+function resize(w, h, dpr = devicePixelRatio) {
+  renderer.setPixelRatio(dpr);
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', () => resize(innerWidth, innerHeight));
+dispatchEvent(new Event('resize'));
+document.body.prepend(renderer.domElement);
+
+</script>
+<!-- partial -->
+  
+</body>
+</html>
