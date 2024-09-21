@@ -139,6 +139,10 @@ https://ravanabackup.github.io/codepen/codes/bandit/index.html
 https://ravanabackup.github.io/codepen/codes/complex-polynomials-ratio/index.html
 https://ravanabackup.github.io/codepen/codes/cuboid-warptunnel-audio-visualizer/index.html
 https://ravanabackup.github.io/codepen/codes/discoid/index.html
+https://ravanabackup.github.io/codepen/codes/falling-city/index.html
+https://ravanabackup.github.io/codepen/codes/pretend-hacker/index.html
+https://ravanabackup.github.io/codepen/codes/circuit-board-pattern/index.html
+https://ravanabackup.github.io/codepen/codes/city-flight/index.html
 https://ravanabackup.github.io/codepen/codes/dotify-your-pictures/index.html
 https://ravanabackup.github.io/codepen/codes/embroidery-3/index.html
 https://ravanabackup.github.io/codepen/codescanvas-orbital-trails-v2/index.html
