@@ -147,3 +147,8 @@ https://ravanabackup.github.io/codepen/codes/dotify-your-pictures/index.html
 https://ravanabackup.github.io/codepen/codes/embroidery-3/index.html
 https://ravanabackup.github.io/codepen/codescanvas-orbital-trails-v2/index.html
 https://ravanabackup.github.io/codepen/codes/diffusion-limited-aggregation-v1/index.html
+https://ravanabackup.github.io/codepen/codes/trypophobia/index.html
+https://ravanabackup.github.io/codepen/codes/vliblob/index.html
+https://ravanabackup.github.io/codepen/codes/acid-swiming-pool/index.html
+https://ravanabackup.github.io/codepen/codes/asteroid/index.html
+https://ravanabackup.github.io/codepen/codes/game-of-life/index.html
