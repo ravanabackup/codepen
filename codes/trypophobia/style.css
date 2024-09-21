@@ -1,0 +1,7 @@
+html {
+  background-color: #000;
+  overflow: hidden;
+}
+canvas {
+  vertical-align: top;
+}

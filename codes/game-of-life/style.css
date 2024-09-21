@@ -1,0 +1,19 @@
+html {
+  background: #111;
+  overflow: hidden;
+  height: 100%;
+}
+body {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+canvas {
+  display: block;
+  vertical-align: top;
+  transform-origin: 0 0;
+  -ms-interpolation-mode: nearest-neighbor;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: pixelated;
+}
