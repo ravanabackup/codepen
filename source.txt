@@ -152,3 +152,4 @@ https://ravanabackup.github.io/codepen/codes/vliblob/index.html
 https://ravanabackup.github.io/codepen/codes/acid-swiming-pool/index.html
 https://ravanabackup.github.io/codepen/codes/asteroid/index.html
 https://ravanabackup.github.io/codepen/codes/game-of-life/index.html
+https://ravanabackup.github.io/codepen/codes/ultimate-tic-tac-toe/index.html
