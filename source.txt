@@ -170,3 +170,10 @@ https://ravanabackup.github.io/codepen/codes/transdimensional-worm/index.html
 https://ravanabackup.github.io/codepen/codes/yet-another-webgl-background/index.html
 https://ravanabackup.github.io/codepen/codes/night-drive/index.html
 https://ravanabackup.github.io/codepen/codes/shaders-example-9/index.html
+https://ravanabackup.github.io/codepen/codes/explode/index.html
+https://ravanabackup.github.io/codepen/codes/perlin-noise-2-0/index.html
+https://ravanabackup.github.io/codepen/codes/rounded-boxmatcap-texture/index.html
+https://ravanabackup.github.io/codepen/codes/shader-moon/index.html
+https://ravanabackup.github.io/codepen/codes/blob-experiment-v-2-0/index.html
+https://ravanabackup.github.io/codepen/codes/city-3d/index.html
+https://ravanabackup.github.io/codepen/codes/dark-planetthreejs/index.html
