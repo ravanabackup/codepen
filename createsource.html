@@ -76,7 +76,7 @@
     <button onclick="filterPaths()">Run</button>
 
     <div class="output-container hidden" id="outputContainer">
-        <h2>Filtered URLs</h2>
+        <h2 id="filteredHeading">Filtered URLs</h2>
         <pre id="outputData"></pre>
         <button onclick="copyToClipboard()">Copy to Clipboard</button>
     </div>
@@ -96,9 +96,11 @@
             });
 
             const outputData = filteredLines.join("\n");
+            const filteredCount = filteredLines.length;
 
-            if (filteredLines.length > 0) {
+            if (filteredCount > 0) {
                 document.getElementById("outputData").textContent = outputData;
+                document.getElementById("filteredHeading").textContent = `Filtered URLs (${filteredCount})`;
                 document.getElementById("outputContainer").classList.remove("hidden");
             } else {
                 document.getElementById("outputData").textContent = "";
