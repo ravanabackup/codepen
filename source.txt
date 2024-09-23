@@ -165,3 +165,8 @@ https://ravanabackup.github.io/codepen/codes/genuary8ring-of-rings/index.html
 https://ravanabackup.github.io/codepen/codes/genuary210minuteswovenlight/index.html
 https://ravanabackup.github.io/codepen/codes/mathober-day-21-cyclotomic/index.html
 https://ravanabackup.github.io/codepen/codes/mathober-day-31-radial/index.html
+https://ravanabackup.github.io/codepen/codes/tower-of-climbing-cubeslive-coding-session/index.html
+https://ravanabackup.github.io/codepen/codes/transdimensional-worm/index.html
+https://ravanabackup.github.io/codepen/codes/yet-another-webgl-background/index.html
+https://ravanabackup.github.io/codepen/codes/night-drive/index.html
+https://ravanabackup.github.io/codepen/codes/shaders-example-9/index.html
