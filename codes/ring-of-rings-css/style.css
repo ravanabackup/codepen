@@ -1,0 +1,265 @@
+body {
+  background-image: radial-gradient(circle, #111, #000 400px);
+  overflow: hidden;
+  perspective: 750px;
+}
+
+.scene {
+  position: relative;
+  transform-style: preserve-3d;
+  -webkit-animation: sceneRotate 45s infinite linear;
+          animation: sceneRotate 45s infinite linear;
+}
+@-webkit-keyframes sceneRotate {
+  from {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(360deg) rotateY(720deg);
+  }
+}
+@keyframes sceneRotate {
+  from {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(360deg) rotateY(720deg);
+  }
+}
+
+.ring {
+  position: absolute;
+  transform: rotateZ(var(--ring-angle)) translateX(240px);
+  transform-style: preserve-3d;
+}
+.ring:nth-child(1) {
+  --ring-angle: 0deg;
+}
+.ring:nth-child(2) {
+  --ring-angle: 36deg;
+}
+.ring:nth-child(3) {
+  --ring-angle: 72deg;
+}
+.ring:nth-child(4) {
+  --ring-angle: 108deg;
+}
+.ring:nth-child(5) {
+  --ring-angle: 144deg;
+}
+.ring:nth-child(6) {
+  --ring-angle: 180deg;
+}
+.ring:nth-child(7) {
+  --ring-angle: 216deg;
+}
+.ring:nth-child(8) {
+  --ring-angle: 252deg;
+}
+.ring:nth-child(9) {
+  --ring-angle: 288deg;
+}
+.ring:nth-child(10) {
+  --ring-angle: 324deg;
+}
+
+.layer {
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 120px;
+  height: 120px;
+  border: 10px solid hsl(var(--hue), 100%, 50%);
+  border-radius: 50%;
+  transform: translateZ(var(--tz));
+}
+.layer:nth-child(1) {
+  --tz: -5px;
+  --hue: 120;
+}
+.layer:nth-child(2) {
+  --tz: -4px;
+  --hue: 126;
+}
+.layer:nth-child(3) {
+  --tz: -3px;
+  --hue: 132;
+}
+.layer:nth-child(4) {
+  --tz: -2px;
+  --hue: 138;
+}
+.layer:nth-child(5) {
+  --tz: -1px;
+  --hue: 144;
+}
+.layer:nth-child(6) {
+  --tz: 0px;
+  --hue: 150;
+}
+.layer:nth-child(7) {
+  --tz: 1px;
+  --hue: 156;
+}
+.layer:nth-child(8) {
+  --tz: 2px;
+  --hue: 162;
+}
+.layer:nth-child(9) {
+  --tz: 3px;
+  --hue: 168;
+}
+.layer:nth-child(10) {
+  --tz: 4px;
+  --hue: 174;
+}
+.layer:nth-child(11) {
+  --tz: 5px;
+  --hue: 180;
+}
+
+.panel {
+  position: absolute;
+  width: 36.5px;
+  height: 10px;
+  background-color: #f007;
+  background-image: linear-gradient(lime, aqua);
+  transform: translate(-50%, -50%) rotateZ(var(--panel-angle)) rotateX(90deg) translateZ(56px);
+}
+.panel:nth-child(12) {
+  --panel-angle: 0deg;
+}
+.panel:nth-child(13) {
+  --panel-angle: 36deg;
+}
+.panel:nth-child(14) {
+  --panel-angle: 72deg;
+}
+.panel:nth-child(15) {
+  --panel-angle: 108deg;
+}
+.panel:nth-child(16) {
+  --panel-angle: 144deg;
+}
+.panel:nth-child(17) {
+  --panel-angle: 180deg;
+}
+.panel:nth-child(18) {
+  --panel-angle: 216deg;
+}
+.panel:nth-child(19) {
+  --panel-angle: 252deg;
+}
+.panel:nth-child(20) {
+  --panel-angle: 288deg;
+}
+.panel:nth-child(21) {
+  --panel-angle: 324deg;
+}
+
+.ballContainer {
+  position: absolute;
+  transform-style: preserve-3d;
+  -webkit-animation: ballRotate 15s linear infinite;
+          animation: ballRotate 15s linear infinite;
+}
+@-webkit-keyframes ballRotate {
+  from {
+    transform: rotateZ(0deg) translateY(240px) rotateZ(360deg);
+  }
+  to {
+    transform: rotateZ(360deg) translateY(240px) rotateZ(0deg);
+  }
+}
+@keyframes ballRotate {
+  from {
+    transform: rotateZ(0deg) translateY(240px) rotateZ(360deg);
+  }
+  to {
+    transform: rotateZ(360deg) translateY(240px) rotateZ(0deg);
+  }
+}
+.ballContainer:nth-child(11) {
+  -webkit-animation-delay: 0s;
+          animation-delay: 0s;
+  --hue: 0;
+}
+.ballContainer:nth-child(12) {
+  -webkit-animation-delay: -0.75s;
+          animation-delay: -0.75s;
+  --hue: -12;
+}
+.ballContainer:nth-child(13) {
+  -webkit-animation-delay: -1.5s;
+          animation-delay: -1.5s;
+  --hue: -24;
+}
+.ballContainer:nth-child(14) {
+  -webkit-animation-delay: -2.25s;
+          animation-delay: -2.25s;
+  --hue: -36;
+}
+.ballContainer:nth-child(15) {
+  -webkit-animation-delay: -3s;
+          animation-delay: -3s;
+  --hue: -48;
+}
+.ballContainer:nth-child(odd) > .ball {
+  animation-direction: alternate-reverse;
+}
+
+.ball {
+  position: absolute;
+  background-color: #fff;
+  transform-style: preserve-3d;
+  -webkit-animation: ballZ 1.5s infinite ease-in-out alternate;
+          animation: ballZ 1.5s infinite ease-in-out alternate;
+  -webkit-animation-delay: inherit;
+          animation-delay: inherit;
+}
+@-webkit-keyframes ballZ {
+  from {
+    transform: translateZ(50px);
+  }
+  to {
+    transform: translateZ(-50px);
+  }
+}
+@keyframes ballZ {
+  from {
+    transform: translateZ(50px);
+  }
+  to {
+    transform: translateZ(-50px);
+  }
+}
+.ball::after {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 60px;
+  height: 60px;
+  background-color: hsl(var(--hue), 100%, 60%);
+  background-image: radial-gradient(circle at top, #0000, #000);
+  border-radius: 50%;
+  box-shadow: 0 0 12px #0003;
+  -webkit-animation: ballFix 45s infinite linear;
+          animation: ballFix 45s infinite linear;
+}
+@-webkit-keyframes ballFix {
+  from {
+    transform: rotateY(720deg) rotateX(360deg);
+  }
+  to {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+}
+@keyframes ballFix {
+  from {
+    transform: rotateY(720deg) rotateX(360deg);
+  }
+  to {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+}

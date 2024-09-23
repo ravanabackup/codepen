@@ -1,0 +1,32 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #112B3C;
+  height: 100%;
+  overflow: hidden;
+}
+body:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.3) inset;
+  pointer-events: none;
+}
+@media (min-width: 750px) {
+  body:after {
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.3) inset;
+  }
+}
+
+canvas {
+  position: absolute;
+  touch-action: none;
+}

@@ -1,0 +1,121 @@
+*, *::before, *::after {
+    padding: 0;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+body {
+  background-color: #000;
+  color: #fff;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  perspective: 800px;
+  
+  *:not(:empty) {
+    transform-style: preserve-3d;
+  }
+}
+
+.scene {
+  position: relative;
+  -webkit-animation: sceneRotate 60s infinite linear;
+          animation: sceneRotate 60s infinite linear;
+}
+
+@-webkit-keyframes sceneRotate {
+  from { transform: translateY(10em) rotateX(-15deg) rotateY(0deg); }
+  to { transform: translateY(10em) rotateX(-15deg) rotateY(-360deg); }
+}
+
+@keyframes sceneRotate {
+  from { transform: translateY(10em) rotateX(-15deg) rotateY(0deg); }
+  to { transform: translateY(10em) rotateX(-15deg) rotateY(-360deg); }
+}
+
+.floor {
+  position: absolute;
+  inset: -60em;
+  background-image:
+    radial-gradient(closest-side, transparent, #000),
+    repeating-radial-gradient(circle at calc(cos(0deg) * 25% + 50%) calc(sin(0deg) * 25% + 50%), transparent 0, #fdd2, transparent 1em),
+    repeating-radial-gradient(circle at calc(cos(72deg) * 25% + 50%) calc(sin(72deg) * 25% + 50%), transparent 0, #fdd2, transparent 1em),
+    repeating-radial-gradient(circle at calc(cos(144deg) * 25% + 50%) calc(sin(144deg) * 25% + 50%), transparent 0, #fdd2, transparent 1em),
+    repeating-radial-gradient(circle at calc(cos(216deg) * 25% + 50%) calc(sin(216deg) * 25% + 50%), transparent 0, #fdd2, transparent 1em),
+    repeating-radial-gradient(circle at calc(cos(288deg) * 25% + 50%) calc(sin(288deg) * 25% + 50%), transparent 0, #fdd2, transparent 1em);
+  transform: rotateX(90deg);
+}
+
+.pyramid {
+  position: absolute;
+  
+  --bricks:
+    linear-gradient(155deg, brown 0.375em, transparent 0.375em) 0.625em 0.125em / 1em 1em,
+    linear-gradient(155deg, brown 0.375em, transparent 0.375em) 0.125em 0.625em / 1em 1em,
+    linear-gradient(335deg, maroon 0.375em, transparent 0.375em) 0 0.025em / 1em 1em,
+    linear-gradient(335deg, maroon 0.375em, transparent 0.375em) 0.5em 0.525em / 1em 1em;
+  
+  div {
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(10deg, #0007, #fff3), var(--bricks);
+    background-color: sandybrown;
+    transform-origin: bottom;
+    
+    &:nth-child(2) { --angle: 90deg; }
+    &:nth-child(3) { --angle: 180deg; }
+    &:nth-child(4) { --angle: 270deg; }
+  }
+  
+  &.top {
+    transform: translateY(-10em);
+    -webkit-animation: topRotate 50s infinite linear;
+            animation: topRotate 50s infinite linear;
+
+    div {
+      left: -4.5em;
+      width: 9em;
+      aspect-ratio: 1;
+      transform: rotateY(var(--angle, 0)) translateZ(4.5em) rotateX(30deg);
+      -webkit-clip-path: polygon(0 100%, 50% 0, 100% 100%);
+              clip-path: polygon(0 100%, 50% 0, 100% 100%);
+    }
+  }
+  
+  &.bottom {
+    div {
+      left: -10em;
+      width: 20em;
+      aspect-ratio: 2 / 1;
+      transform: rotateY(var(--angle, 0)) translateZ(10em) rotateX(30deg);
+      -webkit-clip-path: polygon(0 100%, 25% 0, 75% 0, 100% 100%);
+              clip-path: polygon(0 100%, 25% 0, 75% 0, 100% 100%); 
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      inset: -5em;
+      background: radial-gradient(#000a, 75%, #fff3), var(--bricks);
+      background-color: sandybrown;
+      transform: rotateX(90deg) translateZ(8.66em);
+    }
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -11em;
+      background-color: #0009;
+      transform: rotateX(90deg) translateZ(1px);
+      filter: blur(1em)
+    }
+  }
+}
+
+@-webkit-keyframes topRotate {
+  from { transform: translateY(-10em) rotateY(0deg); }
+  to { transform: translateY(-10em) rotateY(-360deg); }
+}
+
+@keyframes topRotate {
+  from { transform: translateY(-10em) rotateY(0deg); }
+  to { transform: translateY(-10em) rotateY(-360deg); }
+}
