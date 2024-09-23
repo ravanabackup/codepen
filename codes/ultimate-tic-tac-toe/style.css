@@ -1,0 +1,112 @@
+.bigBoard, .littleBoard {
+  display: inline-grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  background: gray;
+}
+
+.bigBoard {
+  grid-gap: 6px;
+}
+.littleBoard {
+  grid-gap: 2px;
+  border: 20px solid white;
+  position: relative;
+}
+
+.littleBoard-valid {
+  background: #519111;
+  border: 10px solid #ebfadc;
+  margin: 10px;
+  box-shadow: 0 0 0 10px white;
+}
+.littleBoard-valid .tile {
+  background: #ebfadc;
+}
+
+.littleBoard:not(.littleBoard-null) .tile-X::before,
+.littleBoard:not(.littleBoard-null) .tile-X::after {
+  background: rgba(255, 220, 220);
+}
+
+.littleBoard:not(.littleBoard-null) .tile-O::before {
+  border-color: rgba(220, 220, 255);
+}
+
+.littleBoard-X::before,
+.littleBoard-X::after {
+  content: "";
+  width: 140px;
+  height: 16px;
+  background: red;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+}
+.littleBoard-X::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.littleBoard-X::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.littleBoard-O::after {
+  content: "";
+  width: 100px;
+  height: 100px;
+  border: 16px solid blue;
+  border-radius: 9999px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.littleBoard-\~::after {
+  content: "~";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 200px;
+  font-weight: 500;
+  font-family: monospace;
+  color: gray;
+}
+
+.tile {
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  position: relative;
+}
+
+.tile-X::after,
+.tile-X::before {
+  content: "";
+  width: 32px;
+  height: 6px;
+  background: red;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+.tile-X::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.tile-X::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.tile-O::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  border: 6px solid blue;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+}
