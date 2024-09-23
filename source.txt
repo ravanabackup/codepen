@@ -153,3 +153,15 @@ https://ravanabackup.github.io/codepen/codes/acid-swiming-pool/index.html
 https://ravanabackup.github.io/codepen/codes/asteroid/index.html
 https://ravanabackup.github.io/codepen/codes/game-of-life/index.html
 https://ravanabackup.github.io/codepen/codes/ultimate-tic-tac-toe/index.html
+https://ravanabackup.github.io/codepen/codes/metronome-meditation/index.html
+https://ravanabackup.github.io/codepen/codes/optical-illusions/index.html
+https://ravanabackup.github.io/codepen/codes/parallelturns/index.html
+https://ravanabackup.github.io/codepen/codes/pride-stars/index.html
+https://ravanabackup.github.io/codepen/codes/the-jittery-snail/index.html
+https://ravanabackup.github.io/codepen/codes/extended-gears-of-time/index.html
+https://ravanabackup.github.io/codepen/codes/galactic-contemplation/index.html
+https://ravanabackup.github.io/codepen/codes/genuary5apple-ripples-in-the-console/index.html
+https://ravanabackup.github.io/codepen/codes/genuary8ring-of-rings/index.html
+https://ravanabackup.github.io/codepen/codes/genuary210minuteswovenlight/index.html
+https://ravanabackup.github.io/codepen/codes/mathober-day-21-cyclotomic/index.html
+https://ravanabackup.github.io/codepen/codes/mathober-day-31-radial/index.html
