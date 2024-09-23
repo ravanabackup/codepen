@@ -1,0 +1,16 @@
+body {
+  background: black;
+  overflow: hidden;
+  margin: 0;
+}
+
+svg {
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+}
+
+defs path {
+  stroke: white;
+  stroke-width: 2px;
+}

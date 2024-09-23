@@ -1,0 +1,724 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  background: black;
+}
+
+mommy {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+particle {
+  width: 20vw;
+  height: 20vw;
+  position: absolute;
+  top: -10vw;
+  left: -10vw;
+  background: currentColor;
+  box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.5);
+  animation: 6s infinite linear both alternate;
+}
+
+particle:nth-child(1) {
+  animation-name: animate1;
+  animation-delay: 0s;
+  color: #bf4040;
+}
+
+@keyframes animate1 {
+  0% {
+    transform: translate(0vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(0vw, 50vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(0vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(2) {
+  animation-name: animate2;
+  animation-delay: -0.05s;
+  color: #bf5340;
+}
+
+@keyframes animate2 {
+  0% {
+    transform: translate(2.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(2.5vw, 57.82172vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(2.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(3) {
+  animation-name: animate3;
+  animation-delay: -0.1s;
+  color: #bf6640;
+}
+
+@keyframes animate3 {
+  0% {
+    transform: translate(5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(5vw, 65.45085vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(4) {
+  animation-name: animate4;
+  animation-delay: -0.15s;
+  color: #bf7940;
+}
+
+@keyframes animate4 {
+  0% {
+    transform: translate(7.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(7.5vw, 72.69952vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(7.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(5) {
+  animation-name: animate5;
+  animation-delay: -0.2s;
+  color: #bf8c40;
+}
+
+@keyframes animate5 {
+  0% {
+    transform: translate(10vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(10vw, 79.38926vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(10vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(6) {
+  animation-name: animate6;
+  animation-delay: -0.25s;
+  color: #bf9f40;
+}
+
+@keyframes animate6 {
+  0% {
+    transform: translate(12.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(12.5vw, 85.35534vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(12.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(7) {
+  animation-name: animate7;
+  animation-delay: -0.3s;
+  color: #bfb340;
+}
+
+@keyframes animate7 {
+  0% {
+    transform: translate(15vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(15vw, 90.45085vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(15vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(8) {
+  animation-name: animate8;
+  animation-delay: -0.35s;
+  color: #b9bf40;
+}
+
+@keyframes animate8 {
+  0% {
+    transform: translate(17.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(17.5vw, 94.55033vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(17.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(9) {
+  animation-name: animate9;
+  animation-delay: -0.4s;
+  color: #a6bf40;
+}
+
+@keyframes animate9 {
+  0% {
+    transform: translate(20vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(20vw, 97.55283vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(20vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(10) {
+  animation-name: animate10;
+  animation-delay: -0.45s;
+  color: #93bf40;
+}
+
+@keyframes animate10 {
+  0% {
+    transform: translate(22.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(22.5vw, 99.38442vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(22.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(11) {
+  animation-name: animate11;
+  animation-delay: -0.5s;
+  color: #80bf40;
+}
+
+@keyframes animate11 {
+  0% {
+    transform: translate(25vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(25vw, 100vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(25vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(12) {
+  animation-name: animate12;
+  animation-delay: -0.55s;
+  color: #6cbf40;
+}
+
+@keyframes animate12 {
+  0% {
+    transform: translate(27.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(27.5vw, 99.38442vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(27.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(13) {
+  animation-name: animate13;
+  animation-delay: -0.6s;
+  color: #59bf40;
+}
+
+@keyframes animate13 {
+  0% {
+    transform: translate(30vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(30vw, 97.55283vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(30vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(14) {
+  animation-name: animate14;
+  animation-delay: -0.65s;
+  color: #46bf40;
+}
+
+@keyframes animate14 {
+  0% {
+    transform: translate(32.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(32.5vw, 94.55033vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(32.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(15) {
+  animation-name: animate15;
+  animation-delay: -0.7s;
+  color: #40bf4d;
+}
+
+@keyframes animate15 {
+  0% {
+    transform: translate(35vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(35vw, 90.45085vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(35vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(16) {
+  animation-name: animate16;
+  animation-delay: -0.75s;
+  color: #40bf60;
+}
+
+@keyframes animate16 {
+  0% {
+    transform: translate(37.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(37.5vw, 85.35534vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(37.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(17) {
+  animation-name: animate17;
+  animation-delay: -0.8s;
+  color: #40bf73;
+}
+
+@keyframes animate17 {
+  0% {
+    transform: translate(40vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(40vw, 79.38926vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(40vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(18) {
+  animation-name: animate18;
+  animation-delay: -0.85s;
+  color: #40bf86;
+}
+
+@keyframes animate18 {
+  0% {
+    transform: translate(42.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(42.5vw, 72.69952vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(42.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(19) {
+  animation-name: animate19;
+  animation-delay: -0.9s;
+  color: #40bf99;
+}
+
+@keyframes animate19 {
+  0% {
+    transform: translate(45vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(45vw, 65.45085vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(45vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(20) {
+  animation-name: animate20;
+  animation-delay: -0.95s;
+  color: #40bfac;
+}
+
+@keyframes animate20 {
+  0% {
+    transform: translate(47.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(47.5vw, 57.82172vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(47.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(21) {
+  animation-name: animate21;
+  animation-delay: -1s;
+  color: #40bfbf;
+}
+
+@keyframes animate21 {
+  0% {
+    transform: translate(50vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(50vw, 50vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(50vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(22) {
+  animation-name: animate22;
+  animation-delay: -1.05s;
+  color: #40acbf;
+}
+
+@keyframes animate22 {
+  0% {
+    transform: translate(52.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(52.5vw, 42.17828vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(52.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(23) {
+  animation-name: animate23;
+  animation-delay: -1.1s;
+  color: #4099bf;
+}
+
+@keyframes animate23 {
+  0% {
+    transform: translate(55vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(55vw, 34.54915vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(55vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(24) {
+  animation-name: animate24;
+  animation-delay: -1.15s;
+  color: #4086bf;
+}
+
+@keyframes animate24 {
+  0% {
+    transform: translate(57.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(57.5vw, 27.30048vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(57.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(25) {
+  animation-name: animate25;
+  animation-delay: -1.2s;
+  color: #4073bf;
+}
+
+@keyframes animate25 {
+  0% {
+    transform: translate(60vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(60vw, 20.61074vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(60vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(26) {
+  animation-name: animate26;
+  animation-delay: -1.25s;
+  color: #4060bf;
+}
+
+@keyframes animate26 {
+  0% {
+    transform: translate(62.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(62.5vw, 14.64466vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(62.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(27) {
+  animation-name: animate27;
+  animation-delay: -1.3s;
+  color: #404dbf;
+}
+
+@keyframes animate27 {
+  0% {
+    transform: translate(65vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(65vw, 9.54915vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(65vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(28) {
+  animation-name: animate28;
+  animation-delay: -1.35s;
+  color: #4640bf;
+}
+
+@keyframes animate28 {
+  0% {
+    transform: translate(67.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(67.5vw, 5.44967vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(67.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(29) {
+  animation-name: animate29;
+  animation-delay: -1.4s;
+  color: #5940bf;
+}
+
+@keyframes animate29 {
+  0% {
+    transform: translate(70vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(70vw, 2.44717vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(70vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(30) {
+  animation-name: animate30;
+  animation-delay: -1.45s;
+  color: #6c40bf;
+}
+
+@keyframes animate30 {
+  0% {
+    transform: translate(72.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(72.5vw, 0.61558vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(72.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(31) {
+  animation-name: animate31;
+  animation-delay: -1.5s;
+  color: #8040bf;
+}
+
+@keyframes animate31 {
+  0% {
+    transform: translate(75vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(75vw, 0vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(75vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(32) {
+  animation-name: animate32;
+  animation-delay: -1.55s;
+  color: #9340bf;
+}
+
+@keyframes animate32 {
+  0% {
+    transform: translate(77.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(77.5vw, 0.61558vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(77.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(33) {
+  animation-name: animate33;
+  animation-delay: -1.6s;
+  color: #a640bf;
+}
+
+@keyframes animate33 {
+  0% {
+    transform: translate(80vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(80vw, 2.44717vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(80vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(34) {
+  animation-name: animate34;
+  animation-delay: -1.65s;
+  color: #b940bf;
+}
+
+@keyframes animate34 {
+  0% {
+    transform: translate(82.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(82.5vw, 5.44967vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(82.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(35) {
+  animation-name: animate35;
+  animation-delay: -1.7s;
+  color: #bf40b3;
+}
+
+@keyframes animate35 {
+  0% {
+    transform: translate(85vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(85vw, 9.54915vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(85vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(36) {
+  animation-name: animate36;
+  animation-delay: -1.75s;
+  color: #bf409f;
+}
+
+@keyframes animate36 {
+  0% {
+    transform: translate(87.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(87.5vw, 14.64466vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(87.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(37) {
+  animation-name: animate37;
+  animation-delay: -1.8s;
+  color: #bf408c;
+}
+
+@keyframes animate37 {
+  0% {
+    transform: translate(90vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(90vw, 20.61074vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(90vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(38) {
+  animation-name: animate38;
+  animation-delay: -1.85s;
+  color: #bf4079;
+}
+
+@keyframes animate38 {
+  0% {
+    transform: translate(92.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(92.5vw, 27.30048vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(92.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(39) {
+  animation-name: animate39;
+  animation-delay: -1.9s;
+  color: #bf4066;
+}
+
+@keyframes animate39 {
+  0% {
+    transform: translate(95vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(95vw, 34.54915vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(95vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(40) {
+  animation-name: animate40;
+  animation-delay: -1.95s;
+  color: #bf4053;
+}
+
+@keyframes animate40 {
+  0% {
+    transform: translate(97.5vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(97.5vw, 42.17828vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(97.5vw, 100vh) rotateZ(0deg);
+  }
+}
+particle:nth-child(41) {
+  animation-name: animate41;
+  animation-delay: -2s;
+  color: #bf4040;
+}
+
+@keyframes animate41 {
+  0% {
+    transform: translate(100vw, 0) rotateZ(0deg);
+  }
+  50% {
+    transform: translate(100vw, 50vh) rotateZ(360deg);
+  }
+  100% {
+    transform: translate(100vw, 100vh) rotateZ(0deg);
+  }
+}
