@@ -260,3 +260,9 @@ https://ravanabackup.github.io/codepen/codes/concentric-circles-animation/index.
 https://ravanabackup.github.io/codepen/codes/hexagonical-retro-tiles/index.html
 https://ravanabackup.github.io/codepen/codes/invasion-of-creepy-crawly-rainbow-fireflies/index.html
 https://ravanabackup.github.io/codepen/codes/it-s-great-to-feel-useful/index.html
+https://ravanabackup.github.io/codepen/codes/rasterization-tool/index.html
+https://ravanabackup.github.io/codepen/codes/retro-style-dither-cam/index.html
+https://ravanabackup.github.io/codepen/codes/binary-music-player-master/index.html
+https://ravanabackup.github.io/codepen/codes/checkboxrace-master/index.html
+https://ravanabackup.github.io/codepen/codes/lego-webcam/index.html
+https://ravanabackup.github.io/codepen/codes/mondrian-and-me-main/index.html
