@@ -1,0 +1,32 @@
+body{
+  background-color:black;
+}
+canvas{
+  background-color:black;
+  position:absolute;
+  top:calc(50vh - 250px);
+  left:calc(50vw - 200px);
+}
+#overlay {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: calc(50vh - 250px);
+  left: calc(50vw - 200px);
+  background-image: radial-gradient(transparent 20%, #000 69%);
+}
+#inp {
+  width:400px;
+  height:100px;
+  position:absolute;
+  left:calc(50vw - 200px);
+  top:calc(50vh + 160px);
+  
+  color:white;
+  text-align:center;
+  
+  font:20px Verdana;
+}
+#alp{
+  width:200px;
+}

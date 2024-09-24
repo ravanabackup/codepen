@@ -1,0 +1,15 @@
+canvas {
+  position:absolute;
+  top:0;
+  left:0;
+  opacity:.5;
+}
+#c1 {
+  z-index: 3;
+}
+#c2 {
+  z-index: 1;
+}
+body {
+  background-color:#111;
+}

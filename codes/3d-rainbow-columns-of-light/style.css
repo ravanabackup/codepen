@@ -1,0 +1,54 @@
+canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-image: radial-gradient( ellipse 50% 50% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,.2) 40%, rgba( 0,0,0,.8) 90% ), repeating-linear-gradient( 30deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px, rgba( 0,0,0,.2) 1.5px, rgba(0,0,0,0) 2px );
+}
+#controls {
+	position: absolute;
+	top: 30px;
+	left: 10px;
+	background-color: rgba(0,0,0,.5);
+	font: 13px Verdana;
+	color: #eee;
+	padding: 5px 5px 5px 5px;
+	width: 220px;
+	height: 350px;
+	overflow-y: hidden;
+	transition: height .3s, padding .3s;
+}
+#controls.hidden {
+	height: 0px;
+	padding: 0px 5px 0px 5px;
+}
+#controls input {
+	width: 80px;
+	margin-right: 5px;
+	font: 10px Verdana;
+}
+#dispControls {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 230px;
+	border: none;
+	background-color: rgba( 0,0,0,.9);
+	height: 20px;
+	text-align: center;
+	color: #eee;
+	transition: background-color .2s;
+}
+#dispControls:hover {
+	background-color: rgba( 20, 25, 20, .9 );
+	cursor: pointer;
+}
+button:focus, input:focus {
+	outline: none;
+}

@@ -1,0 +1,15 @@
+canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+p {
+	position: absolute;
+	font: 30px Verdana;
+	width: 100%;
+	left: 0;
+	margin-top: 10px;
+	text-align: center;
+	color: #eee;
+	text-shadow: 0 0 10px #222, 0 0 10px #222, 0 0 10px #222;
+}
