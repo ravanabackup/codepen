@@ -1,0 +1,51 @@
+html,
+body {
+  overflow: hidden;
+}
+body {
+  margin: 0;
+  background-color: #000;
+}
+.dg.ac {
+  z-index: 999 !important;
+}
+#container {
+  overflow: hidden;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
+}
+#cover {
+  position: absolute;
+  width: 1024px;
+  height: 1024px;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  z-index: -1;
+}
+#image {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  z-index: 1001;
+  width: 160px;
+  height: 160px;
+}
+#image img {
+  width: 100%;
+}
+video {
+  position: absolute;
+  z-index: 1330;
+  opacity: 1;
+  top: 0%;
+  left: 0%;
+  width: 1280px;
+  height: 1280px;
+}
