@@ -1,0 +1,151 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: black;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(calc(-50% - 100px), calc(-50% - 100px));
+}
+.container.c1 {
+  margin-left: 100px;
+}
+.container.c1 div {
+  transform-origin: top right;
+}
+.container.c2 {
+  margin-top: 100px;
+}
+.container.c2 div {
+  transform-origin: bottom left;
+}
+.container.c3 {
+  margin-top: 100px;
+  margin-left: 100px;
+}
+.container.c3 div {
+  transform-origin: bottom right;
+}
+.container.c4 div {
+  transform-origin: top left;
+}
+.container div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  -webkit-animation: 4s rotate cubic-bezier(0, 0.84, 0.92, 0.46) infinite;
+          animation: 4s rotate cubic-bezier(0, 0.84, 0.92, 0.46) infinite;
+}
+.container .white {
+  background: black;
+  border: 2px solid white;
+  z-index: 5;
+  -webkit-animation: 4s rotate cubic-bezier(0, 0.84, 0.92, 0.46) infinite, 4s color cubic-bezier(0, 0.84, 0.92, 0.46) infinite;
+          animation: 4s rotate cubic-bezier(0, 0.84, 0.92, 0.46) infinite, 4s color cubic-bezier(0, 0.84, 0.92, 0.46) infinite;
+}
+.container .cyan {
+  border: 2px solid cyan;
+  -webkit-animation-delay: 0.02s;
+          animation-delay: 0.02s;
+}
+.container .yellow {
+  border: 2px solid yellow;
+  -webkit-animation-delay: 0.04s;
+          animation-delay: 0.04s;
+}
+.container .magenta {
+  border: 2px solid magenta;
+  -webkit-animation-delay: 0.06s;
+          animation-delay: 0.06s;
+}
+
+@-webkit-keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(160deg) scale(1.4);
+  }
+  90% {
+    transform: rotate(360deg) scale(1);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(160deg) scale(1.4);
+  }
+  90% {
+    transform: rotate(360deg) scale(1);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes color {
+  0% {
+    background: white;
+  }
+  10% {
+    background: white;
+  }
+  15% {
+    background: black;
+  }
+  88% {
+    background: black;
+  }
+  92% {
+    background: white;
+  }
+  100% {
+    background: white;
+  }
+}
+@keyframes color {
+  0% {
+    background: white;
+  }
+  10% {
+    background: white;
+  }
+  15% {
+    background: black;
+  }
+  88% {
+    background: black;
+  }
+  92% {
+    background: white;
+  }
+  100% {
+    background: white;
+  }
+}

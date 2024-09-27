@@ -1,0 +1,10 @@
+body {
+  background-color: #4C3B4D;
+}
+
+#stage {
+  position: absolute;
+  left: -80%;
+  width: 180vw;
+  height: 100vh;
+}

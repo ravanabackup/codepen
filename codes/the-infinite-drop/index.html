@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - The Infinite Drop</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <title>step bounce</title>
+  <defs>
+     <ellipse id="dot" cx="0" cy="0" rx="10" ry="10" fill="#1D284E" stroke-width="1" stroke="#3378B7"/>
+  </defs>
+    <g class="pContainer" />    
+  <g id="wholeGroup">
+  <ellipse id="ball" cx="0" cy="200" rx="10" ry="9" fill="#F5F3F5" stroke-width="6" stroke="none" opacity-="0.5"/>
+  <g id="platformGroup" fill="none" stroke="#F5F3F5" stroke-width="5" stroke-miterlimit="10" stroke-linecap="round" >
+	<line x1="378.2" y1="5.08" x2="221.8" y2="-61.34"/>
+	<line x1="378.2" y1="806.4" x2="221.8" y2="740"/>
+	<line x1="421.8" y1="705.1" x2="578.2" y2="638.7"/>
+	<line x1="378.2" y1="605.1" x2="221.8" y2="538.7"/>
+	<line id="platformR" x1="421.8" y1="505.1" x2="578.2" y2="438.7"/>
+	<line id="platformL" x1="378.2" y1="405.1" x2="221.8" y2="338.7"/>
+	<line x1="421.8" y1="305.1" x2="578.2" y2="238.7"/>
+	<line x1="378.2" y1="205.1" x2="221.8" y2="138.7"/>
+	<line x1="421.8" y1="105.1" x2="578.2" y2="38.7"/>
+  </g>
+ <path id="rightToLeft" d="M503,266.6
+	c-36.9-38.8-192-94.7-247.2,82.5" fill="none" stroke-miterlimit="10" stroke-width="3" stroke="none"/>
+  <path id="leftToRight" d="M255.8,149.1
+	C425,26,501.9,213.1,503,266.6" fill="none" stroke="none" stroke-miterlimit="10" stroke-width="3"/>
+  </g>
+
+</svg>
+<!-- partial -->
+  <script src='//cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js'></script>
+<script src='//s3-us-west-2.amazonaws.com/s.cdpn.io/16327/MorphSVGPlugin.min.js'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/Physics2DPlugin.min.js'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/35984/CubicBezier.min.js'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/CSSTransform.min.js?r=5'></script><script  src="./script.js"></script>
+
+</body>
+</html>

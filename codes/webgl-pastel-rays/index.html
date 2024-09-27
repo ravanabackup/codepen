@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [WebGL] Pastel Rays</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="vertexShader" type="x-shader/x-vertex">
+varying vec2 vUv;
+void main()
+{
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+uniform float time;
+uniform vec2 resolution;
+
+varying vec2 vUv;
+
+#define PI 3.14159265359
+#define T (time*0.5)
+
+// Sineless hash - Dave Hoskins ( https://www.shadertoy.com/view/4djSRW )
+// License: CC BY-SA v4.0 (this function only)
+float hash11(float p)
+{
+  const float HASHSCALE1 = .1031;
+  vec3 p3  = fract(vec3(p) * HASHSCALE1);
+  p3 += dot(p3, p3.yzx + 19.19);
+  return fract((p3.x + p3.y) * p3.z);
+}
+// cf. http://www.iquilezles.org/www/articles/palettes/palettes.htm
+vec3 cosPal(float t)
+{
+	// return clamp(vec3(0.5) + vec3(0.5)*cos( 2.*PI*(vec3(1.0)*t+vec3(0.00,0.33,0.67)) ),0.,1.);
+  // return clamp(vec3(0.5) + vec3(0.5)*cos( 2.*PI*(vec3(1.0)*t+vec3(0.00,0.10,0.20)) ),0.,1.);
+  return clamp(vec3(0.5) + vec3(0.5)*cos( 2.*PI*(vec3(1.0)*t+vec3(0.30,0.20,0.20)) ),0.,1.);
+  // return clamp(vec3(0.5) + vec3(0.5)*cos( 2.*PI*(vec3(1.0,1.0,0.5)*t+vec3(0.80,0.90,0.30)) ),0.,1.);
+  // return clamp(vec3(0.5) + vec3(0.5)*cos( 2.*PI*(vec3(1.0,0.7,0.4)*t+vec3(0.00,0.15,0.20)) ),0.,1.);
+  // return clamp(vec3(0.5) + vec3(0.5)*cos( 2.*PI*(vec3(2.,1.,1.)*t+vec3(0.50,0.20,0.25)) ),0.,1.);
+}
+void calcPattern(out float value, out vec3 color, vec2 p, float t) {
+  value = 0.0;
+  color = vec3(0.0);
+  // repeat for each octave
+  for (float o = 1.0; o <= 8.0; o += 1.) {
+    float r = hash11(1.234 * o);
+    float expo = pow(2.5,o);
+    float phaseOffset = r * PI;
+    float phaseSpeed = 0.5 + (o * 0.25) * (0.5 + r);
+    float amplitude = 1.5 / expo; // sum[1,8] of 1/2.5^x ~= .66, so mult by 1.5
+    float contribution = sin( phaseOffset + 0.5 * expo * ( phaseSpeed * (t + 0.15*o*sin(t+2.*PI*r)) + (p.x + p.y) ) );
+
+    value += amplitude * (contribution);
+  }
+  value = 0.5 + 0.5 * value; // normalize sine range
+  color = cosPal(value);
+}
+
+void main( void ) {
+  float value;
+  vec3 gradColor;
+  calcPattern(value, gradColor, vec2(-10.*vUv.x, 4.*vUv.y), T);
+
+  float circFade = length(vUv - vec2(0.5, 0.5)) * 1.75;
+  circFade = max(0.0, 1.0 - (circFade * circFade));
+
+  gl_FragColor = vec4((1.0 + 0.15 * value) * gradColor * circFade, 1.0);
+}
+</script>
+<div id="container"></div>
+<div id="info">Pastel Rays - GLSL shader - with <a href="https://threejs.org" target="_blank">three.js</a>
+</div>
+<div id="controls">
+  <label for="resolution">resolution: </label>
+  <select id="resolution" value="2">
+    <option value="0.5">0.5x</option>
+    <option value="1">1x</option>
+    <option value="2" selected>2x</option>
+    <option value="4">4x</option>
+    <option value="8">8x</option>
+  </select>
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

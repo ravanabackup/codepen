@@ -1,0 +1,61 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #e4e4e4;
+  overflow: hidden;
+  font-size: 150px;
+}
+body * {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+body::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(http://www.transparenttextures.com/patterns/redox-01.png), url(http://www.transparenttextures.com/patterns/redox-02.png), url(http://www.transparenttextures.com/patterns/rice-paper-3.png);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.cube {
+  transform-style: preserve-3d;
+}
+.cube .face {
+  width: 1em;
+  height: 1em;
+  margin: -0.5em -0.5em;
+  background: rgba(228, 228, 228, 0.6);
+}
+.cube .face:nth-child(1) {
+  transform: rotateY(0deg) translateZ(0.5em);
+}
+.cube .face:nth-child(2) {
+  transform: rotateY(90deg) translateZ(0.5em);
+}
+.cube .face:nth-child(3) {
+  transform: rotateY(180deg) translateZ(0.5em);
+}
+.cube .face:nth-child(4) {
+  transform: rotateY(270deg) translateZ(0.5em);
+}
+.cube .face:nth-child(5) {
+  transform: rotateX(810deg) translateZ(0.5em);
+}
+.cube .face:nth-child(6) {
+  transform: rotateX(990deg) translateZ(0.5em);
+}
+.cube .face canvas {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [WebGL] Iterative Mandelbrot Fractal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="vertexShader" type="x-shader/x-vertex">
+varying vec2 vUv;
+void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+uniform float time;
+uniform vec2 resolution;
+varying vec2 vUv;
+
+void main(void) {
+	vec2 z, c;
+  
+  float scale = 2.1;
+  c.x = (resolution.x / resolution.y) * scale * (vUv.x - 0.5) - 0.25;
+  c.y = scale * (vUv.y - 0.5) - 0.;
+  
+  z = c;
+  float b;
+  for (float i=0.; i<40.; i+=0.5) {
+  	b = i;
+  	float x = (z.x * z.x - z.y * z.y) + c.x;
+  	float y = (2.0 * z.x * z.y) + c.y;
+    
+    if ((x*x + y*y) > 4.0) break;
+    z.x = x;
+    z.y = y;
+  }
+	//b = b>=39.5 ? 0.0 : b;
+  
+  gl_FragColor = vec4(
+  	b / 20.0 - (0.5 + 0.5 * cos(time * 0.8)),
+    b / 20.0 - (0.5 + 0.5 * cos(time * 0.8)),
+    b / (20.0 + 0.5 * cos(time * 0.6)),
+    1.0
+  );
+}
+</script>
+<div id="container"></div>
+<div id="info">Iterative Mandelbrot Fractal - GLSL shader - with <a href="https://threejs.org" target="_blank">three.js</a>
+</div>
+<div id="controls">
+  <label for="resolution">resolution: </label>
+  <select id="resolution" value="2">
+    <option value="0.5">0.5x</option>
+    <option value="1">1x</option>
+    <option value="2" selected>2x</option>
+    <option value="4">4x</option>
+    <option value="8">8x</option>
+  </select>
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [WebGL] Toon Fire Effect</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="vertexShader" type="x-shader/x-vertex">
+varying vec2 vUv;
+void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+varying vec2 vUv;
+uniform float time;
+uniform sampler2D texMask;
+uniform sampler2D texNoise;
+uniform float fuzziness;
+uniform float fireSpeed;
+uniform float brightnessMultiplier;
+uniform float noiseMultiplier;
+uniform float noiseScale;
+uniform float baseSize;
+uniform float outerStep;
+uniform float innerStep;
+uniform float distortionPower;
+uniform float innerVerticalFalloff;
+uniform vec3 outerColorBase;
+uniform vec3 innerColorBase;
+
+void main( void ) {
+	vec4 maskColor = texture2D(texMask, vUv);
+  float sTime = 0.5* time * fireSpeed * noiseScale;
+  
+  vec4 noiseA = texture2D(texNoise, fract(noiseScale*vUv - sTime*vec2(0.0,0.5)) );
+  vec4 noiseB = texture2D(texNoise, fract(noiseScale*vUv - sTime*vec2(0.0,1.0)) );
+  
+  float distortedNoise = pow(noiseA.r + noiseB.r, distortionPower);
+  float dummyAlpha = 1.0;
+  float invY = 1.0 - vUv.y;
+  float shapedNoise = ( maskColor.b*baseSize + dummyAlpha*distortedNoise*noiseMultiplier*maskColor.r*maskColor.g*invY ) * invY;
+
+	float stretched = shapedNoise*pow(maskColor.g*invY, innerVerticalFalloff);
+  //float outerDropoff = step(outerStep, stretched);
+  //float innerDropoff = step(innerStep, stretched);
+  float outerDropoff = clamp(stretched - outerStep, 0.0, fuzziness) * (1. / fuzziness);
+  float innerDropoff = clamp(stretched - innerStep, 0.0, fuzziness) * (1. / fuzziness);
+  vec3 emissive = (outerDropoff*outerColorBase.rgb + innerDropoff*innerColorBase.rgb) * brightnessMultiplier;
+  
+  gl_FragColor = vec4(emissive, 1.0 - outerDropoff);
+}
+</script>
+<div id="container"></div>
+<div id="info">Toon Fire Effect - GLSL shader - with <a href="https://threejs.org" target="_blank">three.js</a>
+</div>
+<div id="controls">
+  <label for="resolution">resolution: </label>
+  <select id="resolution" value="2">
+    <option value="0.5">0.5x</option>
+    <option value="1">1x</option>
+    <option value="2" selected>2x</option>
+    <option value="4">4x</option>
+    <option value="8">8x</option>
+  </select>
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.1/dat.gui.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
