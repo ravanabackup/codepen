@@ -1,0 +1,87 @@
+#btn--yp {
+  box-sizing: content-box;
+  position: fixed;
+  z-index: 9;
+  bottom: 1em;
+  right: 1em;
+  border: solid 1em transparent;
+  width: 4.625em;
+  height: 3.25em;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/2017/icon-yp.svg) 50%/cover content-box;
+  font: 16px/1.25 trebuchet ms, sans-serif;
+  text-indent: 200vw;
+  text-shadow: none;
+  filter: grayscale(1) drop-shadow(0 0 1px #e8e0e0);
+  transition: 0.5s;
+  white-space: nowrap;
+}
+#btn--yp:before {
+  box-sizing: inherit;
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin: 1em -0.5em;
+  padding: 0.5em;
+  width: 100%;
+  border-radius: 5px;
+  background: #e8e0e0;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  text-indent: 0vw;
+  white-space: normal;
+  animation: float 1s ease-in-out infinite alternate;
+  content: attr(data-txt);
+}
+#btn--yp:hover, #btn--yp:focus {
+  outline: none;
+  filter: grayscale(0) drop-shadow(0 0 1px crimson);
+}
+
+@keyframes float {
+  to {
+    transform: translateY(0.75em);
+  }
+}
+body {
+  overflow: hidden;
+  margin: 0;
+  height: 100vh;
+  perspective: 20em;
+  background: #000;
+}
+
+div {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.a3d {
+  top: 50%;
+  left: 50%;
+  animation: move var(--t) linear infinite;
+}
+
+@keyframes move {
+  to {
+    transform: translatez(7em);
+  }
+}
+.ring {
+  transform: rotatex(90deg) translatey(calc((1 - var(--j))*7em)) skewy(10deg);
+}
+
+.segm {
+  margin: -3.5em -50vmax;
+  width: 100vmax;
+  height: 7em;
+  transform: rotatey(var(--ca)) translatez(50vmax);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(orange, purple);
+}
+
+@keyframes fade {
+  to {
+    opacity: calc((var(--n) - var(--j))/var(--m));
+  }
+}

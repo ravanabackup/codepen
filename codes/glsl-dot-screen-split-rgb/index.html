@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - GLSL dot screen split RGB</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- WebGL Three JS simple shader template based on Kyle McDonald exemple : https://gist.github.com/kylemcdonald/9593057-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r61/three.min.js"></script>
+  </head>
+  <body><div id="container"></div>
+    <!-- simple vertex shader -->
+    <script id="vertexShader" type="x-shader/x-vertex">
+      void main() {
+        gl_Position = vec4(position, 1.0);
+      }
+    </script>
+    
+    <!-- simple fragment shader -->
+    <script id="fragmentShader" type="x-shader/x-fragment">
+		uniform vec2 resolution;
+		uniform vec2 colsrows;
+		uniform float time;
+		uniform float cycletime;
+		uniform float radius;
+		
+		float random(vec2 tex){
+			return fract(sin(dot(tex.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+		}
+		
+		vec4 addGrain(vec2 uv, float time, float grainIntensity){
+			float grain = random(fract(uv * time)) * grainIntensity;
+			return vec4(vec3(grain), 1.0);
+		}
+		
+		float circle(vec2 _st, vec2 center, float _radius, float borderSmooth_){
+			vec2 dist = _st-vec2(center);
+			return 1.-smoothstep(_radius-(_radius * borderSmooth_), _radius+(_radius * borderSmooth_), dot(dist,dist)*4.0);
+		}
+		
+		void main(){
+			vec2 uv = gl_FragCoord.xy / resolution.xy;
+			
+			//multiply y by the cols & rows vector
+			vec2 cellsnuv = uv * colsrows;
+			
+			//get the normalize values between 0,1 for each cell
+			vec2 fuv = fract(cellsnuv);
+			
+			//get the index of each cells. Usefull in some cases
+			vec2 iuv = floor(cellsnuv);
+			
+			//create circle
+			float incRadius = random(iuv) * 2.0 - 1.0;
+			
+			float offset = random(iuv * 0.5) * 0.035;
+			float animoffset = fract(time) * 0.05;
+			float incRed = random(iuv * 0.5) * (offset + animoffset);
+			float incGreen = random(iuv) * (offset + animoffset * 0.25);
+			float incBlue = random(iuv * 2.5) * (offset + animoffset * 0.5);
+			vec2 center = vec2(.5);
+			vec2 centerRed = center + vec2(incRed, .0);
+			vec2 centerGreen = center + vec2(incGreen, .0);
+			vec2 centerBlue = center + vec2(incBlue, .0);
+			
+			float shapeRed = circle(fuv, centerRed, radius + incRadius * radius, 0.15); 
+			float shapeGreen = circle(fuv, centerGreen, radius + incRadius * radius, 0.15); 
+			float shapeBlue = circle(fuv, centerBlue, radius + incRadius * radius, 0.15);
+			
+			vec3 color = vec3(shapeRed, shapeGreen, shapeBlue);
+			float randomVoidCell = random(iuv * 4.5 * cycletime);
+			randomVoidCell = step(0.5, randomVoidCell);
+			
+			float grey = 0.085;
+			vec4 background = vec4(vec3(grey), 1.0);
+			
+			vec4 grain = addGrain(uv, 1.0 + fract(time), 0.075);
+			
+			gl_FragColor = background + vec4(color * randomVoidCell, 1.0) + grain;
+		}
+    </script>
+  </body>
+</html>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

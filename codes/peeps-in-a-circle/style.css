@@ -1,0 +1,54 @@
+body {
+  overflow: hidden;
+  background-color: #c0ebf2;
+  background: -webkit-radial-gradient(ellipse at center, #c0ebf2 0%, #78d4e3 100%);
+  background: -moz-radial-gradient(ellipse at center, #c0ebf2 0%, #78d4e3 100%);
+  background: -o-radial-gradient(ellipse at center, #c0ebf2 0%, #78d4e3 100%);
+  background: -ms-radial-gradient(ellipse at center, #c0ebf2 0%, #78d4e3 100%);
+  background: radial-gradient(ellipse at center, #c0ebf2 0%, #78d4e3 100%);
+  color: #fff;
+}
+#ringoffire {
+  height: 100vh;
+  width: 100vw;
+}
+.person {
+  position: absolute;
+  top: 50%;
+  left: calc(50% - 32px);
+  width: 65px;
+  height: 150px;
+  background: url("https://f.cl.ly/items/402Z1P161X0I1k0v1d3t/characters.png") no-repeat;
+}
+.message {
+  position: absolute;
+  width: 30%;
+  top: 45%;
+  left: 35%;
+  text-align: center;
+}
+.message h1 {
+  text-transform: uppercase;
+  font-weight: normal;
+  font-size: 1.5rem;
+  color: #000;
+  margin: 0;
+}
+.message h6 {
+  font-size: 1.25rem;
+  margin: 0;
+  color: #dff5f9;
+}
+.light {
+  color: #f2fbfc;
+}
+.timer > div {
+  display: inline-block;
+  line-height: 1;
+  width: 1em;
+  color: #dff5f9;
+  margin-top: 2rem;
+}
+.divider {
+  width: 0.5rem;
+}

@@ -1,0 +1,32 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  height: 100vh;
+  background-color: #1d1f20;
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+
+.container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.label {
+  position: absolute;
+  bottom: 1em;
+  left: 1em;
+  color: white;
+  text-shadow: 1px 1px 0 black;
+}
+
+canvas, img {
+  max-width: 100%;
+  max-height: 100%;
+}

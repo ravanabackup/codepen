@@ -1,0 +1,47 @@
+html {
+  overflow: hidden;
+}
+
+body {
+  background: whitesmoke;
+}
+
+div, div:after {
+  position: absolute;
+}
+
+div {
+  filter: blur(calc(var(--f)*13px));
+}
+
+.layer {
+  --p: 1;
+  --f: 0;
+  top: 50%;
+  left: 50%;
+}
+
+.layer:nth-child(2n) {
+  --p: 0 ;
+}
+
+div:after {
+  --k: calc(var(--i)/var(--n));
+  --cr: calc(var(--k)*48vmin);
+  margin: calc(var(--f)*1.5em - var(--cr));
+  padding: var(--cr);
+  background: hsla(0, 0%, calc((1 - var(--f))*var(--p)*100%), calc(1 - var(--f)*.65));
+  clip-path: polygon(var(--v));
+  --t: calc((2*var(--k) + 1)*3s);
+  animation: r var(--t) linear calc((var(--k) - 1)*var(--t)/3) infinite;
+  content: "";
+}
+
+@keyframes r {
+  to {
+    transform: rotate(calc((1 - 2*var(--p))*1turn));
+  }
+}
+.shadow {
+  --f: 1 ;
+}

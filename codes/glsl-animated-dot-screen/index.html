@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - GLSL animated dot screen</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- WebGL Three JS simple shader template based on Kyle McDonald exemple : https://gist.github.com/kylemcdonald/9593057-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r61/three.min.js"></script>
+  </head>
+  <body><div id="container"></div>
+    <!-- simple vertex shader -->
+    <script id="vertexShader" type="x-shader/x-vertex">
+      void main() {
+        gl_Position = vec4(position, 1.0);
+      }
+    </script>
+    
+    <!-- simple fragment shader -->
+    <script id="fragmentShader" type="x-shader/x-fragment">
+		uniform vec2 resolution;
+		uniform vec2 colsrows;
+		uniform float time;
+		uniform float normtime;
+		uniform float loopmod;
+		uniform float radius;
+		
+		float random(vec2 tex){
+			return fract(sin(dot(tex.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+		}
+		
+		float circle(vec2 st, vec2 center, float radius, float borderSmooth){
+			 vec2 dist = st-center;
+			return 1.0 - smoothstep(radius - (radius * borderSmooth),
+                         radius + (radius * borderSmooth),
+                         dot(dist,dist) * 4.0);
+		}
+		
+		vec4 addGrain(vec2 uv, float time, float grainIntensity){
+			float grain = random(fract(uv * time)) * grainIntensity;
+			return vec4(vec3(grain), 1.0);
+		}
+		
+		float addStreamLine(vec2 uv, float rows){
+			vec2 uvstream = uv * vec2(1.0, rows);
+			vec2 iuv = floor(uvstream);
+			float modrow = mod(iuv.y, 2.0);
+			return modrow;
+		}
+		
+		void main(){
+			vec2 uv = gl_FragCoord.xy / resolution.xy;
+			//multiply y by the cols & rows vector
+			vec2 cellsnuv = uv * colsrows;
+			
+			//get the index of each cells. Usefull in some cases
+			vec2 iuv = floor(cellsnuv);
+			
+			//animate per row
+			float modanimation = mod(loopmod, 2.0);
+			float minustime = time * .015;
+			float offset = 10.0;
+			float offsetPerRow = random(vec2(iuv.y)) * 2.0 - 1.0;
+			float animationOffsetPerRow = minustime * offset * offsetPerRow;
+			float offsetPerCol = random(vec2(iuv.x)) * 2.0 - 1.0;
+			float animationOffsetPerCol = minustime * offset * offsetPerCol;
+			vec2 animateduv = vec2(uv + vec2(animationOffsetPerRow * modanimation, animationOffsetPerCol * (1.0 - modanimation)));
+			vec2 animatedCellsnuv = animateduv * colsrows;
+			
+			
+			//get the normalize values between 0,1 for each cell
+			vec2 fuv = fract(animatedCellsnuv);
+			iuv = floor(animatedCellsnuv);
+			
+			//grid offset
+			float gridOffset = .0175;
+			//float randGridOffsetX = random(vec2(normtime));
+			float randGridOffsetY = random(vec2(normtime * 0.98));
+			vec2 animatedGridOffset = vec2(0.0, randGridOffsetY * gridOffset);
+		
+			//define radius
+			float incRadius = (random(iuv) * 2.0 - 1.0) * .35 * normtime;
+			
+			//split RGB (offset)
+			float split = .015;
+			float offsetRed = random(iuv * loopmod) * 2.0 - 1.0;
+			float offsetGreen = random(iuv * (loopmod + 0.1)) * 2.0 - 1.0;
+			float offsetBlue = random(iuv * (loopmod + 0.15)) * 2.0 - 1.0;
+			
+			vec2 offsetUvRed = vec2(offsetRed * split);
+			vec2 offsetUvGreen = vec2(offsetGreen * split);
+			vec2 offsetUvBlue = vec2(offsetBlue * split);
+			
+			//find circle
+			float randomBlur = random(iuv + time * .015) * .5 + .5;
+			vec3 shapeRed = vec3(circle(fuv + offsetUvRed + animatedGridOffset, vec2(.5, .5), radius + incRadius, randomBlur * 0.15));
+			vec3 shapeGreen = vec3(circle(fuv + offsetUvGreen + animatedGridOffset, vec2(.5, .5), radius + incRadius, randomBlur * 0.15));
+			vec3 shapeBlue = vec3(circle(fuv + offsetUvBlue + animatedGridOffset, vec2(.5, .5), radius + incRadius, randomBlur * 0.15));
+			vec3 shape = vec3(shapeRed.r, shapeGreen.r, shapeBlue.b);
+			
+			//define random grid
+			float randomGrid = random(vec2(loopmod)) * .25 + .25;
+			float randomShapeGrid = step(randomGrid, random(iuv + vec2(loopmod * 0.5)));
+			float randomLine = random(vec2(iuv.y) * loopmod);
+			float randomShapeLine = step(0.5, randomLine);
+			
+			//define random color
+			float incRed = random(iuv * 0.5);
+			float incGreen = random(iuv) * .5 + .5;
+			float incBlue = random(iuv * 2.5) * .5 + .5;
+			vec3 color = vec3(incRed, incGreen, incBlue);
+			
+			//add grain
+			vec4 grain = addGrain(uv, 0.1 + time, .2);
+			
+			//add stream line
+			float streamLine = addStreamLine(uv + vec2(0.0, time * .01), resolution.y * .75) * 0.85 + .85;
+			streamLine = clamp(streamLine, 0.0, 1.0);
+			
+			gl_FragColor = vec4(shape * color * randomShapeGrid * randomShapeLine, 1.0) * streamLine + grain;
+		}
+    </script>
+  </body>
+</html>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

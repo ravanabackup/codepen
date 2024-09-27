@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Noised Cells</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="container"></div>	
+
+<!-- GLSL SCRIPT -->
+<!-- vertex shader -->
+<script id="vertexShader" type="x-shader/x-vertex">
+	void main() {
+		gl_Position = vec4(position, 1.0);
+	}
+</script>
+
+<!-- fragment shader -->
+<script id="fragmentShader" type="x-shader/x-fragment">
+		#define TWO_PI 6.28318530718
+		uniform vec2 resolution;
+		uniform float time;
+		uniform vec2 colsrows;
+	
+		float HueToRGB(float f1, float f2, float hue)
+		{
+			if (hue < 0.0)
+				hue += 1.0;
+			else if (hue > 1.0)
+				hue -= 1.0;
+			float res;
+			if ((6.0 * hue) < 1.0)
+				res = f1 + (f2 - f1) * 6.0 * hue;
+			else if ((2.0 * hue) < 1.0)
+				res = f2;
+			else if ((3.0 * hue) < 2.0)
+				res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
+			else
+				res = f1;
+			return res;
+		}
+
+
+		vec3 HSLToRGB(vec3 hsl)
+		{
+			vec3 rgb;
+
+			if (hsl.y == 0.0)
+				rgb = vec3(hsl.z); // Luminance
+			else
+			{
+				float f2;
+
+				if (hsl.z < 0.5)
+					f2 = hsl.z * (1.0 + hsl.y);
+				else
+					f2 = (hsl.z + hsl.y) - (hsl.y * hsl.z);
+
+				float f1 = 2.0 * hsl.z - f2;
+
+				rgb.r = HueToRGB(f1, f2, hsl.x + (1.0/3.0));
+				rgb.g = HueToRGB(f1, f2, hsl.x);
+				rgb.b= HueToRGB(f1, f2, hsl.x - (1.0/3.0));
+			}
+
+			return rgb;
+		}
+	
+		mat2 rotate2d(float _angle){
+			return mat2(cos(_angle),-sin(_angle),
+						sin(_angle),cos(_angle));
+		}
+		
+		vec2 rotateFrom(vec2 uv, vec2 center, float angle){
+			vec2 uv_ = uv - center;
+			uv_ =  rotate2d(angle) * uv_;
+			uv_ = uv_ + center;
+
+			return uv_;
+		}	
+	
+		float random(float value){
+			return fract(sin(value) * 43758.5453123);
+		}
+		
+		float random(vec2 tex){
+			return fract(sin(dot(tex.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+		}
+		
+		vec2 random2D(vec2 uv){
+			uv = vec2(dot(uv, vec2(127.1, 311.7)), dot(uv, vec2(269.5, 183.3)));
+			//return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+			return fract(sin(uv) * 43758.5453123); //return without offset on x, y
+		}
+
+		vec3 random3D(vec3 uv){
+			uv = vec3(dot(uv, vec3(127.1, 311.7, 120.9898)), dot(uv, vec3(269.5, 183.3, 150.457)), dot(uv, vec3(380.5, 182.3, 170.457)));
+			return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+		}
+	
+		float cubicCurve(float value){
+			return value * value * (3.0 - 2.0 * value); // custom cubic curve
+		}
+
+		vec2 cubicCurve(vec2 value){
+			return value * value * (3.0 - 2.0 * value); // custom cubic curve
+		}
+
+		vec3 cubicCurve(vec3 value){
+			return value * value * (3.0 - 2.0 * value); // custom cubic curve
+		}
+
+		float noise(vec2 uv){
+			vec2 iuv = floor(uv);
+			vec2 fuv = fract(uv);
+			vec2 suv = cubicCurve(fuv);
+
+			float dotAA_ = dot(random2D(iuv + vec2(0.0)), fuv - vec2(0.0));
+			float dotBB_ = dot(random2D(iuv + vec2(1.0, 0.0)), fuv - vec2(1.0, 0.0));
+			float dotCC_ = dot(random2D(iuv + vec2(0.0, 1.0)), fuv - vec2(0.0, 1.0));
+			float dotDD_ = dot(random2D(iuv + vec2(1.0, 1.0)), fuv - vec2(1.0, 1.0));
+
+			return mix(
+				mix(dotAA_, dotBB_,	suv.x),
+				mix(dotCC_, dotDD_, suv.x),
+				suv.y);
+		}
+
+		float noise(vec3 uv){
+			vec3 iuv = floor(uv);
+			vec3 fuv = fract(uv);
+			vec3 suv = cubicCurve(fuv);
+
+			float dotAA_ = dot(random3D(iuv + vec3(0.0)), fuv - vec3(0.0));
+			float dotBB_ = dot(random3D(iuv + vec3(1.0, 0.0, 0.0)), fuv - vec3(1.0, 0.0, 0.0));
+			float dotCC_ = dot(random3D(iuv + vec3(0.0, 1.0, 0.0)), fuv - vec3(0.0, 1.0, 0.0));
+			float dotDD_ = dot(random3D(iuv + vec3(1.0, 1.0, 0.0)), fuv - vec3(1.0, 1.0, 0.0));
+
+			float dotEE_ = dot(random3D(iuv + vec3(0.0, 0.0, 1.0)), fuv - vec3(0.0, 0.0, 1.0));
+			float dotFF_ = dot(random3D(iuv + vec3(1.0, 0.0, 1.0)), fuv - vec3(1.0, 0.0, 1.0));
+			float dotGG_ = dot(random3D(iuv + vec3(0.0, 1.0, 1.0)), fuv - vec3(0.0, 1.0, 1.0));
+			float dotHH_ = dot(random3D(iuv + vec3(1.0, 1.0, 1.0)), fuv - vec3(1.0, 1.0, 1.0));
+
+			float passH0 = mix(
+				mix(dotAA_, dotBB_,	suv.x),
+				mix(dotCC_, dotDD_, suv.x),
+				suv.y);
+
+			float passH1 = mix(
+				mix(dotEE_, dotFF_,	suv.x),
+				mix(dotGG_, dotHH_, suv.x),
+				suv.y);
+
+			return mix(passH0, passH1, suv.z);
+		}
+
+		float rect(vec2 uv, vec2 length, float smooth){
+			float dx = abs(uv.x - 0.5);
+			float dy = abs(uv.y - 0.5);
+			float lenx = 1.0 - smoothstep(length.x - smooth, length.x + smooth, dx);
+			float leny = 1.0 - smoothstep(length.y - smooth, length.y + smooth, dy);
+			
+			return lenx * leny;
+		}
+	
+	
+		vec4 addGrain(vec2 uv, float time, float grainIntensity){
+    		float grain = random(fract(uv * time)) * grainIntensity;
+    		return vec4(vec3(grain), 1.0);
+		}
+
+		void main(){
+			vec2 uv = gl_FragCoord.xy / resolution.xy;
+			vec2 ouv = uv;
+			float ratio = resolution.x / resolution.y;
+			vec2 squaredColsRows = vec2(colsrows.x, colsrows.x / ratio);
+
+			
+			//rotate
+			uv = rotateFrom(uv, vec2(0.5), time * 0.01);
+			
+			//noised uv
+			vec2 OnePlusUV = vec2(1.0) + uv;
+			float noiseComplexity = noise(vec3(uv * 2.0, time * 0.1));
+			vec2 complexity = mix(vec2(2.5), vec2(3.5), vec2(noiseComplexity));
+			float ampx = noise(vec3(OnePlusUV * complexity, time * 0.1));
+			float ampy = noise(vec3(OnePlusUV.yx * complexity.xy, time * 0.1));
+			vec2 amp = vec2(ampx, ampy);
+			vec2 theta = OnePlusUV * TWO_PI * 0.5;
+			vec2 inc = sin(theta) * (amp * 0.15);
+			uv = fract(uv + inc);
+			
+			
+			//create cells
+			uv.y = fract(uv.y + time * 0.01);
+			vec2 nuv = uv * squaredColsRows;
+			vec2 fuv = fract(nuv);
+			vec2 iuv = floor(nuv);
+			
+			//animate cells
+			vec2 size = mix(vec2(0.4, 0.15), vec2(0.5, 0.4), amp);
+			float lightness = mix(0.1, 1.0, length(amp) * 2.);
+			float rect = rect(fuv, size, 0.05);
+			
+			float randIndexHue = random(iuv);
+			float noiseHue = noise(vec3(randIndexHue, randIndexHue * 2.0, time));
+			float hue = mix(0.5, 0.9, randIndexHue + (noiseHue * 0.5));
+			vec3 cellColor = HSLToRGB(vec3(hue, lightness * 0.75, 0.65 * lightness));
+			vec3 bgColor = HSLToRGB(vec3(0.72, 0.75, 0.05));
+			vec3 color = mix(bgColor, cellColor, vec3(rect));
+			vec4 grain = addGrain(ouv, time, .075);
+			
+			gl_FragColor = vec4(color, 1.0) + grain;
+		}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/87/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

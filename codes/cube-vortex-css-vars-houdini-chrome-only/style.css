@@ -1,0 +1,189 @@
+#btn--yp {
+  box-sizing: content-box;
+  position: fixed;
+  z-index: 9;
+  bottom: 1em;
+  right: 1em;
+  border: solid 1em transparent;
+  width: 4.625em;
+  height: 3.25em;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/2017/icon-yp.svg) 50%/cover content-box;
+  font: 16px/ 1.25 trebuchet ms, sans-serif;
+  text-indent: 200vw;
+  text-shadow: none;
+  filter: grayscale(1) drop-shadow(0 0 1px #e8e0e0);
+  transition: .5s;
+  white-space: nowrap;
+}
+#btn--yp:before {
+  box-sizing: inherit;
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin: 1em -.5em;
+  padding: .5em;
+  width: 100%;
+  border-radius: 5px;
+  background: #e8e0e0;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  text-indent: 0vw;
+  white-space: normal;
+  animation: float 1s ease-in-out infinite alternate;
+  content: attr(data-txt);
+}
+#btn--yp:hover, #btn--yp:focus {
+  outline: none;
+  filter: grayscale(0) drop-shadow(0 0 1px crimson);
+}
+
+@keyframes float {
+  to {
+    transform: translateY(0.75em);
+  }
+}
+body {
+  overflow: hidden;
+  height: 100vh;
+  perspective: 25em;
+  background: #000;
+}
+
+div {
+  --i: 0;
+  --j: 0;
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.a3d {
+  top: 50%;
+  left: 50%;
+  animation: ry 8s linear infinite;
+}
+
+@keyframes ry {
+  to {
+    transform: rotatey(1turn);
+  }
+}
+.cube {
+  --x: calc((var(--i) - 6)*1.5em);
+  --y: calc((var(--j) - 6)*1.5em);
+  --z: calc(var(--m)*9em);
+  transform: rotatey(calc(var(--j)*90deg/13)) translate3d(var(--x), var(--y), var(--z)) scale3d(var(--f), var(--f), var(--f));
+  color: hsl(calc(var(--i)*360/13), 65%, 65%);
+  animation: osc 1s ease-in-out infinite alternate;
+  animation-name: osc, zoom;
+  animation-duration: 1s, 0.5s;
+  animation-delay: calc((var(--i) + var(--j))*-0.07692s);
+}
+.cube:nth-child(13n + 2) {
+  --i: 1;
+}
+.cube:nth-child(13n + 3) {
+  --i: 2;
+}
+.cube:nth-child(13n + 4) {
+  --i: 3;
+}
+.cube:nth-child(13n + 5) {
+  --i: 4;
+}
+.cube:nth-child(13n + 6) {
+  --i: 5;
+}
+.cube:nth-child(13n + 7) {
+  --i: 6;
+}
+.cube:nth-child(13n + 8) {
+  --i: 7;
+}
+.cube:nth-child(13n + 9) {
+  --i: 8;
+}
+.cube:nth-child(13n + 10) {
+  --i: 9;
+}
+.cube:nth-child(13n + 11) {
+  --i: 10;
+}
+.cube:nth-child(13n + 12) {
+  --i: 11;
+}
+.cube:nth-child(13n + 13) {
+  --i: 12;
+}
+.cube:nth-child(n + 14) {
+  --j: 1;
+}
+.cube:nth-child(n + 27) {
+  --j: 2;
+}
+.cube:nth-child(n + 40) {
+  --j: 3;
+}
+.cube:nth-child(n + 53) {
+  --j: 4;
+}
+.cube:nth-child(n + 66) {
+  --j: 5;
+}
+.cube:nth-child(n + 79) {
+  --j: 6;
+}
+.cube:nth-child(n + 92) {
+  --j: 7;
+}
+.cube:nth-child(n + 105) {
+  --j: 8;
+}
+.cube:nth-child(n + 118) {
+  --j: 9;
+}
+.cube:nth-child(n + 131) {
+  --j: 10;
+}
+.cube:nth-child(n + 144) {
+  --j: 11;
+}
+.cube:nth-child(n + 157) {
+  --j: 12;
+}
+.cube__face {
+  --j: calc(1 - var(--i));
+  margin: -0.75em;
+  width: 1.5em;
+  height: 1.5em;
+  backface-visibility: hidden;
+  transform: rotate3d(var(--i), var(--j), 0, calc(var(--m)*90deg)) translatez(0.75em);
+  box-shadow: inset 0 0 0 2px currentcolor;
+  background: #000;
+}
+.cube__face:nth-child(n + 5) {
+  --i: 1;
+}
+.cube__face:nth-child(1) {
+  --m: 0;
+}
+.cube__face:nth-child(3) {
+  --m: 2;
+}
+.cube__face:nth-child(4) {
+  --m: 3;
+}
+.cube__face:nth-child(6) {
+  --m: -1;
+}
+
+@keyframes osc {
+  to {
+    --m: -1;
+  }
+}
+@keyframes zoom {
+  to {
+    --f: 0.1;
+  }
+}

@@ -1,0 +1,73 @@
+#btn--yp {
+  box-sizing: content-box;
+  position: fixed;
+  z-index: 9;
+  bottom: 1em;
+  right: 1em;
+  border: solid 1em transparent;
+  width: 4.625em;
+  height: 3.25em;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/2017/icon-yp.svg) 50%/cover content-box;
+  font: 16px/1.25 trebuchet ms, sans-serif;
+  text-indent: 200vw;
+  text-shadow: none;
+  filter: grayscale(1) drop-shadow(0 0 1px #e8e0e0);
+  transition: 0.5s;
+  white-space: nowrap;
+}
+#btn--yp:before {
+  box-sizing: inherit;
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin: 1em -0.5em;
+  padding: 0.5em;
+  width: 100%;
+  border-radius: 5px;
+  background: #e8e0e0;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  text-indent: 0vw;
+  white-space: normal;
+  animation: float 1s ease-in-out infinite alternate;
+  content: attr(data-txt);
+}
+#btn--yp:hover, #btn--yp:focus {
+  outline: none;
+  filter: grayscale(0) drop-shadow(0 0 1px crimson);
+}
+
+@keyframes float {
+  to {
+    transform: translateY(0.75em);
+  }
+}
+@property --a {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+body {
+  display: grid;
+  grid-template: repeat(var(--n), calc(90vh/var(--n)))/repeat(var(--n), calc(90vw/var(--n)));
+  place-content: center;
+  margin: 0;
+  height: 100vh;
+  background: #141414;
+}
+
+.cell {
+  --m: calc(.5*(var(--n) - 1));
+  --abs-i: max(var(--m) - var(--i), var(--i) - var(--m));
+  --abs-j: max(var(--m) - var(--j), var(--j) - var(--m));
+  --prg: calc(.5*(var(--abs-i) + var(--abs-j))/var(--m));
+  background: conic-gradient(from var(--a, 0deg), hsl(calc(var(--prg)*1turn - var(--a)), 85%, 65%), transparent);
+  animation: a 2s linear calc((var(--prg) - 1)*2s) infinite;
+}
+
+@keyframes a {
+  to {
+    --a: 1turn ;
+  }
+}

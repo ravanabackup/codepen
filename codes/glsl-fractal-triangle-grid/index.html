@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - GLSL fractal Triangle Grid</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="container"></div>	
+
+<!-- GLSL SCRIPT -->
+<!-- vertex shader -->
+<script id="vertexShader" type="x-shader/x-vertex">
+	void main() {
+		gl_Position = vec4(position, 1.0);
+	}
+</script>
+
+<!-- fragment shader -->
+<script id="fragmentShader" type="x-shader/x-fragment">
+		// Author:
+// Title:
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#define PI 3.14159265359
+
+/**
+* Color Management
+*/
+float HueToRGB(float f1, float f2, float hue)
+{
+	if (hue < 0.0)
+		hue += 1.0;
+	else if (hue > 1.0)
+		hue -= 1.0;
+	float res;
+	if ((6.0 * hue) < 1.0)
+		res = f1 + (f2 - f1) * 6.0 * hue;
+	else if ((2.0 * hue) < 1.0)
+		res = f2;
+	else if ((3.0 * hue) < 2.0)
+		res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
+	else
+		res = f1;
+	return res;
+}
+
+
+vec3 HSLToRGB(vec3 hsl)
+{
+	vec3 rgb;
+
+	if (hsl.y == 0.0)
+		rgb = vec3(hsl.z); // Luminance
+	else
+	{
+		float f2;
+
+		if (hsl.z < 0.5)
+			f2 = hsl.z * (1.0 + hsl.y);
+		else
+			f2 = (hsl.z + hsl.y) - (hsl.y * hsl.z);
+
+		float f1 = 2.0 * hsl.z - f2;
+
+		rgb.r = HueToRGB(f1, f2, hsl.x + (1.0/3.0));
+		rgb.g = HueToRGB(f1, f2, hsl.x);
+		rgb.b= HueToRGB(f1, f2, hsl.x - (1.0/3.0));
+	}
+
+	return rgb;
+}
+
+/**
+* Random functions
+*/
+float random(float value){
+			return fract(sin(value) * 43758.5453123);
+		}
+
+float random(vec2 tex){
+	return fract(sin(dot(tex.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+float random(vec3 tex){
+	return fract(sin(dot(tex, vec3(12.9898, 78.233, 150.457))) * 43758.5453123);
+}
+
+vec2 random2D(vec2 uv){
+	uv = vec2(dot(uv, vec2(127.1, 311.7)), dot(uv, vec2(269.5, 183.3)));
+	//return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+	return fract(sin(uv) * 43758.5453123); //return without offset on x, y
+}
+
+vec3 random3D(vec3 uv){
+	uv = vec3(dot(uv, vec3(127.1, 311.7, 120.9898)), dot(uv, vec3(269.5, 183.3, 150.457)), dot(uv, vec3(380.5, 182.3, 170.457)));
+	return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+}
+
+/**
+* Rotate and scale 2D functions
+*/
+mat2 rotate2d(float _angle){
+    return mat2(cos(_angle),-sin(_angle),
+                sin(_angle),cos(_angle));
+}
+
+void rotate(inout vec2 uv, float theta){
+  // move space from the center to the vec2(0.0)
+  uv -= vec2(0.5);
+  // rotate the space
+  uv = rotate2d(theta) * uv;
+  // move it back to the original place
+  uv += vec2(0.5);
+}
+
+mat2 scale(vec2 _scale){
+    return mat2(_scale.x,0.0,
+                0.0,_scale.y);
+}
+
+void scale(inout vec2 uv, vec2 scaleFactor){
+	uv -= vec2(0.5);
+	uv = scale(scaleFactor) * uv;
+	uv += vec2(0.5);
+}
+
+/**
+* Line drawig function
+*/
+float line(float x, float t, float s, float w){
+    float d = smoothstep(t-s*0.5, t+s*0.5, x+w*0.5) - smoothstep(t-s*0.5, t+s*0.5, x-w*0.5);
+    return d;
+}
+
+/**
+* Triangle Grid functions
+*/
+void triangleGrid(in vec2 uv, in float nbTriangle, in float triangleRatio, out vec3 fgrid, out vec3 igrid){
+  vec2 cuv = uv;
+
+  cuv *= mat2(1, -1./triangleRatio,
+              0, 2./triangleRatio) * nbTriangle; //convert to hexagonl grid
+  vec3 grid = vec3(cuv, 1. - cuv.x - cuv.y);
+  vec3 iuv = floor(grid);
+  vec3 fuv = fract(grid);
+
+  float stepper = step(1.0, length(fuv)); //inversion grid
+  fuv = abs(1.0 * stepper - fuv);
+
+  fgrid = fuv;
+  igrid = iuv;
+}
+
+float getTriangleEgdes(vec3 grid, float t, float scale, float smoothing){
+
+  float sx = (1.0 - step(grid.z, t)) * (1.0 - step(grid.y, t));
+  float sy = (1.0 - step(grid.z, t)) * (1.0 - step(grid.x, t));
+  float sz = (1.0 - step(grid.x, t)) * (1.0 - step(grid.y, t));
+
+  float edgeX = line(grid.x * sx, t, smoothing, scale); //edge
+  float edgeY = line(grid.y * sy, t, smoothing, scale); //base
+  float edgeZ = line(grid.z * sz, t, smoothing, scale); //edge
+
+  return (edgeX + edgeY + edgeZ);
+}
+
+float getTriangleBarycenter(vec3 grid, float t, float scale, float smoothing){
+
+  float sx = (1.0 - step(grid.z, t)) * (1.0 - step(grid.y, t));
+  float sy = (1.0 - step(grid.z, t)) * (1.0 - step(grid.x, t));
+  float sz = (1.0 - step(grid.x, t)) * (1.0 - step(grid.y, t));
+
+  //draw a line from corner to barycenter
+  float barycenterX = line(grid.x - grid.y * sx, 0.0, smoothing, scale) * (step(1.0/3.0, grid.z * sx));
+  float barycenterY = line(grid.y - grid.z * sy, 0.0, smoothing, scale) * (step(1.0/3.0, grid.x * sy));
+  float barycenterZ = line(grid.z - grid.x * sz, 0.0, smoothing, scale) * (step(1.0/3.0, grid.y * sz));
+
+  return (barycenterX + barycenterY + barycenterZ);
+}
+
+float getTriangleMedian(vec3 grid, float t, float scale, float smoothing){
+
+  float sx = (1.0 - step(grid.z, t)) * (1.0 - step(grid.y, t));
+  float sy = (1.0 - step(grid.z, t)) * (1.0 - step(grid.x, t));
+  float sz = (1.0 - step(grid.x, t)) * (1.0 - step(grid.y, t));
+
+  //draw a line from corner to barycenter
+  float medianX = line(grid.x - grid.z * sx, 0.0, smoothing, scale) * (step(1.0/3.0, grid.z * sx));
+  float medianY = line(grid.y - grid.x * sy, 0.0, smoothing, scale) * (step(1.0/3.0, grid.x * sy));
+  float medianZ = line(grid.z - grid.y * sz, 0.0, smoothing, scale) * (step(1.0/3.0, grid.y * sz));
+
+  return (medianX + medianY + medianZ);
+}
+
+vec3 getAnimatedFractalTriangleGrid(vec3 fgrid, vec3 shift, float sizeTime, float smoothing, float scale,	vec3 cellRandomness){
+	float TERed = getTriangleEgdes(fgrid - shift, sizeTime, smoothing, scale);
+	float TBRed = getTriangleBarycenter(fgrid - shift, sizeTime, smoothing, scale);
+	float TMRed = getTriangleMedian(fgrid - shift, sizeTime, smoothing, scale);
+
+	float TEGreen = getTriangleEgdes(fgrid, sizeTime, smoothing, scale);
+	float TBGreen = getTriangleBarycenter(fgrid, sizeTime, smoothing, scale);
+	float TMGreen = getTriangleMedian(fgrid, sizeTime, smoothing, scale);
+
+	float TEBlue = getTriangleEgdes(fgrid + shift, sizeTime, smoothing, scale);
+	float TBBlue = getTriangleBarycenter(fgrid + shift, sizeTime, smoothing, scale);
+	float TMBlue = getTriangleMedian(fgrid + shift, sizeTime, smoothing, scale);
+
+	float multipleCell = clamp(cellRandomness.z + cellRandomness.x + cellRandomness.y, 0.0, 1.0);
+
+	float red = fgrid.x * 0.0 +
+							TERed * multipleCell +
+							TBRed * cellRandomness.x +
+							TMRed * cellRandomness.y;
+
+	float green = fgrid.x * 0.0 +
+							TEGreen * multipleCell +
+							TBGreen * cellRandomness.x +
+							TMGreen * cellRandomness.y;
+
+	float blue = fgrid.x * 0.0 +
+							TEBlue * multipleCell +
+							TBBlue * cellRandomness.x +
+							TMBlue * cellRandomness.y;
+	vec3 rgb = vec3(red, green, blue);
+	rgb = clamp(rgb, vec3(0.0), vec3(1.0));
+
+	return rgb;
+}
+
+/**
+* Post Process
+*/
+vec4 addGrain(vec2 uv, float time, float grainIntensity){
+		float grain = random(fract(uv * time)) * grainIntensity;
+		return vec4(vec3(grain), 1.0);
+}
+
+/** Global
+*/
+
+vec3 fractalGrid(vec2 uv, float colsrows, float speed, float baseSmooth, float baseScale, float minRandCell, float rgbshift){
+	//Rotate UV for deformation
+	vec2 ouv = uv * 2.0 - 1.0;
+
+	//
+	vec2 cnuv = uv - vec2(0.5);
+	rotate(uv, PI * 0.75 * (cnuv.x * -cnuv.y));
+	cnuv = uv - vec2(0.5);
+	rotate(uv, PI * 0.75 + (cnuv.x * -cnuv.y));
+	rotate(uv, -PI * u_time * 0.025);
+
+	//Animate uv
+	uv = fract(uv + vec2(0.0, u_time * speed));
+	//Define cols rows and fractal grid
+	vec3 fgrid;
+	vec3 igrid;
+	float it;
+	triangleGrid(uv, 2.0, 2.0, fgrid, igrid);
+	#define ITERATION 3
+	for(int index=0; index<ITERATION; index++){
+		float randColsRows = 1.0 + step(0.5, random(igrid));
+		it += 1.0 * randColsRows * float(index);
+		uv = uv * colsrows * randColsRows;
+		triangleGrid(uv, 2.0, 2.0, fgrid, igrid);
+	}
+	float smoothing  = baseSmooth + 0.005 * it;
+	float scale      = baseScale + 0.005 * it;
+
+	//Define random index for empty cells
+	float maxRandCell = 1.0 - minRandCell;
+	float randtime = random(floor(u_time)) * minRandCell + maxRandCell;
+	vec3 randIndex = random3D(igrid);
+	vec3 stepRandIndex = step(vec3(randtime), randIndex);
+	float randPI = 1.0 + ((randIndex.x + randIndex.y + randIndex.z) / 3.0);
+
+	//define cell size time animation and RGB Shift value
+	float sizeTime = (1.33 / 3.0) * abs(sin(u_time * 0.1 * PI * randPI));
+	float shiftValue = rgbshift;
+	vec3 shift = vec3(ouv.x * shiftValue, ouv.y * shiftValue, ouv.x * shiftValue);
+
+	return getAnimatedFractalTriangleGrid(fgrid, shift, sizeTime, smoothing, scale, stepRandIndex);// * ((randIndex.x + randIndex.y + randIndex.z) / 3.0);
+}
+
+void main() {
+    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+	vec2 ouv = uv;
+	float colorSpeed = 0.1;
+	float couvx = cos((ouv.x * 2.0 - 1.0) * PI) * sin(fract(-u_time * colorSpeed) * PI);
+	float couvy = cos((ouv.y * 2.0 - 1.0) * PI) * cos(fract( u_time * colorSpeed) * PI);
+	float couvxy = cos((ouv.y * 2.0 - 1.0) * (ouv.y * 2.0 - 1.0) * sin(fract(u_time * colorSpeed) * PI) + u_time * colorSpeed * PI);
+	rotate(ouv, PI * 1.5 * couvy * couvx * couvxy * PI);
+	
+	uv.x *= (u_resolution.x / u_resolution.y);
+	
+	float speed = 0.05;
+	float baseSmooth = 0.025;
+	float baseScale = 0.01;
+	float rgbshift = 0.015;
+	#define ZPASS 4
+	float scaler = 1.0 - (1.0 / float(ZPASS + 1));
+	float opacity = 1.0 / float(ZPASS + 1);
+	float minRandCell = (1.0 / float(ZPASS + 1)) * 1.0;
+	vec3 FTGrid = fractalGrid(uv, 2.0, speed, baseSmooth, baseScale, minRandCell, rgbshift) * opacity;
+	for(int i=0; i<ZPASS; i++){
+		float normi = float(i) / float(ZPASS);
+		scale(uv, vec2(scaler));
+		FTGrid += fractalGrid(uv, 2.0, speed + 0.025 * float(i + 1),	baseSmooth, baseScale, minRandCell * float(i), rgbshift) * (opacity * float(1 + i));
+	}
+	FTGrid = clamp(FTGrid, vec3(0.0), vec3(1.0));
+	
+	vec3 backgroundColor  = vec3(6.0/255.0, 8.0/255.0, 212.0/360.0);
+	vec3 foregroundColor1 = HSLToRGB(vec3(186.0/360.0, 1.0, ouv.x * 0.15 + 0.85));
+	vec3 foregroundColor2 = HSLToRGB(vec3(300.0/360.0, 1.0, ouv.y * 0.15 + 0.85));
+	vec3 foregroundColor3 = mix(foregroundColor1, foregroundColor2, (ouv.x + ouv.y) * 0.5);
+	vec3 finalColor 	  = mix(backgroundColor, foregroundColor3, FTGrid); 
+	vec4 grain = addGrain(uv, 1.0 + u_time, 0.075);
+
+    gl_FragColor = vec4(finalColor, 1.0) + grain;
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/87/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
