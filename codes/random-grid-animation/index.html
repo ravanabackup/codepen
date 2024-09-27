@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Random Grid animation</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="main">
+	<div id="content">
+		<div id="title">Random Grid Animation</div>
+		<div id="header">	  	
+			<div id="baseline">
+				<p id="date">2018/02/22</p>
+				<h1>#GLSL</h1>
+				<p id="description">--</p>
+			</div>		  	
+			<div id="author">— Code & Design by <a href="https://www.arivaux.com" target = "_blank">Alexandre Rivaux</a></div>
+		</div>
+	</div>
+	<div id="container"></div>	
+</div>
+
+<!-- GLSL SCRIPT -->
+<!-- vertex shader -->
+<script id="vertexShader" type="x-shader/x-vertex">
+	void main() {
+		gl_Position = vec4(position, 1.0);
+	}
+</script>
+
+<!-- fragment shader -->
+<script id="fragmentShader" type="x-shader/x-fragment">
+		#define TWO_PI 6.28318530718
+		uniform vec2 resolution;
+		uniform float time;
+		uniform float count;
+	
+		float random(float value){
+			return fract(sin(value) * 43758.5453123);
+		}
+	
+		vec2 random2D(vec2 uv){
+			uv = vec2(dot(uv, vec2(127.1, 311.7)), dot(uv, vec2(269.5, 183.3)));
+			//return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+			return fract(sin(uv) * 43758.5453123); //return without offset on x, y
+		}
+		
+		void main(){
+			vec2 uv = gl_FragCoord.xy / resolution.xy;
+			
+			//use sin for loop animation
+			float sinTime = sin(time * (TWO_PI * 0.5));
+			
+			//define res for creating square grid
+			float res = resolution.x / resolution.y;
+			
+			//define colsrows
+			float crCount = 12.0;
+			vec2 colrow = vec2(crCount, crCount/ res);
+			
+			//get new grid
+			vec2 nuv = uv * colrow;
+			vec2 fuv = fract(nuv);
+			vec2 iuv = floor(nuv);
+			
+			//Shuffle index at random values
+			//vec2 riuv = random2D((iuv + vec2(1.0) + count) * count) - 0.05;
+			vec2 riuv = random2D((iuv + vec2(1.0) + count) * count) - 0.05;
+			riuv = clamp(riuv, vec2(0.0), vec2(1.0));
+			
+			//define color
+			vec2 white = smoothstep(riuv, riuv+0.05, vec2(sinTime));
+			
+			gl_FragColor = vec4(vec3(white.x * white.y), 1.0);
+		}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/87/three.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

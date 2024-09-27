@@ -1,0 +1,119 @@
+#btn--yp {
+  box-sizing: content-box;
+  position: fixed;
+  z-index: 9;
+  bottom: 1em;
+  right: 1em;
+  border: solid 1em transparent;
+  width: 4.625em;
+  height: 3.25em;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/2017/icon-yp.svg) 50%/cover content-box;
+  font: 16px/1.25 trebuchet ms, sans-serif;
+  text-indent: 200vw;
+  text-shadow: none;
+  filter: grayscale(1) drop-shadow(0 0 1px #e8e0e0);
+  transition: 0.5s;
+  white-space: nowrap;
+}
+#btn--yp:before {
+  box-sizing: inherit;
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin: 1em -0.5em;
+  padding: 0.5em;
+  width: 100%;
+  border-radius: 5px;
+  background: #e8e0e0;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  text-indent: 0vw;
+  white-space: normal;
+  animation: float 1s ease-in-out infinite alternate;
+  content: attr(data-txt);
+}
+#btn--yp:hover, #btn--yp:focus {
+  outline: none;
+  filter: grayscale(0) drop-shadow(0 0 1px crimson);
+}
+
+@keyframes float {
+  to {
+    transform: translateY(0.75em);
+  }
+}
+body {
+  background: #584f50;
+}
+
+div, :before, :after {
+  position: absolute;
+}
+
+div {
+  transform-style: preserve-3d;
+}
+
+.a3d {
+  top: 50%;
+  left: 50%;
+  --ini: scale3d(0.1, 0.1, 0.1) rotatex(-35deg) rotatey(-45deg);
+  transform: var(--ini) rotatey(90deg);
+  animation: r 6s steps(1) infinite;
+}
+
+@keyframes r {
+  33.3333333333% {
+    transform: var(--ini) rotatex(-90deg);
+  }
+  66.6666666667% {
+    transform: var(--ini) rotatez(90deg);
+  }
+}
+.tile {
+  --p: calc(var(--id)/var(--q));
+  margin-top: calc((var(--id) - .5*var(--q))*80em/var(--nt));
+  animation: a 2s cubic-bezier(var(--p), 0, calc(1 - var(--p)), 1) infinite;
+}
+
+@keyframes a {
+  0% {
+    transform: rotatey(0.5turn);
+  }
+}
+.face {
+  --i: 0;
+  --j: calc(1 - var(--i));
+  margin: calc(-.5*calc(80em/(1 + var(--j)*var(--q)))) -40em;
+  width: 80em;
+  height: calc(80em/(1 + var(--j)*var(--q)));
+  transform: rotate3d(var(--i), var(--j), 0, calc(var(--m, 1)*90deg)) translatez(calc(40em/(1 + var(--i)*var(--q))));
+  background: #e2cbb1;
+}
+.face:nth-child(2n) {
+  --tf: 1 ;
+}
+.face:last-child {
+  --i: 1;
+  --tf: 2 ;
+}
+.face:before, .face:after {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #9da7c1;
+  animation: f 6s steps(1) calc((var(--tf, 0) - var(--tl, 1) - 3)*2s) infinite;
+  content: "";
+}
+.face:after {
+  --tl: 0;
+  background: #a76774;
+}
+
+@keyframes f {
+  33.3333333333% {
+    opacity: 0;
+  }
+}

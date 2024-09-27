@@ -1,0 +1,39 @@
+* {
+  margin: 0;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #000;
+}
+
+svg {
+  flex: 1;
+  fill: none;
+  stroke: cornflowerblue;
+}
+
+use + use {
+  stroke-width: var(--sw);
+  filter: url(#f0);
+}
+
+.out {
+  stroke: dodgerblue;
+}
+
+[id=top] {
+  stroke: cyan;
+  stroke-linecap: round;
+  filter: url(#f1);
+  animation: a 1s linear infinite;
+}
+
+@keyframes a {
+  to {
+    stroke-dashoffset: 0px;
+  }
+}

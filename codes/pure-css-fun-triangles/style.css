@@ -1,0 +1,67 @@
+html {
+  overflow: hidden;
+}
+
+.triangle, .triangle:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.triangle {
+  animation: ani 1s linear infinite;
+}
+.triangle.central {
+  transform: rotate(60deg);
+  animation-name: anic;
+}
+.triangle:before {
+  margin: -8.6188em -4em;
+  border: solid 4em transparent;
+  border-bottom: solid 6.9282em black;
+  transform: scale(1.015);
+  -webkit-filter: drop-shadow(0 0 0.25em);
+  content: '';
+}
+
+.triangle:nth-child(1) {
+  animation-name: ani1;
+}
+
+@keyframes ani1 {
+  from {
+    transform: rotate(-60deg) translateY(-16em) rotate(-240deg) scale(0);
+  }
+  to {
+    transform: rotate(0deg) translateY(-4.6188em) rotate(0deg) scale(1);
+  }
+}
+.triangle:nth-child(2) {
+  animation-name: ani2;
+}
+
+@keyframes ani2 {
+  from {
+    transform: rotate(60deg) translateY(-16em) rotate(-240deg) scale(0);
+  }
+  to {
+    transform: rotate(120deg) translateY(-4.6188em) rotate(0deg) scale(1);
+  }
+}
+.triangle:nth-child(3) {
+  animation-name: ani3;
+}
+
+@keyframes ani3 {
+  from {
+    transform: rotate(180deg) translateY(-16em) rotate(-240deg) scale(0);
+  }
+  to {
+    transform: rotate(240deg) translateY(-4.6188em) rotate(0deg) scale(1);
+  }
+}
+@keyframes anic {
+  from {
+    transform: rotate(0deg) scale(2);
+  }
+}

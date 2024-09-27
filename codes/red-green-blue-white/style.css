@@ -1,0 +1,35 @@
+html {
+  background: black;
+}
+
+div {
+  color: red;
+}
+div, div:before, div:after {
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -7.5em;
+  border: solid 3em;
+  width: 15em;
+  height: 15em;
+  mix-blend-mode: screen;
+  animation: rot 8s linear infinite;
+}
+div:before, div:after {
+  content: '';
+}
+div:before {
+  color: lime;
+}
+div:after {
+  color: blue;
+  animation-duration: 4s;
+}
+
+@keyframes rot {
+  to {
+    transform: rotate(360deg);
+  }
+}

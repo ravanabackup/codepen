@@ -1,0 +1,81 @@
+#btn--yp {
+  box-sizing: content-box;
+  position: fixed;
+  z-index: 9;
+  bottom: 1em;
+  right: 1em;
+  border: solid 1em transparent;
+  width: 4.625em;
+  height: 3.25em;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/2017/icon-yp.svg) 50%/cover content-box;
+  font: 16px/1.25 trebuchet ms, sans-serif;
+  text-indent: 200vw;
+  text-shadow: none;
+  filter: grayscale(1) drop-shadow(0 0 1px #e8e0e0);
+  transition: 0.5s;
+  white-space: nowrap;
+}
+#btn--yp:before {
+  box-sizing: inherit;
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin: 1em -0.5em;
+  padding: 0.5em;
+  width: 100%;
+  border-radius: 5px;
+  background: #e8e0e0;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  text-indent: 0vw;
+  white-space: normal;
+  animation: float 1s ease-in-out infinite alternate;
+  content: attr(data-txt);
+}
+#btn--yp:hover, #btn--yp:focus {
+  outline: none;
+  filter: grayscale(0) drop-shadow(0 0 1px crimson);
+}
+
+@keyframes float {
+  to {
+    transform: translateY(0.75em);
+  }
+}
+body {
+  background: #130912;
+}
+
+.seg {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5em;
+  height: 6px;
+  transform: translate(-50%, -50%) rotate(calc(var(--k)/var(--n)*1turn)) translate(calc(6px/var(--tan) + .5*5em));
+}
+.seg::before, .seg::after {
+  --i: 0;
+  --sgn-i: calc(1 - 2*var(--i));
+  flex: 1;
+  margin: 0 1px;
+  border-radius: 3px;
+  transform-origin: calc(var(--i)*100%);
+  background: linear-gradient(calc(var(--sgn-i)*-90deg), #3e1c33, #602749, #b14623, #f6921d);
+  animation: zip 1s ease-out calc((var(--k)/var(--n) - 1)*2*1s) infinite alternate;
+  content: "";
+}
+.seg::after {
+  --i: 1 ;
+}
+
+@keyframes zip {
+  0%, 50% {
+    transform: none;
+  }
+  75%, 100% {
+    transform: rotate(calc(var(--sgn-i)*68deg));
+  }
+}

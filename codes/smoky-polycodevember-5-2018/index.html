@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Smoky poly - #codevember 5/ 2018</title>
+  <link rel="stylesheet" href="./style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<svg viewBox="-2000 -1000 4000 2000" stroke-width="5" style="--sw: 25px">
+  <filter id="f0" x="-50%" y="-50%" width="200%" height="200%">
+    <feTurbulence type="noise" baseFrequency=".02" numOctaves="8" result="turbulence"></feTurbulence>
+    <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="65" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+    <feGaussianBlur stdDeviation="8"></feGaussianBlur>
+  </filter>
+  <filter id="f1" x="-50%" y="-50%" width="200%" height="200%">
+    <feTurbulence type="noise" baseFrequency=".01" numOctaves="5" result="turbulence"></feTurbulence>
+    <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="65" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+    <feGaussianBlur stdDeviation="9"></feGaussianBlur>
+  </filter>
+  <polygon id="poly" points="0,-800 693,400 -693,400"></polygon>
+  <use xlink:href="#poly" transform="scale(0.96875)"></use>
+  <use class="out" xlink:href="#poly" transform="scale(1.015625)"></use>
+  <use class="out" xlink:href="#poly" transform="scale(1.03125)"></use>
+  <use id="mid" xlink:href="#poly" transform="scale(0.984375)"></use>
+  <use id="top" xlink:href="#poly" transform="scale(0.984375)" stroke-dasharray="1386px 2771px" stroke-dashoffset="4157px"></use>
+</svg>
+<!-- partial -->
+  
+</body>
+</html>

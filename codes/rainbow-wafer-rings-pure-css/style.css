@@ -1,0 +1,471 @@
+body {
+  overflow: hidden;
+  height: 100vh;
+  perspective: 20em;
+  background: #222;
+}
+
+div {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.assembly {
+  top: 50%;
+  left: 50%;
+}
+
+.ring:nth-child(1) {
+  transform: rotate(0deg) translate(8.125em);
+}
+.ring:nth-child(1) .dot:nth-child(odd) {
+  color: #ff3333;
+}
+.ring:nth-child(1) .dot:nth-child(even) {
+  color: #ffcc33;
+}
+.ring:nth-child(1) .rotor, .ring:nth-child(1) .dot:before {
+  animation-delay: 0s;
+}
+
+.ring:nth-child(2) {
+  transform: rotate(11.25deg) translate(8.125em);
+}
+.ring:nth-child(2) .dot:nth-child(odd) {
+  color: #ffcc33;
+}
+.ring:nth-child(2) .dot:nth-child(even) {
+  color: #99ff33;
+}
+.ring:nth-child(2) .rotor, .ring:nth-child(2) .dot:before {
+  animation-delay: -0.1s;
+}
+
+.ring:nth-child(3) {
+  transform: rotate(22.5deg) translate(8.125em);
+}
+.ring:nth-child(3) .dot:nth-child(odd) {
+  color: #99ff33;
+}
+.ring:nth-child(3) .dot:nth-child(even) {
+  color: #33ff66;
+}
+.ring:nth-child(3) .rotor, .ring:nth-child(3) .dot:before {
+  animation-delay: -0.2s;
+}
+
+.ring:nth-child(4) {
+  transform: rotate(33.75deg) translate(8.125em);
+}
+.ring:nth-child(4) .dot:nth-child(odd) {
+  color: #33ff66;
+}
+.ring:nth-child(4) .dot:nth-child(even) {
+  color: #33ffff;
+}
+.ring:nth-child(4) .rotor, .ring:nth-child(4) .dot:before {
+  animation-delay: -0.3s;
+}
+
+.ring:nth-child(5) {
+  transform: rotate(45deg) translate(8.125em);
+}
+.ring:nth-child(5) .dot:nth-child(odd) {
+  color: #33ffff;
+}
+.ring:nth-child(5) .dot:nth-child(even) {
+  color: #3366ff;
+}
+.ring:nth-child(5) .rotor, .ring:nth-child(5) .dot:before {
+  animation-delay: -0.4s;
+}
+
+.ring:nth-child(6) {
+  transform: rotate(56.25deg) translate(8.125em);
+}
+.ring:nth-child(6) .dot:nth-child(odd) {
+  color: #3366ff;
+}
+.ring:nth-child(6) .dot:nth-child(even) {
+  color: #9933ff;
+}
+.ring:nth-child(6) .rotor, .ring:nth-child(6) .dot:before {
+  animation-delay: -0.5s;
+}
+
+.ring:nth-child(7) {
+  transform: rotate(67.5deg) translate(8.125em);
+}
+.ring:nth-child(7) .dot:nth-child(odd) {
+  color: #9933ff;
+}
+.ring:nth-child(7) .dot:nth-child(even) {
+  color: #ff33cc;
+}
+.ring:nth-child(7) .rotor, .ring:nth-child(7) .dot:before {
+  animation-delay: -0.6s;
+}
+
+.ring:nth-child(8) {
+  transform: rotate(78.75deg) translate(8.125em);
+}
+.ring:nth-child(8) .dot:nth-child(odd) {
+  color: #ff33cc;
+}
+.ring:nth-child(8) .dot:nth-child(even) {
+  color: #ff3333;
+}
+.ring:nth-child(8) .rotor, .ring:nth-child(8) .dot:before {
+  animation-delay: -0.7s;
+}
+
+.ring:nth-child(9) {
+  transform: rotate(90deg) translate(8.125em);
+}
+.ring:nth-child(9) .dot:nth-child(odd) {
+  color: #ff3333;
+}
+.ring:nth-child(9) .dot:nth-child(even) {
+  color: #ffcc33;
+}
+.ring:nth-child(9) .rotor, .ring:nth-child(9) .dot:before {
+  animation-delay: -0.8s;
+}
+
+.ring:nth-child(10) {
+  transform: rotate(101.25deg) translate(8.125em);
+}
+.ring:nth-child(10) .dot:nth-child(odd) {
+  color: #ffcc33;
+}
+.ring:nth-child(10) .dot:nth-child(even) {
+  color: #99ff33;
+}
+.ring:nth-child(10) .rotor, .ring:nth-child(10) .dot:before {
+  animation-delay: -0.9s;
+}
+
+.ring:nth-child(11) {
+  transform: rotate(112.5deg) translate(8.125em);
+}
+.ring:nth-child(11) .dot:nth-child(odd) {
+  color: #99ff33;
+}
+.ring:nth-child(11) .dot:nth-child(even) {
+  color: #33ff66;
+}
+.ring:nth-child(11) .rotor, .ring:nth-child(11) .dot:before {
+  animation-delay: -1s;
+}
+
+.ring:nth-child(12) {
+  transform: rotate(123.75deg) translate(8.125em);
+}
+.ring:nth-child(12) .dot:nth-child(odd) {
+  color: #33ff66;
+}
+.ring:nth-child(12) .dot:nth-child(even) {
+  color: #33ffff;
+}
+.ring:nth-child(12) .rotor, .ring:nth-child(12) .dot:before {
+  animation-delay: -1.1s;
+}
+
+.ring:nth-child(13) {
+  transform: rotate(135deg) translate(8.125em);
+}
+.ring:nth-child(13) .dot:nth-child(odd) {
+  color: #33ffff;
+}
+.ring:nth-child(13) .dot:nth-child(even) {
+  color: #3366ff;
+}
+.ring:nth-child(13) .rotor, .ring:nth-child(13) .dot:before {
+  animation-delay: -1.2s;
+}
+
+.ring:nth-child(14) {
+  transform: rotate(146.25deg) translate(8.125em);
+}
+.ring:nth-child(14) .dot:nth-child(odd) {
+  color: #3366ff;
+}
+.ring:nth-child(14) .dot:nth-child(even) {
+  color: #9933ff;
+}
+.ring:nth-child(14) .rotor, .ring:nth-child(14) .dot:before {
+  animation-delay: -1.3s;
+}
+
+.ring:nth-child(15) {
+  transform: rotate(157.5deg) translate(8.125em);
+}
+.ring:nth-child(15) .dot:nth-child(odd) {
+  color: #9933ff;
+}
+.ring:nth-child(15) .dot:nth-child(even) {
+  color: #ff33cc;
+}
+.ring:nth-child(15) .rotor, .ring:nth-child(15) .dot:before {
+  animation-delay: -1.4s;
+}
+
+.ring:nth-child(16) {
+  transform: rotate(168.75deg) translate(8.125em);
+}
+.ring:nth-child(16) .dot:nth-child(odd) {
+  color: #ff33cc;
+}
+.ring:nth-child(16) .dot:nth-child(even) {
+  color: #ff3333;
+}
+.ring:nth-child(16) .rotor, .ring:nth-child(16) .dot:before {
+  animation-delay: -1.5s;
+}
+
+.ring:nth-child(17) {
+  transform: rotate(180deg) translate(8.125em);
+}
+.ring:nth-child(17) .dot:nth-child(odd) {
+  color: #ff3333;
+}
+.ring:nth-child(17) .dot:nth-child(even) {
+  color: #ffcc33;
+}
+.ring:nth-child(17) .rotor, .ring:nth-child(17) .dot:before {
+  animation-delay: -1.6s;
+}
+
+.ring:nth-child(18) {
+  transform: rotate(191.25deg) translate(8.125em);
+}
+.ring:nth-child(18) .dot:nth-child(odd) {
+  color: #ffcc33;
+}
+.ring:nth-child(18) .dot:nth-child(even) {
+  color: #99ff33;
+}
+.ring:nth-child(18) .rotor, .ring:nth-child(18) .dot:before {
+  animation-delay: -1.7s;
+}
+
+.ring:nth-child(19) {
+  transform: rotate(202.5deg) translate(8.125em);
+}
+.ring:nth-child(19) .dot:nth-child(odd) {
+  color: #99ff33;
+}
+.ring:nth-child(19) .dot:nth-child(even) {
+  color: #33ff66;
+}
+.ring:nth-child(19) .rotor, .ring:nth-child(19) .dot:before {
+  animation-delay: -1.8s;
+}
+
+.ring:nth-child(20) {
+  transform: rotate(213.75deg) translate(8.125em);
+}
+.ring:nth-child(20) .dot:nth-child(odd) {
+  color: #33ff66;
+}
+.ring:nth-child(20) .dot:nth-child(even) {
+  color: #33ffff;
+}
+.ring:nth-child(20) .rotor, .ring:nth-child(20) .dot:before {
+  animation-delay: -1.9s;
+}
+
+.ring:nth-child(21) {
+  transform: rotate(225deg) translate(8.125em);
+}
+.ring:nth-child(21) .dot:nth-child(odd) {
+  color: #33ffff;
+}
+.ring:nth-child(21) .dot:nth-child(even) {
+  color: #3366ff;
+}
+.ring:nth-child(21) .rotor, .ring:nth-child(21) .dot:before {
+  animation-delay: -2s;
+}
+
+.ring:nth-child(22) {
+  transform: rotate(236.25deg) translate(8.125em);
+}
+.ring:nth-child(22) .dot:nth-child(odd) {
+  color: #3366ff;
+}
+.ring:nth-child(22) .dot:nth-child(even) {
+  color: #9933ff;
+}
+.ring:nth-child(22) .rotor, .ring:nth-child(22) .dot:before {
+  animation-delay: -2.1s;
+}
+
+.ring:nth-child(23) {
+  transform: rotate(247.5deg) translate(8.125em);
+}
+.ring:nth-child(23) .dot:nth-child(odd) {
+  color: #9933ff;
+}
+.ring:nth-child(23) .dot:nth-child(even) {
+  color: #ff33cc;
+}
+.ring:nth-child(23) .rotor, .ring:nth-child(23) .dot:before {
+  animation-delay: -2.2s;
+}
+
+.ring:nth-child(24) {
+  transform: rotate(258.75deg) translate(8.125em);
+}
+.ring:nth-child(24) .dot:nth-child(odd) {
+  color: #ff33cc;
+}
+.ring:nth-child(24) .dot:nth-child(even) {
+  color: #ff3333;
+}
+.ring:nth-child(24) .rotor, .ring:nth-child(24) .dot:before {
+  animation-delay: -2.3s;
+}
+
+.ring:nth-child(25) {
+  transform: rotate(270deg) translate(8.125em);
+}
+.ring:nth-child(25) .dot:nth-child(odd) {
+  color: #ff3333;
+}
+.ring:nth-child(25) .dot:nth-child(even) {
+  color: #ffcc33;
+}
+.ring:nth-child(25) .rotor, .ring:nth-child(25) .dot:before {
+  animation-delay: -2.4s;
+}
+
+.ring:nth-child(26) {
+  transform: rotate(281.25deg) translate(8.125em);
+}
+.ring:nth-child(26) .dot:nth-child(odd) {
+  color: #ffcc33;
+}
+.ring:nth-child(26) .dot:nth-child(even) {
+  color: #99ff33;
+}
+.ring:nth-child(26) .rotor, .ring:nth-child(26) .dot:before {
+  animation-delay: -2.5s;
+}
+
+.ring:nth-child(27) {
+  transform: rotate(292.5deg) translate(8.125em);
+}
+.ring:nth-child(27) .dot:nth-child(odd) {
+  color: #99ff33;
+}
+.ring:nth-child(27) .dot:nth-child(even) {
+  color: #33ff66;
+}
+.ring:nth-child(27) .rotor, .ring:nth-child(27) .dot:before {
+  animation-delay: -2.6s;
+}
+
+.ring:nth-child(28) {
+  transform: rotate(303.75deg) translate(8.125em);
+}
+.ring:nth-child(28) .dot:nth-child(odd) {
+  color: #33ff66;
+}
+.ring:nth-child(28) .dot:nth-child(even) {
+  color: #33ffff;
+}
+.ring:nth-child(28) .rotor, .ring:nth-child(28) .dot:before {
+  animation-delay: -2.7s;
+}
+
+.ring:nth-child(29) {
+  transform: rotate(315deg) translate(8.125em);
+}
+.ring:nth-child(29) .dot:nth-child(odd) {
+  color: #33ffff;
+}
+.ring:nth-child(29) .dot:nth-child(even) {
+  color: #3366ff;
+}
+.ring:nth-child(29) .rotor, .ring:nth-child(29) .dot:before {
+  animation-delay: -2.8s;
+}
+
+.ring:nth-child(30) {
+  transform: rotate(326.25deg) translate(8.125em);
+}
+.ring:nth-child(30) .dot:nth-child(odd) {
+  color: #3366ff;
+}
+.ring:nth-child(30) .dot:nth-child(even) {
+  color: #9933ff;
+}
+.ring:nth-child(30) .rotor, .ring:nth-child(30) .dot:before {
+  animation-delay: -2.9s;
+}
+
+.ring:nth-child(31) {
+  transform: rotate(337.5deg) translate(8.125em);
+}
+.ring:nth-child(31) .dot:nth-child(odd) {
+  color: #9933ff;
+}
+.ring:nth-child(31) .dot:nth-child(even) {
+  color: #ff33cc;
+}
+.ring:nth-child(31) .rotor, .ring:nth-child(31) .dot:before {
+  animation-delay: -3s;
+}
+
+.ring:nth-child(32) {
+  transform: rotate(348.75deg) translate(8.125em);
+}
+.ring:nth-child(32) .dot:nth-child(odd) {
+  color: #ff33cc;
+}
+.ring:nth-child(32) .dot:nth-child(even) {
+  color: #ff3333;
+}
+.ring:nth-child(32) .rotor, .ring:nth-child(32) .dot:before {
+  animation-delay: -3.1s;
+}
+
+.rotor, .dot:before {
+  animation: r 3.2s linear infinite;
+}
+
+.dot:nth-child(1) {
+  transform: rotateY(0deg) translateZ(2.5em) rotateY(0deg);
+}
+.dot:nth-child(2) {
+  transform: rotateY(60deg) translateZ(2.5em) rotateY(-60deg);
+}
+.dot:nth-child(3) {
+  transform: rotateY(120deg) translateZ(2.5em) rotateY(-120deg);
+}
+.dot:nth-child(4) {
+  transform: rotateY(180deg) translateZ(2.5em) rotateY(-180deg);
+}
+.dot:nth-child(5) {
+  transform: rotateY(240deg) translateZ(2.5em) rotateY(-240deg);
+}
+.dot:nth-child(6) {
+  transform: rotateY(300deg) translateZ(2.5em) rotateY(-300deg);
+}
+.dot:before {
+  position: absolute;
+  margin: -0.3125em;
+  width: 0.625em;
+  height: 0.625em;
+  border-radius: 50%;
+  background: currentColor;
+  animation-direction: reverse;
+  content: "";
+}
+
+@keyframes r {
+  to {
+    transform: rotateY(1turn);
+  }
+}

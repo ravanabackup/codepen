@@ -1,0 +1,100 @@
+html {
+  overflow: hidden;
+  background: black;
+}
+
+.assembly {
+  transform: rotateX(-45deg) rotateY(-135deg);
+}
+.assembly, .assembly * {
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+}
+
+.positioner:nth-child(1) {
+  transform: rotateY(90deg) translateZ(8em);
+}
+.positioner:nth-child(2) {
+  transform: rotateY(180deg) translateZ(8em) rotate(90deg);
+}
+.positioner:nth-child(3) {
+  transform: rotateX(-90deg) translateZ(8em) rotate(180deg);
+}
+.positioner:nth-child(4) {
+  transform: rotateY(270deg) translateZ(8em);
+}
+.positioner:nth-child(5) {
+  transform: rotateY(360deg) translateZ(8em) rotate(270deg);
+}
+.positioner:nth-child(6) {
+  transform: rotateX(90deg) translateZ(8em) rotate(360deg);
+}
+.positioner:last-child {
+  transform: scale3d(0.99, 0.99, 0.99);
+  /* to fix messed up 3D  order in Firefox */
+  /* DON'T move before the unprefixed one */
+  -webkit-transform: none;
+  /* only apply the abomination above for Firefox */
+}
+
+.positioner:not(:last-child) .cube {
+  transform-origin: 4em 0 -4em;
+  animation: rot 1s ease-in-out infinite;
+}
+
+.face {
+  margin: -4em;
+  border: solid 0.125em;
+  width: 8em;
+  height: 8em;
+  box-shadow: inset 0 0 0 1.75em grey, inset 0 0 0 2em;
+}
+.face:nth-child(1) {
+  transform: rotateY(0deg) translateZ(4em);
+}
+.face:nth-child(2) {
+  transform: rotateY(90deg) translateZ(4em);
+}
+.face:nth-child(3) {
+  transform: rotateY(180deg) translateZ(4em);
+}
+.face:nth-child(4) {
+  transform: rotateY(270deg) translateZ(4em);
+}
+.face:nth-child(5) {
+  transform: rotateX(90deg) translateZ(4em);
+}
+.face:nth-child(6) {
+  transform: rotateX(-90deg) translateZ(4em);
+}
+
+/* selector hack from http://browserhacks.com/ */
+.inner:not(*:root) {
+  margin: -1em -2em;
+  border: solid 0.125em;
+  width: 4em;
+  height: 2em;
+  backface-visibility: hidden;
+  background: silver;
+}
+.inner:not(*:root):nth-child(1) {
+  transform: rotate(0deg) rotateX(-90deg) translate3d(0, 1em, -2em);
+}
+.inner:not(*:root):nth-child(2) {
+  transform: rotate(90deg) rotateX(-90deg) translate3d(0, 1em, -2em);
+}
+.inner:not(*:root):nth-child(3) {
+  transform: rotate(180deg) rotateX(-90deg) translate3d(0, 1em, -2em);
+}
+.inner:not(*:root):nth-child(4) {
+  transform: rotate(270deg) rotateX(-90deg) translate3d(0, 1em, -2em);
+}
+
+@keyframes rot {
+  to {
+    transform: rotateY(180deg);
+  }
+}

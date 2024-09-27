@@ -1,0 +1,88 @@
+@charset "UTF-8";
+#btn--yp {
+  box-sizing: content-box;
+  position: fixed;
+  z-index: 9;
+  bottom: 1em;
+  right: 1em;
+  border: solid 1em transparent;
+  width: 4.625em;
+  height: 3.25em;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/2017/icon-yp.svg) 50%/cover content-box;
+  font: 16px/1.25 trebuchet ms, sans-serif;
+  text-indent: 200vw;
+  text-shadow: none;
+  filter: grayscale(1) drop-shadow(0 0 1px #e8e0e0);
+  transition: 0.5s;
+  white-space: nowrap;
+}
+#btn--yp:before {
+  box-sizing: inherit;
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin: 1em -0.5em;
+  padding: 0.5em;
+  width: 100%;
+  border-radius: 5px;
+  background: #e8e0e0;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  text-indent: 0vw;
+  white-space: normal;
+  animation: float 1s ease-in-out infinite alternate;
+  content: attr(data-txt);
+}
+#btn--yp:hover, #btn--yp:focus {
+  outline: none;
+  filter: grayscale(0) drop-shadow(0 0 1px crimson);
+}
+
+@keyframes float {
+  to {
+    transform: translateY(0.75em);
+  }
+}
+@property --p {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+@property --f {
+  syntax: "<number>";
+  initial-value: 0.05;
+  inherits: false;
+}
+body {
+  display: grid;
+  place-content: center;
+  margin: 0;
+  height: 100vh;
+}
+
+.grid {
+  display: grid;
+  grid-template: repeat(var(--n), 2em)/repeat(var(--n), 2em);
+}
+
+@keyframes p {
+  0% {
+    --p: 1 ;
+  }
+}
+@keyframes f {
+  to {
+    --f: 1 ;
+  }
+}
+.⚫ {
+  --q: calc((var(--row) + var(--col))/var(--n) - 2);
+  width: 5em;
+  height: 5em;
+  border-radius: 50%;
+  transform: rotate(calc(var(--p)*1turn)) translate(1em) scale(var(--f));
+  box-shadow: 0 0 0 calc(2px/var(--f)) #fff;
+  background: #000;
+  animation: p 1s linear infinite, f 1s ease-in-out calc(var(--q)*2s) infinite alternate;
+}

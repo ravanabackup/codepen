@@ -1,0 +1,91 @@
+#btn--yp {
+  box-sizing: content-box;
+  position: fixed;
+  z-index: 9;
+  bottom: 1em;
+  right: 1em;
+  border: solid 1em transparent;
+  width: 4.625em;
+  height: 3.25em;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/2017/icon-yp.svg) 50%/cover content-box;
+  font: 16px/ 1.25 trebuchet ms, sans-serif;
+  text-indent: 200vw;
+  text-shadow: none;
+  filter: grayscale(1) drop-shadow(0 0 1px #e8e0e0);
+  transition: .5s;
+  white-space: nowrap;
+}
+#btn--yp:before {
+  box-sizing: inherit;
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin: 1em -.5em;
+  padding: .5em;
+  width: 100%;
+  border-radius: 5px;
+  background: #e8e0e0;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  text-indent: 0vw;
+  white-space: normal;
+  animation: float 1s ease-in-out infinite alternate;
+  content: attr(data-txt);
+}
+#btn--yp:hover, #btn--yp:focus {
+  outline: none;
+  filter: grayscale(0) drop-shadow(0 0 1px crimson);
+}
+
+@keyframes float {
+  to {
+    transform: translateY(0.75em);
+  }
+}
+@property --k {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: true;
+}
+@property --int {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: true;
+}
+body {
+  display: grid;
+  margin: 0;
+  height: 100vh;
+  background: #000;
+}
+
+@keyframes a {
+  to {
+    transform: var(--pos) scale(0);
+  }
+}
+.tri {
+  --p: calc(2*var(--lyr) + 1);
+  --prv: calc(var(--q)*var(--lyr)*var(--lyr));
+  --rid: calc(var(--idx) - var(--prv));
+  --k: Max(0, calc(var(--rid)/var(--p) - .5));
+  --j: calc(var(--rid) - var(--k)*var(--p));
+  --int: calc(var(--j)/2);
+  --mod: calc(var(--j) - 2*var(--int));
+  grid-area: 1/ 1;
+  place-self: center;
+  padding: 3vmin;
+  --pos: rotate(calc(var(--k)/var(--q)*1turn)) translate(calc(.5*(var(--lyr) - var(--j))*5.19615vmin), calc(var(--lyr)*4.5vmin + 3vmin)) rotate(calc(var(--mod)*.5turn)) translatey(calc(var(--mod)*-1.5vmin));
+  transform: var(--pos) scale(0.9);
+  background: currentcolor;
+  color: hsl(calc((var(--k) + var(--j)/var(--p))/var(--q)*360), 100%, calc((1 - var(--lyr)/var(--m))*100%));
+  clip-path: polygon(50% 0%, 93.30127% 75%, 6.69873% 75%);
+  animation: a 1s ease-in-out infinite alternate;
+  animation-delay: calc((var(--lyr)/var(--m) - (var(--k) + var(--j)/var(--p))/var(--q) - 1)*2s);
+}
+@supports (background: conic-gradient(red, tan)) {
+  .tri {
+    background: conic-gradient(from 150deg at 50% 0, currentcolor 0% 60deg, transparent 0%);
+  }
+}

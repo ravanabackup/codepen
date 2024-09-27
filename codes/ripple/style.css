@@ -1,10 +1,3887 @@
-canvas {
-    display: block; width: 100vw; height: 100vh;
-    cursor: -webkit-grab;
-    cursor: grab;
+@keyframes pulse {
+  0%, 20% {
+    transform: scale(1) rotate(0);
+  }
+  80%, 100% {
+    transform: scale(2) rotate(720deg);
+  }
+}
+* {
+  margin: 0;
+  padding: 0;
 }
 
-a {
-    position: fixed; top: 0; left: 0;
-    padding: 5vmin;
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #1d1e22;
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+}
+
+.row:nth-child(2n) {
+  margin-left: 20px;
+}
+
+.cell {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 10px;
+  background: #e2d1dd;
+  animation: pulse 5s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+}
+
+.cell_1_1 {
+  animation-delay: 3.4176827757s;
+}
+
+.cell_1_2 {
+  animation-delay: 3.3019354594s;
+}
+
+.cell_1_3 {
+  animation-delay: 3.1906982865s;
+}
+
+.cell_1_4 {
+  animation-delay: 3.0844592539s;
+}
+
+.cell_1_5 {
+  animation-delay: 2.9837522983s;
+}
+
+.cell_1_6 {
+  animation-delay: 2.8891559706s;
+}
+
+.cell_1_7 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_1_8 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_1_9 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_1_10 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_1_11 {
+  animation-delay: 2.5303710751s;
+}
+
+.cell_1_12 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_1_13 {
+  animation-delay: 2.4523231616s;
+}
+
+.cell_1_14 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_1_15 {
+  animation-delay: 2.4181030214s;
+}
+
+.cell_1_16 {
+  animation-delay: 2.4181030214s;
+}
+
+.cell_1_17 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_1_18 {
+  animation-delay: 2.4523231616s;
+}
+
+.cell_1_19 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_1_20 {
+  animation-delay: 2.5303710751s;
+}
+
+.cell_1_21 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_1_22 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_1_23 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_1_24 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_1_25 {
+  animation-delay: 2.8891559706s;
+}
+
+.cell_1_26 {
+  animation-delay: 2.9837522983s;
+}
+
+.cell_1_27 {
+  animation-delay: 3.0844592539s;
+}
+
+.cell_1_28 {
+  animation-delay: 3.1906982865s;
+}
+
+.cell_1_29 {
+  animation-delay: 3.3019354594s;
+}
+
+.cell_1_30 {
+  animation-delay: 3.4176827757s;
+}
+
+.cell_1_31 {
+  animation-delay: 3.5374975461s;
+}
+
+.cell_2_1 {
+  animation-delay: 3.3019354594s;
+}
+
+.cell_2_2 {
+  animation-delay: 3.1819805153s;
+}
+
+.cell_2_3 {
+  animation-delay: 3.0663949155s;
+}
+
+.cell_2_4 {
+  animation-delay: 2.9556913085s;
+}
+
+.cell_2_5 {
+  animation-delay: 2.8504385627s;
+}
+
+.cell_2_6 {
+  animation-delay: 2.7512623365s;
+}
+
+.cell_2_7 {
+  animation-delay: 2.6588426889s;
+}
+
+.cell_2_8 {
+  animation-delay: 2.5739075352s;
+}
+
+.cell_2_9 {
+  animation-delay: 2.4972206773s;
+}
+
+.cell_2_10 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_2_11 {
+  animation-delay: 2.3717082451s;
+}
+
+.cell_2_12 {
+  animation-delay: 2.3243876135s;
+}
+
+.cell_2_13 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_2_14 {
+  animation-delay: 2.2638462845s;
+}
+
+.cell_2_15 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_2_16 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_2_17 {
+  animation-delay: 2.2638462845s;
+}
+
+.cell_2_18 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_2_19 {
+  animation-delay: 2.3243876135s;
+}
+
+.cell_2_20 {
+  animation-delay: 2.3717082451s;
+}
+
+.cell_2_21 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_2_22 {
+  animation-delay: 2.4972206773s;
+}
+
+.cell_2_23 {
+  animation-delay: 2.5739075352s;
+}
+
+.cell_2_24 {
+  animation-delay: 2.6588426889s;
+}
+
+.cell_2_25 {
+  animation-delay: 2.7512623365s;
+}
+
+.cell_2_26 {
+  animation-delay: 2.8504385627s;
+}
+
+.cell_2_27 {
+  animation-delay: 2.9556913085s;
+}
+
+.cell_2_28 {
+  animation-delay: 3.0663949155s;
+}
+
+.cell_2_29 {
+  animation-delay: 3.1819805153s;
+}
+
+.cell_2_30 {
+  animation-delay: 3.3019354594s;
+}
+
+.cell_2_31 {
+  animation-delay: 3.4258007985s;
+}
+
+.cell_3_1 {
+  animation-delay: 3.1906982865s;
+}
+
+.cell_3_2 {
+  animation-delay: 3.0663949155s;
+}
+
+.cell_3_3 {
+  animation-delay: 2.9462782549s;
+}
+
+.cell_3_4 {
+  animation-delay: 2.8308812919s;
+}
+
+.cell_3_5 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_3_6 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_3_7 {
+  animation-delay: 2.5193694096s;
+}
+
+.cell_3_8 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_3_9 {
+  animation-delay: 2.3481671339s;
+}
+
+.cell_3_10 {
+  animation-delay: 2.2760833806s;
+}
+
+.cell_3_11 {
+  animation-delay: 2.2142217093s;
+}
+
+.cell_3_12 {
+  animation-delay: 2.1634591643s;
+}
+
+.cell_3_13 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_3_14 {
+  animation-delay: 2.0982797187s;
+}
+
+.cell_3_15 {
+  animation-delay: 2.0849993339s;
+}
+
+.cell_3_16 {
+  animation-delay: 2.0849993339s;
+}
+
+.cell_3_17 {
+  animation-delay: 2.0982797187s;
+}
+
+.cell_3_18 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_3_19 {
+  animation-delay: 2.1634591643s;
+}
+
+.cell_3_20 {
+  animation-delay: 2.2142217093s;
+}
+
+.cell_3_21 {
+  animation-delay: 2.2760833806s;
+}
+
+.cell_3_22 {
+  animation-delay: 2.3481671339s;
+}
+
+.cell_3_23 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_3_24 {
+  animation-delay: 2.5193694096s;
+}
+
+.cell_3_25 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_3_26 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_3_27 {
+  animation-delay: 2.8308812919s;
+}
+
+.cell_3_28 {
+  animation-delay: 2.9462782549s;
+}
+
+.cell_3_29 {
+  animation-delay: 3.0663949155s;
+}
+
+.cell_3_30 {
+  animation-delay: 3.1906982865s;
+}
+
+.cell_3_31 {
+  animation-delay: 3.3187179586s;
+}
+
+.cell_4_1 {
+  animation-delay: 3.0844592539s;
+}
+
+.cell_4_2 {
+  animation-delay: 2.9556913085s;
+}
+
+.cell_4_3 {
+  animation-delay: 2.8308812919s;
+}
+
+.cell_4_4 {
+  animation-delay: 2.7105759945s;
+}
+
+.cell_4_5 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_4_6 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_4_7 {
+  animation-delay: 2.3833916077s;
+}
+
+.cell_4_8 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_4_9 {
+  animation-delay: 2.2016408023s;
+}
+
+.cell_4_10 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_4_11 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_4_12 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_4_13 {
+  animation-delay: 1.961433716s;
+}
+
+.cell_4_14 {
+  animation-delay: 1.9329022508s;
+}
+
+.cell_4_15 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_4_16 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_4_17 {
+  animation-delay: 1.9329022508s;
+}
+
+.cell_4_18 {
+  animation-delay: 1.961433716s;
+}
+
+.cell_4_19 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_4_20 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_4_21 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_4_22 {
+  animation-delay: 2.2016408023s;
+}
+
+.cell_4_23 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_4_24 {
+  animation-delay: 2.3833916077s;
+}
+
+.cell_4_25 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_4_26 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_4_27 {
+  animation-delay: 2.7105759945s;
+}
+
+.cell_4_28 {
+  animation-delay: 2.8308812919s;
+}
+
+.cell_4_29 {
+  animation-delay: 2.9556913085s;
+}
+
+.cell_4_30 {
+  animation-delay: 3.0844592539s;
+}
+
+.cell_4_31 {
+  animation-delay: 3.2167098443s;
+}
+
+.cell_5_1 {
+  animation-delay: 2.9837522983s;
+}
+
+.cell_5_2 {
+  animation-delay: 2.8504385627s;
+}
+
+.cell_5_3 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_5_4 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_5_5 {
+  animation-delay: 2.4748737342s;
+}
+
+.cell_5_6 {
+  animation-delay: 2.3599670431s;
+}
+
+.cell_5_7 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_5_8 {
+  animation-delay: 2.1505813168s;
+}
+
+.cell_5_9 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_5_10 {
+  animation-delay: 1.9755449319s;
+}
+
+.cell_5_11 {
+  animation-delay: 1.9039432765s;
+}
+
+.cell_5_12 {
+  animation-delay: 1.8446619684s;
+}
+
+.cell_5_13 {
+  animation-delay: 1.7989194287s;
+}
+
+.cell_5_14 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_5_15 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_5_16 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_5_17 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_5_18 {
+  animation-delay: 1.7989194287s;
+}
+
+.cell_5_19 {
+  animation-delay: 1.8446619684s;
+}
+
+.cell_5_20 {
+  animation-delay: 1.9039432765s;
+}
+
+.cell_5_21 {
+  animation-delay: 1.9755449319s;
+}
+
+.cell_5_22 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_5_23 {
+  animation-delay: 2.1505813168s;
+}
+
+.cell_5_24 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_5_25 {
+  animation-delay: 2.3599670431s;
+}
+
+.cell_5_26 {
+  animation-delay: 2.4748737342s;
+}
+
+.cell_5_27 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_5_28 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_5_29 {
+  animation-delay: 2.8504385627s;
+}
+
+.cell_5_30 {
+  animation-delay: 2.9837522983s;
+}
+
+.cell_5_31 {
+  animation-delay: 3.1202742045s;
+}
+
+.cell_6_1 {
+  animation-delay: 2.8891559706s;
+}
+
+.cell_6_2 {
+  animation-delay: 2.7512623365s;
+}
+
+.cell_6_3 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_6_4 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_6_5 {
+  animation-delay: 2.3599670431s;
+}
+
+.cell_6_6 {
+  animation-delay: 2.2391714738s;
+}
+
+.cell_6_7 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_6_8 {
+  animation-delay: 2.0172864062s;
+}
+
+.cell_6_9 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_6_10 {
+  animation-delay: 1.8295415333s;
+}
+
+.cell_6_11 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_6_12 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_6_13 {
+  animation-delay: 1.6372402254s;
+}
+
+.cell_6_14 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_6_15 {
+  animation-delay: 1.5855247992s;
+}
+
+.cell_6_16 {
+  animation-delay: 1.5855247992s;
+}
+
+.cell_6_17 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_6_18 {
+  animation-delay: 1.6372402254s;
+}
+
+.cell_6_19 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_6_20 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_6_21 {
+  animation-delay: 1.8295415333s;
+}
+
+.cell_6_22 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_6_23 {
+  animation-delay: 2.0172864062s;
+}
+
+.cell_6_24 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_6_25 {
+  animation-delay: 2.2391714738s;
+}
+
+.cell_6_26 {
+  animation-delay: 2.3599670431s;
+}
+
+.cell_6_27 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_6_28 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_6_29 {
+  animation-delay: 2.7512623365s;
+}
+
+.cell_6_30 {
+  animation-delay: 2.8891559706s;
+}
+
+.cell_6_31 {
+  animation-delay: 3.0299431604s;
+}
+
+.cell_7_1 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_7_2 {
+  animation-delay: 2.6588426889s;
+}
+
+.cell_7_3 {
+  animation-delay: 2.5193694096s;
+}
+
+.cell_7_4 {
+  animation-delay: 2.3833916077s;
+}
+
+.cell_7_5 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_7_6 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_7_7 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_7_8 {
+  animation-delay: 1.8892973415s;
+}
+
+.cell_7_9 {
+  animation-delay: 1.7834112133s;
+}
+
+.cell_7_10 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_7_11 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_7_12 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_7_13 {
+  animation-delay: 1.4766704289s;
+}
+
+.cell_7_14 {
+  animation-delay: 1.4385563751s;
+}
+
+.cell_7_15 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_7_16 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_7_17 {
+  animation-delay: 1.4385563751s;
+}
+
+.cell_7_18 {
+  animation-delay: 1.4766704289s;
+}
+
+.cell_7_19 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_7_20 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_7_21 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_7_22 {
+  animation-delay: 1.7834112133s;
+}
+
+.cell_7_23 {
+  animation-delay: 1.8892973415s;
+}
+
+.cell_7_24 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_7_25 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_7_26 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_7_27 {
+  animation-delay: 2.3833916077s;
+}
+
+.cell_7_28 {
+  animation-delay: 2.5193694096s;
+}
+
+.cell_7_29 {
+  animation-delay: 2.6588426889s;
+}
+
+.cell_7_30 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_7_31 {
+  animation-delay: 2.9462782549s;
+}
+
+.cell_8_1 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_8_2 {
+  animation-delay: 2.5739075352s;
+}
+
+.cell_8_3 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_8_4 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_8_5 {
+  animation-delay: 2.1505813168s;
+}
+
+.cell_8_6 {
+  animation-delay: 2.0172864062s;
+}
+
+.cell_8_7 {
+  animation-delay: 1.8892973415s;
+}
+
+.cell_8_8 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_8_9 {
+  animation-delay: 1.6541194368s;
+}
+
+.cell_8_10 {
+  animation-delay: 1.5500896031s;
+}
+
+.cell_8_11 {
+  animation-delay: 1.4577379737s;
+}
+
+.cell_8_12 {
+  animation-delay: 1.3794121131s;
+}
+
+.cell_8_13 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_8_14 {
+  animation-delay: 1.2747548784s;
+}
+
+.cell_8_15 {
+  animation-delay: 1.2527746982s;
+}
+
+.cell_8_16 {
+  animation-delay: 1.2527746982s;
+}
+
+.cell_8_17 {
+  animation-delay: 1.2747548784s;
+}
+
+.cell_8_18 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_8_19 {
+  animation-delay: 1.3794121131s;
+}
+
+.cell_8_20 {
+  animation-delay: 1.4577379737s;
+}
+
+.cell_8_21 {
+  animation-delay: 1.5500896031s;
+}
+
+.cell_8_22 {
+  animation-delay: 1.6541194368s;
+}
+
+.cell_8_23 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_8_24 {
+  animation-delay: 1.8892973415s;
+}
+
+.cell_8_25 {
+  animation-delay: 2.0172864062s;
+}
+
+.cell_8_26 {
+  animation-delay: 2.1505813168s;
+}
+
+.cell_8_27 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_8_28 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_8_29 {
+  animation-delay: 2.5739075352s;
+}
+
+.cell_8_30 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_8_31 {
+  animation-delay: 2.8698625596s;
+}
+
+.cell_9_1 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_9_2 {
+  animation-delay: 2.4972206773s;
+}
+
+.cell_9_3 {
+  animation-delay: 2.3481671339s;
+}
+
+.cell_9_4 {
+  animation-delay: 2.2016408023s;
+}
+
+.cell_9_5 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_9_6 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_9_7 {
+  animation-delay: 1.7834112133s;
+}
+
+.cell_9_8 {
+  animation-delay: 1.6541194368s;
+}
+
+.cell_9_9 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_9_10 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_9_11 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_9_12 {
+  animation-delay: 1.2304019217s;
+}
+
+.cell_9_13 {
+  animation-delay: 1.1606990231s;
+}
+
+.cell_9_14 {
+  animation-delay: 1.1118053387s;
+}
+
+.cell_9_15 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_9_16 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_9_17 {
+  animation-delay: 1.1118053387s;
+}
+
+.cell_9_18 {
+  animation-delay: 1.1606990231s;
+}
+
+.cell_9_19 {
+  animation-delay: 1.2304019217s;
+}
+
+.cell_9_20 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_9_21 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_9_22 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_9_23 {
+  animation-delay: 1.6541194368s;
+}
+
+.cell_9_24 {
+  animation-delay: 1.7834112133s;
+}
+
+.cell_9_25 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_9_26 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_9_27 {
+  animation-delay: 2.2016408023s;
+}
+
+.cell_9_28 {
+  animation-delay: 2.3481671339s;
+}
+
+.cell_9_29 {
+  animation-delay: 2.4972206773s;
+}
+
+.cell_9_30 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_9_31 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_10_1 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_10_2 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_10_3 {
+  animation-delay: 2.2760833806s;
+}
+
+.cell_10_4 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_10_5 {
+  animation-delay: 1.9755449319s;
+}
+
+.cell_10_6 {
+  animation-delay: 1.8295415333s;
+}
+
+.cell_10_7 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_10_8 {
+  animation-delay: 1.5500896031s;
+}
+
+.cell_10_9 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_10_10 {
+  animation-delay: 1.2963624322s;
+}
+
+.cell_10_11 {
+  animation-delay: 1.1843892003s;
+}
+
+.cell_10_12 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_10_13 {
+  animation-delay: 1.0069204978s;
+}
+
+.cell_10_14 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_10_15 {
+  animation-delay: 0.9204467514s;
+}
+
+.cell_10_16 {
+  animation-delay: 0.9204467514s;
+}
+
+.cell_10_17 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_10_18 {
+  animation-delay: 1.0069204978s;
+}
+
+.cell_10_19 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_10_20 {
+  animation-delay: 1.1843892003s;
+}
+
+.cell_10_21 {
+  animation-delay: 1.2963624322s;
+}
+
+.cell_10_22 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_10_23 {
+  animation-delay: 1.5500896031s;
+}
+
+.cell_10_24 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_10_25 {
+  animation-delay: 1.8295415333s;
+}
+
+.cell_10_26 {
+  animation-delay: 1.9755449319s;
+}
+
+.cell_10_27 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_10_28 {
+  animation-delay: 2.2760833806s;
+}
+
+.cell_10_29 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_10_30 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_10_31 {
+  animation-delay: 2.7411473672s;
+}
+
+.cell_11_1 {
+  animation-delay: 2.5303710751s;
+}
+
+.cell_11_2 {
+  animation-delay: 2.3717082451s;
+}
+
+.cell_11_3 {
+  animation-delay: 2.2142217093s;
+}
+
+.cell_11_4 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_11_5 {
+  animation-delay: 1.9039432765s;
+}
+
+.cell_11_6 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_11_7 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_11_8 {
+  animation-delay: 1.4577379737s;
+}
+
+.cell_11_9 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_11_10 {
+  animation-delay: 1.1843892003s;
+}
+
+.cell_11_11 {
+  animation-delay: 1.0606601718s;
+}
+
+.cell_11_12 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_11_13 {
+  animation-delay: 0.8579691784s;
+}
+
+.cell_11_14 {
+  animation-delay: 0.790569415s;
+}
+
+.cell_11_15 {
+  animation-delay: 0.7546154282s;
+}
+
+.cell_11_16 {
+  animation-delay: 0.7546154282s;
+}
+
+.cell_11_17 {
+  animation-delay: 0.790569415s;
+}
+
+.cell_11_18 {
+  animation-delay: 0.8579691784s;
+}
+
+.cell_11_19 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_11_20 {
+  animation-delay: 1.0606601718s;
+}
+
+.cell_11_21 {
+  animation-delay: 1.1843892003s;
+}
+
+.cell_11_22 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_11_23 {
+  animation-delay: 1.4577379737s;
+}
+
+.cell_11_24 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_11_25 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_11_26 {
+  animation-delay: 1.9039432765s;
+}
+
+.cell_11_27 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_11_28 {
+  animation-delay: 2.2142217093s;
+}
+
+.cell_11_29 {
+  animation-delay: 2.3717082451s;
+}
+
+.cell_11_30 {
+  animation-delay: 2.5303710751s;
+}
+
+.cell_11_31 {
+  animation-delay: 2.6900020653s;
+}
+
+.cell_12_1 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_12_2 {
+  animation-delay: 2.3243876135s;
+}
+
+.cell_12_3 {
+  animation-delay: 2.1634591643s;
+}
+
+.cell_12_4 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_12_5 {
+  animation-delay: 1.8446619684s;
+}
+
+.cell_12_6 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_12_7 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_12_8 {
+  animation-delay: 1.3794121131s;
+}
+
+.cell_12_9 {
+  animation-delay: 1.2304019217s;
+}
+
+.cell_12_10 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_12_11 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_12_12 {
+  animation-delay: 0.8249579114s;
+}
+
+.cell_12_13 {
+  animation-delay: 0.7168604389s;
+}
+
+.cell_12_14 {
+  animation-delay: 0.6346477588s;
+}
+
+.cell_12_15 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_12_16 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_12_17 {
+  animation-delay: 0.6346477588s;
+}
+
+.cell_12_18 {
+  animation-delay: 0.7168604389s;
+}
+
+.cell_12_19 {
+  animation-delay: 0.8249579114s;
+}
+
+.cell_12_20 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_12_21 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_12_22 {
+  animation-delay: 1.2304019217s;
+}
+
+.cell_12_23 {
+  animation-delay: 1.3794121131s;
+}
+
+.cell_12_24 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_12_25 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_12_26 {
+  animation-delay: 1.8446619684s;
+}
+
+.cell_12_27 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_12_28 {
+  animation-delay: 2.1634591643s;
+}
+
+.cell_12_29 {
+  animation-delay: 2.3243876135s;
+}
+
+.cell_12_30 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_12_31 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_13_1 {
+  animation-delay: 2.4523231616s;
+}
+
+.cell_13_2 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_13_3 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_13_4 {
+  animation-delay: 1.961433716s;
+}
+
+.cell_13_5 {
+  animation-delay: 1.7989194287s;
+}
+
+.cell_13_6 {
+  animation-delay: 1.6372402254s;
+}
+
+.cell_13_7 {
+  animation-delay: 1.4766704289s;
+}
+
+.cell_13_8 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_13_9 {
+  animation-delay: 1.1606990231s;
+}
+
+.cell_13_10 {
+  animation-delay: 1.0069204978s;
+}
+
+.cell_13_11 {
+  animation-delay: 0.8579691784s;
+}
+
+.cell_13_12 {
+  animation-delay: 0.7168604389s;
+}
+
+.cell_13_13 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_13_14 {
+  animation-delay: 0.4859126579s;
+}
+
+.cell_13_15 {
+  animation-delay: 0.4249182928s;
+}
+
+.cell_13_16 {
+  animation-delay: 0.4249182928s;
+}
+
+.cell_13_17 {
+  animation-delay: 0.4859126579s;
+}
+
+.cell_13_18 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_13_19 {
+  animation-delay: 0.7168604389s;
+}
+
+.cell_13_20 {
+  animation-delay: 0.8579691784s;
+}
+
+.cell_13_21 {
+  animation-delay: 1.0069204978s;
+}
+
+.cell_13_22 {
+  animation-delay: 1.1606990231s;
+}
+
+.cell_13_23 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_13_24 {
+  animation-delay: 1.4766704289s;
+}
+
+.cell_13_25 {
+  animation-delay: 1.6372402254s;
+}
+
+.cell_13_26 {
+  animation-delay: 1.7989194287s;
+}
+
+.cell_13_27 {
+  animation-delay: 1.961433716s;
+}
+
+.cell_13_28 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_13_29 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_13_30 {
+  animation-delay: 2.4523231616s;
+}
+
+.cell_13_31 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_14_1 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_14_2 {
+  animation-delay: 2.2638462845s;
+}
+
+.cell_14_3 {
+  animation-delay: 2.0982797187s;
+}
+
+.cell_14_4 {
+  animation-delay: 1.9329022508s;
+}
+
+.cell_14_5 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_14_6 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_14_7 {
+  animation-delay: 1.4385563751s;
+}
+
+.cell_14_8 {
+  animation-delay: 1.2747548784s;
+}
+
+.cell_14_9 {
+  animation-delay: 1.1118053387s;
+}
+
+.cell_14_10 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_14_11 {
+  animation-delay: 0.790569415s;
+}
+
+.cell_14_12 {
+  animation-delay: 0.6346477588s;
+}
+
+.cell_14_13 {
+  animation-delay: 0.4859126579s;
+}
+
+.cell_14_14 {
+  animation-delay: 0.3535533906s;
+}
+
+.cell_14_15 {
+  animation-delay: 0.2635231383s;
+}
+
+.cell_14_16 {
+  animation-delay: 0.2635231383s;
+}
+
+.cell_14_17 {
+  animation-delay: 0.3535533906s;
+}
+
+.cell_14_18 {
+  animation-delay: 0.4859126579s;
+}
+
+.cell_14_19 {
+  animation-delay: 0.6346477588s;
+}
+
+.cell_14_20 {
+  animation-delay: 0.790569415s;
+}
+
+.cell_14_21 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_14_22 {
+  animation-delay: 1.1118053387s;
+}
+
+.cell_14_23 {
+  animation-delay: 1.2747548784s;
+}
+
+.cell_14_24 {
+  animation-delay: 1.4385563751s;
+}
+
+.cell_14_25 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_14_26 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_14_27 {
+  animation-delay: 1.9329022508s;
+}
+
+.cell_14_28 {
+  animation-delay: 2.0982797187s;
+}
+
+.cell_14_29 {
+  animation-delay: 2.2638462845s;
+}
+
+.cell_14_30 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_14_31 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_15_1 {
+  animation-delay: 2.4181030214s;
+}
+
+.cell_15_2 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_15_3 {
+  animation-delay: 2.0849993339s;
+}
+
+.cell_15_4 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_15_5 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_15_6 {
+  animation-delay: 1.5855247992s;
+}
+
+.cell_15_7 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_15_8 {
+  animation-delay: 1.2527746982s;
+}
+
+.cell_15_9 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_15_10 {
+  animation-delay: 0.9204467514s;
+}
+
+.cell_15_11 {
+  animation-delay: 0.7546154282s;
+}
+
+.cell_15_12 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_15_13 {
+  animation-delay: 0.4249182928s;
+}
+
+.cell_15_14 {
+  animation-delay: 0.2635231383s;
+}
+
+.cell_15_15 {
+  animation-delay: 0.1178511302s;
+}
+
+.cell_15_16 {
+  animation-delay: 0.1178511302s;
+}
+
+.cell_15_17 {
+  animation-delay: 0.2635231383s;
+}
+
+.cell_15_18 {
+  animation-delay: 0.4249182928s;
+}
+
+.cell_15_19 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_15_20 {
+  animation-delay: 0.7546154282s;
+}
+
+.cell_15_21 {
+  animation-delay: 0.9204467514s;
+}
+
+.cell_15_22 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_15_23 {
+  animation-delay: 1.2527746982s;
+}
+
+.cell_15_24 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_15_25 {
+  animation-delay: 1.5855247992s;
+}
+
+.cell_15_26 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_15_27 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_15_28 {
+  animation-delay: 2.0849993339s;
+}
+
+.cell_15_29 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_15_30 {
+  animation-delay: 2.4181030214s;
+}
+
+.cell_15_31 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_16_1 {
+  animation-delay: 2.4181030214s;
+}
+
+.cell_16_2 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_16_3 {
+  animation-delay: 2.0849993339s;
+}
+
+.cell_16_4 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_16_5 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_16_6 {
+  animation-delay: 1.5855247992s;
+}
+
+.cell_16_7 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_16_8 {
+  animation-delay: 1.2527746982s;
+}
+
+.cell_16_9 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_16_10 {
+  animation-delay: 0.9204467514s;
+}
+
+.cell_16_11 {
+  animation-delay: 0.7546154282s;
+}
+
+.cell_16_12 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_16_13 {
+  animation-delay: 0.4249182928s;
+}
+
+.cell_16_14 {
+  animation-delay: 0.2635231383s;
+}
+
+.cell_16_15 {
+  animation-delay: 0.1178511302s;
+}
+
+.cell_16_16 {
+  animation-delay: 0.1178511302s;
+}
+
+.cell_16_17 {
+  animation-delay: 0.2635231383s;
+}
+
+.cell_16_18 {
+  animation-delay: 0.4249182928s;
+}
+
+.cell_16_19 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_16_20 {
+  animation-delay: 0.7546154282s;
+}
+
+.cell_16_21 {
+  animation-delay: 0.9204467514s;
+}
+
+.cell_16_22 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_16_23 {
+  animation-delay: 1.2527746982s;
+}
+
+.cell_16_24 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_16_25 {
+  animation-delay: 1.5855247992s;
+}
+
+.cell_16_26 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_16_27 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_16_28 {
+  animation-delay: 2.0849993339s;
+}
+
+.cell_16_29 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_16_30 {
+  animation-delay: 2.4181030214s;
+}
+
+.cell_16_31 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_17_1 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_17_2 {
+  animation-delay: 2.2638462845s;
+}
+
+.cell_17_3 {
+  animation-delay: 2.0982797187s;
+}
+
+.cell_17_4 {
+  animation-delay: 1.9329022508s;
+}
+
+.cell_17_5 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_17_6 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_17_7 {
+  animation-delay: 1.4385563751s;
+}
+
+.cell_17_8 {
+  animation-delay: 1.2747548784s;
+}
+
+.cell_17_9 {
+  animation-delay: 1.1118053387s;
+}
+
+.cell_17_10 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_17_11 {
+  animation-delay: 0.790569415s;
+}
+
+.cell_17_12 {
+  animation-delay: 0.6346477588s;
+}
+
+.cell_17_13 {
+  animation-delay: 0.4859126579s;
+}
+
+.cell_17_14 {
+  animation-delay: 0.3535533906s;
+}
+
+.cell_17_15 {
+  animation-delay: 0.2635231383s;
+}
+
+.cell_17_16 {
+  animation-delay: 0.2635231383s;
+}
+
+.cell_17_17 {
+  animation-delay: 0.3535533906s;
+}
+
+.cell_17_18 {
+  animation-delay: 0.4859126579s;
+}
+
+.cell_17_19 {
+  animation-delay: 0.6346477588s;
+}
+
+.cell_17_20 {
+  animation-delay: 0.790569415s;
+}
+
+.cell_17_21 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_17_22 {
+  animation-delay: 1.1118053387s;
+}
+
+.cell_17_23 {
+  animation-delay: 1.2747548784s;
+}
+
+.cell_17_24 {
+  animation-delay: 1.4385563751s;
+}
+
+.cell_17_25 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_17_26 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_17_27 {
+  animation-delay: 1.9329022508s;
+}
+
+.cell_17_28 {
+  animation-delay: 2.0982797187s;
+}
+
+.cell_17_29 {
+  animation-delay: 2.2638462845s;
+}
+
+.cell_17_30 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_17_31 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_18_1 {
+  animation-delay: 2.4523231616s;
+}
+
+.cell_18_2 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_18_3 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_18_4 {
+  animation-delay: 1.961433716s;
+}
+
+.cell_18_5 {
+  animation-delay: 1.7989194287s;
+}
+
+.cell_18_6 {
+  animation-delay: 1.6372402254s;
+}
+
+.cell_18_7 {
+  animation-delay: 1.4766704289s;
+}
+
+.cell_18_8 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_18_9 {
+  animation-delay: 1.1606990231s;
+}
+
+.cell_18_10 {
+  animation-delay: 1.0069204978s;
+}
+
+.cell_18_11 {
+  animation-delay: 0.8579691784s;
+}
+
+.cell_18_12 {
+  animation-delay: 0.7168604389s;
+}
+
+.cell_18_13 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_18_14 {
+  animation-delay: 0.4859126579s;
+}
+
+.cell_18_15 {
+  animation-delay: 0.4249182928s;
+}
+
+.cell_18_16 {
+  animation-delay: 0.4249182928s;
+}
+
+.cell_18_17 {
+  animation-delay: 0.4859126579s;
+}
+
+.cell_18_18 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_18_19 {
+  animation-delay: 0.7168604389s;
+}
+
+.cell_18_20 {
+  animation-delay: 0.8579691784s;
+}
+
+.cell_18_21 {
+  animation-delay: 1.0069204978s;
+}
+
+.cell_18_22 {
+  animation-delay: 1.1606990231s;
+}
+
+.cell_18_23 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_18_24 {
+  animation-delay: 1.4766704289s;
+}
+
+.cell_18_25 {
+  animation-delay: 1.6372402254s;
+}
+
+.cell_18_26 {
+  animation-delay: 1.7989194287s;
+}
+
+.cell_18_27 {
+  animation-delay: 1.961433716s;
+}
+
+.cell_18_28 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_18_29 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_18_30 {
+  animation-delay: 2.4523231616s;
+}
+
+.cell_18_31 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_19_1 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_19_2 {
+  animation-delay: 2.3243876135s;
+}
+
+.cell_19_3 {
+  animation-delay: 2.1634591643s;
+}
+
+.cell_19_4 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_19_5 {
+  animation-delay: 1.8446619684s;
+}
+
+.cell_19_6 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_19_7 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_19_8 {
+  animation-delay: 1.3794121131s;
+}
+
+.cell_19_9 {
+  animation-delay: 1.2304019217s;
+}
+
+.cell_19_10 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_19_11 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_19_12 {
+  animation-delay: 0.8249579114s;
+}
+
+.cell_19_13 {
+  animation-delay: 0.7168604389s;
+}
+
+.cell_19_14 {
+  animation-delay: 0.6346477588s;
+}
+
+.cell_19_15 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_19_16 {
+  animation-delay: 0.589255651s;
+}
+
+.cell_19_17 {
+  animation-delay: 0.6346477588s;
+}
+
+.cell_19_18 {
+  animation-delay: 0.7168604389s;
+}
+
+.cell_19_19 {
+  animation-delay: 0.8249579114s;
+}
+
+.cell_19_20 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_19_21 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_19_22 {
+  animation-delay: 1.2304019217s;
+}
+
+.cell_19_23 {
+  animation-delay: 1.3794121131s;
+}
+
+.cell_19_24 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_19_25 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_19_26 {
+  animation-delay: 1.8446619684s;
+}
+
+.cell_19_27 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_19_28 {
+  animation-delay: 2.1634591643s;
+}
+
+.cell_19_29 {
+  animation-delay: 2.3243876135s;
+}
+
+.cell_19_30 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_19_31 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_20_1 {
+  animation-delay: 2.5303710751s;
+}
+
+.cell_20_2 {
+  animation-delay: 2.3717082451s;
+}
+
+.cell_20_3 {
+  animation-delay: 2.2142217093s;
+}
+
+.cell_20_4 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_20_5 {
+  animation-delay: 1.9039432765s;
+}
+
+.cell_20_6 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_20_7 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_20_8 {
+  animation-delay: 1.4577379737s;
+}
+
+.cell_20_9 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_20_10 {
+  animation-delay: 1.1843892003s;
+}
+
+.cell_20_11 {
+  animation-delay: 1.0606601718s;
+}
+
+.cell_20_12 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_20_13 {
+  animation-delay: 0.8579691784s;
+}
+
+.cell_20_14 {
+  animation-delay: 0.790569415s;
+}
+
+.cell_20_15 {
+  animation-delay: 0.7546154282s;
+}
+
+.cell_20_16 {
+  animation-delay: 0.7546154282s;
+}
+
+.cell_20_17 {
+  animation-delay: 0.790569415s;
+}
+
+.cell_20_18 {
+  animation-delay: 0.8579691784s;
+}
+
+.cell_20_19 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_20_20 {
+  animation-delay: 1.0606601718s;
+}
+
+.cell_20_21 {
+  animation-delay: 1.1843892003s;
+}
+
+.cell_20_22 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_20_23 {
+  animation-delay: 1.4577379737s;
+}
+
+.cell_20_24 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_20_25 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_20_26 {
+  animation-delay: 1.9039432765s;
+}
+
+.cell_20_27 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_20_28 {
+  animation-delay: 2.2142217093s;
+}
+
+.cell_20_29 {
+  animation-delay: 2.3717082451s;
+}
+
+.cell_20_30 {
+  animation-delay: 2.5303710751s;
+}
+
+.cell_20_31 {
+  animation-delay: 2.6900020653s;
+}
+
+.cell_21_1 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_21_2 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_21_3 {
+  animation-delay: 2.2760833806s;
+}
+
+.cell_21_4 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_21_5 {
+  animation-delay: 1.9755449319s;
+}
+
+.cell_21_6 {
+  animation-delay: 1.8295415333s;
+}
+
+.cell_21_7 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_21_8 {
+  animation-delay: 1.5500896031s;
+}
+
+.cell_21_9 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_21_10 {
+  animation-delay: 1.2963624322s;
+}
+
+.cell_21_11 {
+  animation-delay: 1.1843892003s;
+}
+
+.cell_21_12 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_21_13 {
+  animation-delay: 1.0069204978s;
+}
+
+.cell_21_14 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_21_15 {
+  animation-delay: 0.9204467514s;
+}
+
+.cell_21_16 {
+  animation-delay: 0.9204467514s;
+}
+
+.cell_21_17 {
+  animation-delay: 0.9501461876s;
+}
+
+.cell_21_18 {
+  animation-delay: 1.0069204978s;
+}
+
+.cell_21_19 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_21_20 {
+  animation-delay: 1.1843892003s;
+}
+
+.cell_21_21 {
+  animation-delay: 1.2963624322s;
+}
+
+.cell_21_22 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_21_23 {
+  animation-delay: 1.5500896031s;
+}
+
+.cell_21_24 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_21_25 {
+  animation-delay: 1.8295415333s;
+}
+
+.cell_21_26 {
+  animation-delay: 1.9755449319s;
+}
+
+.cell_21_27 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_21_28 {
+  animation-delay: 2.2760833806s;
+}
+
+.cell_21_29 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_21_30 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_21_31 {
+  animation-delay: 2.7411473672s;
+}
+
+.cell_22_1 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_22_2 {
+  animation-delay: 2.4972206773s;
+}
+
+.cell_22_3 {
+  animation-delay: 2.3481671339s;
+}
+
+.cell_22_4 {
+  animation-delay: 2.2016408023s;
+}
+
+.cell_22_5 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_22_6 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_22_7 {
+  animation-delay: 1.7834112133s;
+}
+
+.cell_22_8 {
+  animation-delay: 1.6541194368s;
+}
+
+.cell_22_9 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_22_10 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_22_11 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_22_12 {
+  animation-delay: 1.2304019217s;
+}
+
+.cell_22_13 {
+  animation-delay: 1.1606990231s;
+}
+
+.cell_22_14 {
+  animation-delay: 1.1118053387s;
+}
+
+.cell_22_15 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_22_16 {
+  animation-delay: 1.0865337342s;
+}
+
+.cell_22_17 {
+  animation-delay: 1.1118053387s;
+}
+
+.cell_22_18 {
+  animation-delay: 1.1606990231s;
+}
+
+.cell_22_19 {
+  animation-delay: 1.2304019217s;
+}
+
+.cell_22_20 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_22_21 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_22_22 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_22_23 {
+  animation-delay: 1.6541194368s;
+}
+
+.cell_22_24 {
+  animation-delay: 1.7834112133s;
+}
+
+.cell_22_25 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_22_26 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_22_27 {
+  animation-delay: 2.2016408023s;
+}
+
+.cell_22_28 {
+  animation-delay: 2.3481671339s;
+}
+
+.cell_22_29 {
+  animation-delay: 2.4972206773s;
+}
+
+.cell_22_30 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_22_31 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_23_1 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_23_2 {
+  animation-delay: 2.5739075352s;
+}
+
+.cell_23_3 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_23_4 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_23_5 {
+  animation-delay: 2.1505813168s;
+}
+
+.cell_23_6 {
+  animation-delay: 2.0172864062s;
+}
+
+.cell_23_7 {
+  animation-delay: 1.8892973415s;
+}
+
+.cell_23_8 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_23_9 {
+  animation-delay: 1.6541194368s;
+}
+
+.cell_23_10 {
+  animation-delay: 1.5500896031s;
+}
+
+.cell_23_11 {
+  animation-delay: 1.4577379737s;
+}
+
+.cell_23_12 {
+  animation-delay: 1.3794121131s;
+}
+
+.cell_23_13 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_23_14 {
+  animation-delay: 1.2747548784s;
+}
+
+.cell_23_15 {
+  animation-delay: 1.2527746982s;
+}
+
+.cell_23_16 {
+  animation-delay: 1.2527746982s;
+}
+
+.cell_23_17 {
+  animation-delay: 1.2747548784s;
+}
+
+.cell_23_18 {
+  animation-delay: 1.3176156917s;
+}
+
+.cell_23_19 {
+  animation-delay: 1.3794121131s;
+}
+
+.cell_23_20 {
+  animation-delay: 1.4577379737s;
+}
+
+.cell_23_21 {
+  animation-delay: 1.5500896031s;
+}
+
+.cell_23_22 {
+  animation-delay: 1.6541194368s;
+}
+
+.cell_23_23 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_23_24 {
+  animation-delay: 1.8892973415s;
+}
+
+.cell_23_25 {
+  animation-delay: 2.0172864062s;
+}
+
+.cell_23_26 {
+  animation-delay: 2.1505813168s;
+}
+
+.cell_23_27 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_23_28 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_23_29 {
+  animation-delay: 2.5739075352s;
+}
+
+.cell_23_30 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_23_31 {
+  animation-delay: 2.8698625596s;
+}
+
+.cell_24_1 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_24_2 {
+  animation-delay: 2.6588426889s;
+}
+
+.cell_24_3 {
+  animation-delay: 2.5193694096s;
+}
+
+.cell_24_4 {
+  animation-delay: 2.3833916077s;
+}
+
+.cell_24_5 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_24_6 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_24_7 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_24_8 {
+  animation-delay: 1.8892973415s;
+}
+
+.cell_24_9 {
+  animation-delay: 1.7834112133s;
+}
+
+.cell_24_10 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_24_11 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_24_12 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_24_13 {
+  animation-delay: 1.4766704289s;
+}
+
+.cell_24_14 {
+  animation-delay: 1.4385563751s;
+}
+
+.cell_24_15 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_24_16 {
+  animation-delay: 1.4191155305s;
+}
+
+.cell_24_17 {
+  animation-delay: 1.4385563751s;
+}
+
+.cell_24_18 {
+  animation-delay: 1.4766704289s;
+}
+
+.cell_24_19 {
+  animation-delay: 1.5320646926s;
+}
+
+.cell_24_20 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_24_21 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_24_22 {
+  animation-delay: 1.7834112133s;
+}
+
+.cell_24_23 {
+  animation-delay: 1.8892973415s;
+}
+
+.cell_24_24 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_24_25 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_24_26 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_24_27 {
+  animation-delay: 2.3833916077s;
+}
+
+.cell_24_28 {
+  animation-delay: 2.5193694096s;
+}
+
+.cell_24_29 {
+  animation-delay: 2.6588426889s;
+}
+
+.cell_24_30 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_24_31 {
+  animation-delay: 2.9462782549s;
+}
+
+.cell_25_1 {
+  animation-delay: 2.8891559706s;
+}
+
+.cell_25_2 {
+  animation-delay: 2.7512623365s;
+}
+
+.cell_25_3 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_25_4 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_25_5 {
+  animation-delay: 2.3599670431s;
+}
+
+.cell_25_6 {
+  animation-delay: 2.2391714738s;
+}
+
+.cell_25_7 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_25_8 {
+  animation-delay: 2.0172864062s;
+}
+
+.cell_25_9 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_25_10 {
+  animation-delay: 1.8295415333s;
+}
+
+.cell_25_11 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_25_12 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_25_13 {
+  animation-delay: 1.6372402254s;
+}
+
+.cell_25_14 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_25_15 {
+  animation-delay: 1.5855247992s;
+}
+
+.cell_25_16 {
+  animation-delay: 1.5855247992s;
+}
+
+.cell_25_17 {
+  animation-delay: 1.6029486718s;
+}
+
+.cell_25_18 {
+  animation-delay: 1.6372402254s;
+}
+
+.cell_25_19 {
+  animation-delay: 1.6873713943s;
+}
+
+.cell_25_20 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_25_21 {
+  animation-delay: 1.8295415333s;
+}
+
+.cell_25_22 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_25_23 {
+  animation-delay: 2.0172864062s;
+}
+
+.cell_25_24 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_25_25 {
+  animation-delay: 2.2391714738s;
+}
+
+.cell_25_26 {
+  animation-delay: 2.3599670431s;
+}
+
+.cell_25_27 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_25_28 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_25_29 {
+  animation-delay: 2.7512623365s;
+}
+
+.cell_25_30 {
+  animation-delay: 2.8891559706s;
+}
+
+.cell_25_31 {
+  animation-delay: 3.0299431604s;
+}
+
+.cell_26_1 {
+  animation-delay: 2.9837522983s;
+}
+
+.cell_26_2 {
+  animation-delay: 2.8504385627s;
+}
+
+.cell_26_3 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_26_4 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_26_5 {
+  animation-delay: 2.4748737342s;
+}
+
+.cell_26_6 {
+  animation-delay: 2.3599670431s;
+}
+
+.cell_26_7 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_26_8 {
+  animation-delay: 2.1505813168s;
+}
+
+.cell_26_9 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_26_10 {
+  animation-delay: 1.9755449319s;
+}
+
+.cell_26_11 {
+  animation-delay: 1.9039432765s;
+}
+
+.cell_26_12 {
+  animation-delay: 1.8446619684s;
+}
+
+.cell_26_13 {
+  animation-delay: 1.7989194287s;
+}
+
+.cell_26_14 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_26_15 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_26_16 {
+  animation-delay: 1.7519830035s;
+}
+
+.cell_26_17 {
+  animation-delay: 1.767766953s;
+}
+
+.cell_26_18 {
+  animation-delay: 1.7989194287s;
+}
+
+.cell_26_19 {
+  animation-delay: 1.8446619684s;
+}
+
+.cell_26_20 {
+  animation-delay: 1.9039432765s;
+}
+
+.cell_26_21 {
+  animation-delay: 1.9755449319s;
+}
+
+.cell_26_22 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_26_23 {
+  animation-delay: 2.1505813168s;
+}
+
+.cell_26_24 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_26_25 {
+  animation-delay: 2.3599670431s;
+}
+
+.cell_26_26 {
+  animation-delay: 2.4748737342s;
+}
+
+.cell_26_27 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_26_28 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_26_29 {
+  animation-delay: 2.8504385627s;
+}
+
+.cell_26_30 {
+  animation-delay: 2.9837522983s;
+}
+
+.cell_26_31 {
+  animation-delay: 3.1202742045s;
+}
+
+.cell_27_1 {
+  animation-delay: 3.0844592539s;
+}
+
+.cell_27_2 {
+  animation-delay: 2.9556913085s;
+}
+
+.cell_27_3 {
+  animation-delay: 2.8308812919s;
+}
+
+.cell_27_4 {
+  animation-delay: 2.7105759945s;
+}
+
+.cell_27_5 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_27_6 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_27_7 {
+  animation-delay: 2.3833916077s;
+}
+
+.cell_27_8 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_27_9 {
+  animation-delay: 2.2016408023s;
+}
+
+.cell_27_10 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_27_11 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_27_12 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_27_13 {
+  animation-delay: 1.961433716s;
+}
+
+.cell_27_14 {
+  animation-delay: 1.9329022508s;
+}
+
+.cell_27_15 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_27_16 {
+  animation-delay: 1.9184774055s;
+}
+
+.cell_27_17 {
+  animation-delay: 1.9329022508s;
+}
+
+.cell_27_18 {
+  animation-delay: 1.961433716s;
+}
+
+.cell_27_19 {
+  animation-delay: 2.0034692134s;
+}
+
+.cell_27_20 {
+  animation-delay: 2.0581815059s;
+}
+
+.cell_27_21 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_27_22 {
+  animation-delay: 2.2016408023s;
+}
+
+.cell_27_23 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_27_24 {
+  animation-delay: 2.3833916077s;
+}
+
+.cell_27_25 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_27_26 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_27_27 {
+  animation-delay: 2.7105759945s;
+}
+
+.cell_27_28 {
+  animation-delay: 2.8308812919s;
+}
+
+.cell_27_29 {
+  animation-delay: 2.9556913085s;
+}
+
+.cell_27_30 {
+  animation-delay: 3.0844592539s;
+}
+
+.cell_27_31 {
+  animation-delay: 3.2167098443s;
+}
+
+.cell_28_1 {
+  animation-delay: 3.1906982865s;
+}
+
+.cell_28_2 {
+  animation-delay: 3.0663949155s;
+}
+
+.cell_28_3 {
+  animation-delay: 2.9462782549s;
+}
+
+.cell_28_4 {
+  animation-delay: 2.8308812919s;
+}
+
+.cell_28_5 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_28_6 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_28_7 {
+  animation-delay: 2.5193694096s;
+}
+
+.cell_28_8 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_28_9 {
+  animation-delay: 2.3481671339s;
+}
+
+.cell_28_10 {
+  animation-delay: 2.2760833806s;
+}
+
+.cell_28_11 {
+  animation-delay: 2.2142217093s;
+}
+
+.cell_28_12 {
+  animation-delay: 2.1634591643s;
+}
+
+.cell_28_13 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_28_14 {
+  animation-delay: 2.0982797187s;
+}
+
+.cell_28_15 {
+  animation-delay: 2.0849993339s;
+}
+
+.cell_28_16 {
+  animation-delay: 2.0849993339s;
+}
+
+.cell_28_17 {
+  animation-delay: 2.0982797187s;
+}
+
+.cell_28_18 {
+  animation-delay: 2.124591464s;
+}
+
+.cell_28_19 {
+  animation-delay: 2.1634591643s;
+}
+
+.cell_28_20 {
+  animation-delay: 2.2142217093s;
+}
+
+.cell_28_21 {
+  animation-delay: 2.2760833806s;
+}
+
+.cell_28_22 {
+  animation-delay: 2.3481671339s;
+}
+
+.cell_28_23 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_28_24 {
+  animation-delay: 2.5193694096s;
+}
+
+.cell_28_25 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_28_26 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_28_27 {
+  animation-delay: 2.8308812919s;
+}
+
+.cell_28_28 {
+  animation-delay: 2.9462782549s;
+}
+
+.cell_28_29 {
+  animation-delay: 3.0663949155s;
+}
+
+.cell_28_30 {
+  animation-delay: 3.1906982865s;
+}
+
+.cell_28_31 {
+  animation-delay: 3.3187179586s;
+}
+
+.cell_29_1 {
+  animation-delay: 3.3019354594s;
+}
+
+.cell_29_2 {
+  animation-delay: 3.1819805153s;
+}
+
+.cell_29_3 {
+  animation-delay: 3.0663949155s;
+}
+
+.cell_29_4 {
+  animation-delay: 2.9556913085s;
+}
+
+.cell_29_5 {
+  animation-delay: 2.8504385627s;
+}
+
+.cell_29_6 {
+  animation-delay: 2.7512623365s;
+}
+
+.cell_29_7 {
+  animation-delay: 2.6588426889s;
+}
+
+.cell_29_8 {
+  animation-delay: 2.5739075352s;
+}
+
+.cell_29_9 {
+  animation-delay: 2.4972206773s;
+}
+
+.cell_29_10 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_29_11 {
+  animation-delay: 2.3717082451s;
+}
+
+.cell_29_12 {
+  animation-delay: 2.3243876135s;
+}
+
+.cell_29_13 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_29_14 {
+  animation-delay: 2.2638462845s;
+}
+
+.cell_29_15 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_29_16 {
+  animation-delay: 2.251542681s;
+}
+
+.cell_29_17 {
+  animation-delay: 2.2638462845s;
+}
+
+.cell_29_18 {
+  animation-delay: 2.2882550363s;
+}
+
+.cell_29_19 {
+  animation-delay: 2.3243876135s;
+}
+
+.cell_29_20 {
+  animation-delay: 2.3717082451s;
+}
+
+.cell_29_21 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_29_22 {
+  animation-delay: 2.4972206773s;
+}
+
+.cell_29_23 {
+  animation-delay: 2.5739075352s;
+}
+
+.cell_29_24 {
+  animation-delay: 2.6588426889s;
+}
+
+.cell_29_25 {
+  animation-delay: 2.7512623365s;
+}
+
+.cell_29_26 {
+  animation-delay: 2.8504385627s;
+}
+
+.cell_29_27 {
+  animation-delay: 2.9556913085s;
+}
+
+.cell_29_28 {
+  animation-delay: 3.0663949155s;
+}
+
+.cell_29_29 {
+  animation-delay: 3.1819805153s;
+}
+
+.cell_29_30 {
+  animation-delay: 3.3019354594s;
+}
+
+.cell_29_31 {
+  animation-delay: 3.4258007985s;
+}
+
+.cell_30_1 {
+  animation-delay: 3.4176827757s;
+}
+
+.cell_30_2 {
+  animation-delay: 3.3019354594s;
+}
+
+.cell_30_3 {
+  animation-delay: 3.1906982865s;
+}
+
+.cell_30_4 {
+  animation-delay: 3.0844592539s;
+}
+
+.cell_30_5 {
+  animation-delay: 2.9837522983s;
+}
+
+.cell_30_6 {
+  animation-delay: 2.8891559706s;
+}
+
+.cell_30_7 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_30_8 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_30_9 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_30_10 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_30_11 {
+  animation-delay: 2.5303710751s;
+}
+
+.cell_30_12 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_30_13 {
+  animation-delay: 2.4523231616s;
+}
+
+.cell_30_14 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_30_15 {
+  animation-delay: 2.4181030214s;
+}
+
+.cell_30_16 {
+  animation-delay: 2.4181030214s;
+}
+
+.cell_30_17 {
+  animation-delay: 2.4295632895s;
+}
+
+.cell_30_18 {
+  animation-delay: 2.4523231616s;
+}
+
+.cell_30_19 {
+  animation-delay: 2.486072315s;
+}
+
+.cell_30_20 {
+  animation-delay: 2.5303710751s;
+}
+
+.cell_30_21 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_30_22 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_30_23 {
+  animation-delay: 2.7208046196s;
+}
+
+.cell_30_24 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_30_25 {
+  animation-delay: 2.8891559706s;
+}
+
+.cell_30_26 {
+  animation-delay: 2.9837522983s;
+}
+
+.cell_30_27 {
+  animation-delay: 3.0844592539s;
+}
+
+.cell_30_28 {
+  animation-delay: 3.1906982865s;
+}
+
+.cell_30_29 {
+  animation-delay: 3.3019354594s;
+}
+
+.cell_30_30 {
+  animation-delay: 3.4176827757s;
+}
+
+.cell_30_31 {
+  animation-delay: 3.5374975461s;
+}
+
+.cell_31_1 {
+  animation-delay: 3.5374975461s;
+}
+
+.cell_31_2 {
+  animation-delay: 3.4258007985s;
+}
+
+.cell_31_3 {
+  animation-delay: 3.3187179586s;
+}
+
+.cell_31_4 {
+  animation-delay: 3.2167098443s;
+}
+
+.cell_31_5 {
+  animation-delay: 3.1202742045s;
+}
+
+.cell_31_6 {
+  animation-delay: 3.0299431604s;
+}
+
+.cell_31_7 {
+  animation-delay: 2.9462782549s;
+}
+
+.cell_31_8 {
+  animation-delay: 2.8698625596s;
+}
+
+.cell_31_9 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_31_10 {
+  animation-delay: 2.7411473672s;
+}
+
+.cell_31_11 {
+  animation-delay: 2.6900020653s;
+}
+
+.cell_31_12 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_31_13 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_31_14 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_31_15 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_31_16 {
+  animation-delay: 2.5846770699s;
+}
+
+.cell_31_17 {
+  animation-delay: 2.5954019171s;
+}
+
+.cell_31_18 {
+  animation-delay: 2.6167197447s;
+}
+
+.cell_31_19 {
+  animation-delay: 2.6483747637s;
+}
+
+.cell_31_20 {
+  animation-delay: 2.6900020653s;
+}
+
+.cell_31_21 {
+  animation-delay: 2.7411473672s;
+}
+
+.cell_31_22 {
+  animation-delay: 2.8012893857s;
+}
+
+.cell_31_23 {
+  animation-delay: 2.8698625596s;
+}
+
+.cell_31_24 {
+  animation-delay: 2.9462782549s;
+}
+
+.cell_31_25 {
+  animation-delay: 3.0299431604s;
+}
+
+.cell_31_26 {
+  animation-delay: 3.1202742045s;
+}
+
+.cell_31_27 {
+  animation-delay: 3.2167098443s;
+}
+
+.cell_31_28 {
+  animation-delay: 3.3187179586s;
+}
+
+.cell_31_29 {
+  animation-delay: 3.4258007985s;
+}
+
+.cell_31_30 {
+  animation-delay: 3.5374975461s;
+}
+
+.cell_31_31 {
+  animation-delay: 3.6533850361s;
 }

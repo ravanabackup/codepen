@@ -1,0 +1,127 @@
+html {
+  background: dimgrey;
+}
+
+.square {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: ani 1s ease-in-out infinite;
+}
+.square:nth-child(odd) {
+  background: black;
+}
+.square:nth-child(even) {
+  background: white;
+}
+.square:nth-child(1) {
+  margin: -4.44089em;
+  width: 8.88178em;
+  height: 8.88178em;
+  animation-duration: 4s;
+}
+.square:nth-child(2) {
+  margin: -3.55271em;
+  width: 7.10543em;
+  height: 7.10543em;
+  animation-duration: 3.75s;
+}
+.square:nth-child(3) {
+  margin: -2.84217em;
+  width: 5.68434em;
+  height: 5.68434em;
+  animation-duration: 3.5s;
+}
+.square:nth-child(4) {
+  margin: -2.27374em;
+  width: 4.54747em;
+  height: 4.54747em;
+  animation-duration: 3.25s;
+}
+.square:nth-child(5) {
+  margin: -1.81899em;
+  width: 3.63798em;
+  height: 3.63798em;
+  animation-duration: 3s;
+}
+.square:nth-child(6) {
+  margin: -1.45519em;
+  width: 2.91038em;
+  height: 2.91038em;
+  animation-duration: 2.75s;
+}
+.square:nth-child(7) {
+  margin: -1.16415em;
+  width: 2.32831em;
+  height: 2.32831em;
+  animation-duration: 2.5s;
+}
+.square:nth-child(8) {
+  margin: -0.93132em;
+  width: 1.86265em;
+  height: 1.86265em;
+  animation-duration: 2.25s;
+}
+.square:nth-child(9) {
+  margin: -0.74506em;
+  width: 1.49012em;
+  height: 1.49012em;
+  animation-duration: 2s;
+}
+.square:nth-child(10) {
+  margin: -0.59605em;
+  width: 1.19209em;
+  height: 1.19209em;
+  animation-duration: 1.75s;
+}
+.square:nth-child(11) {
+  margin: -0.47684em;
+  width: 0.95367em;
+  height: 0.95367em;
+  animation-duration: 1.5s;
+}
+.square:nth-child(12) {
+  margin: -0.38147em;
+  width: 0.76294em;
+  height: 0.76294em;
+  animation-duration: 1.25s;
+}
+.square:nth-child(13) {
+  margin: -0.30518em;
+  width: 0.61035em;
+  height: 0.61035em;
+  animation-duration: 1s;
+}
+.square:nth-child(14) {
+  margin: -0.24414em;
+  width: 0.48828em;
+  height: 0.48828em;
+  animation-duration: 0.75s;
+}
+.square:nth-child(15) {
+  margin: -0.19531em;
+  width: 0.39063em;
+  height: 0.39063em;
+  animation-duration: 0.5s;
+}
+.square:nth-child(16) {
+  margin: -0.15625em;
+  width: 0.3125em;
+  height: 0.3125em;
+  animation-duration: 0.25s;
+}
+
+@keyframes ani {
+  0%, 100% {
+    transform: translate(85%, 85%);
+  }
+  25% {
+    transform: translate(-85%, 85%);
+  }
+  50% {
+    transform: translate(-85%, -85%);
+  }
+  75% {
+    transform: translate(85%, -85%);
+  }
+}

@@ -1,0 +1,38 @@
+body {
+  --i: 0;
+  display: grid;
+  place-content: center;
+  margin: 0;
+  min-height: 100vh;
+  background: Repeating-linear-gradient(45deg, #222 0 2px, #000 0 7px);
+}
+
+.loader {
+  position: relative;
+  filter: blur(2px) drop-shadow(0 0 0.125em rgba(219, 20, 60, 0.7)) drop-shadow(0 0 0.25em rgba(219, 20, 60, 0.7)) drop-shadow(0 0 0.5em rgba(219, 20, 60, 0.7)) drop-shadow(0 0 1em rgba(219, 20, 60, 0.7)) drop-shadow(0 0 2em rgba(219, 20, 60, 0.7)) drop-shadow(0 0 4em rgba(219, 20, 60, 0.7));
+  animation: rot 1s linear infinite;
+}
+.loader:before, .loader:after {
+  --noti: calc(1 - var(--i));
+  position: absolute;
+  --r-dif: calc(var(--noti)*0.5em + var(--i)*1px);
+  padding: calc(5em + var(--r-dif));
+  border-radius: 50%;
+  transform-origin: 50% var(--r-dif);
+  transform: translate(-50%, -50%) scale(calc(-1 - var(--i)*.0075), calc(1 + var(--i)*.015));
+  --hsl: 348, 83%,calc(47% + var(--i)*100%);
+  background: Radial-gradient(circle at 50% var(--r-dif), HSL(var(--hsl)) var(--r-dif), transparent 0), Conic-gradient(HSL(var(--hsl)), transparent);
+  --mask: radial-gradient(circle at 50% var(--r-dif), #ff0000 var(--r-dif), rgba(0, 0, 0, 0) 0%), radial-gradient(circle at 0 calc(1.5*var(--r-dif) + 5em), rgba(0, 0, 0, 0) calc(5em - .5*var(--r-dif)), #ff0000 0%) 100%/50% no-repeat, radial-gradient(circle at 100% calc(.5*var(--r-dif) + 5em), rgba(0, 0, 0, 0) calc(5em + .5*var(--r-dif)), #ff0000 0%) 0/50% no-repeat;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+  content: "";
+}
+.loader:after {
+  --i: 1;
+}
+
+@keyframes rot {
+  to {
+    transform: rotate(1turn);
+  }
+}
