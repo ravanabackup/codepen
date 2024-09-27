@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - 3D Sine Ripple</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<svg viewBox="0 0 800 600">  
+  <defs>
+    <radialGradient id="instaGrad" cx="400" cy="100" r="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF"/>
+      <stop offset="0.2" stop-color="#fd5"/>
+      <stop offset="0.5" stop-color="#ff543e"/>
+      <stop offset="1" stop-color="#000"/>
+    </radialGradient>		
+<marker id="darkMarker" width="20" height="20" viewBox="0 0 20 20" markerWidth="20" markerHeight="20" refX="0" refY="-4" orient="true" markerUnits="userSpaceOnUse" >
+  
+<circle cx="0" cy="0" r="6" fill="#930433" opacity="0.1"/>
+ 
+</marker>   
+    <marker id="lightMarker" width="8" height="8" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="0" refY="9" orient="true" markerUnits="userSpaceOnUse" >
+  
+<circle cx="0" cy="0" r="4" fill="#FC9EBD" opacity="0.1"/>
+ 
+</marker>     
+    </defs>
+	<g class="whole" >
+  <g class="waveReflectionGroup" opacity="0.61" transform="translate(0, 300)"  >    
+    <polyline id="waveRef" marker-mid="url(#darkMarker)" fill="none" stroke-width="18"  stroke-linecap="round" stroke="url(#instaGrad)"/>
+  </g>  
+  <g class="waveGroup" transform="translate(0, 300)" >    
+    <polyline id="wave" marker-mid="url(#lightMarker)" fill="none" stroke-width="18" stroke-linecap="round" stroke="url(#instaGrad)"/>
+  </g>  
+	</g>
+		
+</svg>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/CustomEase.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

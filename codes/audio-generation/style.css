@@ -1,0 +1,14 @@
+html { height: 100%; }
+body
+{
+  height: 100%;
+  background-image: url(https://i.imgur.com/kzqDSP8.png),
+    radial-gradient(rgb(52, 73, 94), rgb(44, 62, 80));
+}
+#c
+{
+  display: block;
+  margin: 0 auto;
+  background: black;
+  box-shadow: 0 0 40px rgba(0,0,0,1);
+}

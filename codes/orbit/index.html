@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - °orbit</title>
+  <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script><link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<svg class="bgSVG" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <linearGradient id="bgGrad" gradientUnits="userSpaceOnUse" x1="400" y1="0" x2="400" y2="600">
+	<stop  offset="0" style="stop-color:#000"/>
+	<stop  offset="1" style="stop-color:#081029"/>
+</linearGradient>  
+    <rect width="100%" height="100%" fill="url(#bgGrad)"/>
+
+</svg>
+<svg class="mainSVG" viewBox="0 0 800 600" xmlns="http://www.w3.org/2FFF/svg" preserveAspectRatio="xMidYMax meet">
+
+<defs>
+   <circle id="dot"  cx="0" cy="0" r="2" fill="#00"/>   
+  <radialGradient id="dotGrad" cx="400" cy="300" r="512" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:1"/>
+	<stop  offset="0.3" style="stop-color:#0867C7;stop-opacity:1"/>
+	<stop  offset="0.8" style="stop-color:#081029;stop-opacity:0"/>
+</radialGradient>  
+</defs>
+<circle id="center" fill="url(#dotGrad)" cx="400" cy="250" r="512" opacity="0.8"/>   
+  
+  <g class="pContainer" />  
+<g class="lineGroup">
+  
+<g id="line1">
+  <line x1="400" x2="400" y1="50" y2="400" stroke="#FFF" />
+  <circle cx="400" cy="400" r="3" fill="#FFF"/>
+</g>
+<g id="line2">
+  <line x1="400" x2="400" y1="50" y2="350" stroke="#FFF" />
+  <circle cx="400" cy="350" r="3" fill="#FFF"/>
+</g>
+<g id="line3">
+  <line x1="400" x2="400" y1="50" y2="280" stroke="#FFF" />
+  <circle cx="400" cy="280" r="3" fill="#FFF"/>
+</g>
+<g id="line4">
+  <line x1="400" x2="400" y1="50" y2="180" stroke="#FFF" />
+  <circle cx="400" cy="180" r="3" fill="#FFF"/>
+</g>
+<g id="line5">
+  <line x1="400" x2="400" y1="50" y2="90" stroke="#FFF" />
+  <circle cx="400" cy="90" r="3" fill="#FFF"/>
+</g>
+  
+  </g>
+
+</svg>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/TweenMax-latest-beta.js'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/CSSTransform.min.js?r=5'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/35984/AnticipateEase.min.js'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/Physics2DPlugin.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

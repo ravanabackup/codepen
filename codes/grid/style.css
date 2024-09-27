@@ -1,0 +1,76 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #262626;
+  color: #dcdcd2;
+  overflow: hidden;
+}
+body *, body *:before, body *:after {
+  position: absolute;
+}
+
+.wrapper {
+  font-size: 20rem;
+  top: 50%;
+  left: 50%;
+  width: 1em;
+  height: 1em;
+  margin: -0.5em 0 0 -0.5em;
+  overflow: hidden;
+}
+
+@keyframes anim {
+  from {
+    transform: rotate(0deg) translateY(-0.5em) rotate(0deg);
+  }
+  75% {
+    transform: rotate(180deg) translateY(0.5em) rotate(45deg);
+  }
+  to {
+    transform: rotate(180deg) translateY(0.5em) rotate(0deg);
+  }
+}
+.line {
+  left: 0;
+  top: 50%;
+  width: 1em;
+  height: 0.04em;
+  margin-top: -0.02em;
+}
+.line:nth-child(n+6) {
+  transform: rotate(90deg);
+}
+.line:nth-child(n+11) {
+  transform: rotate(180deg);
+}
+.line:nth-child(n+16) {
+  transform: rotate(270deg);
+}
+.line:before, .line:after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: currentColor;
+  animation: anim 3s cubic-bezier(0.74, 0.02, 0.66, 0.98) infinite;
+}
+.line:after {
+  opacity: 0.15;
+  animation-delay: 0.025s;
+}
+.line:nth-child(5n+1):before, .line:nth-child(5n+1):after {
+  font-size: 0.96em;
+}
+.line:nth-child(5n+2):before, .line:nth-child(5n+2):after {
+  font-size: 0.7466666667em;
+}
+.line:nth-child(5n+3):before, .line:nth-child(5n+3):after {
+  font-size: 0.5333333333em;
+}
+.line:nth-child(5n+4):before, .line:nth-child(5n+4):after {
+  font-size: 0.32em;
+}
+.line:nth-child(5n+5):before, .line:nth-child(5n+5):after {
+  font-size: 0.1066666667em;
+}

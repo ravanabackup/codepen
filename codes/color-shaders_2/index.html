@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - color shaders</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="vertShader" type="text">
+
+// attributes, in
+attribute vec3 aPosition;
+
+// matrices
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
+
+void main() {
+  gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+}
+</script>
+
+<script id="fragShader" type="text">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform float uTime;
+uniform float uSpeedColor;
+uniform vec2 uResolution;
+  
+uniform vec3 uColor1;
+uniform vec3 uColor2;
+uniform vec3 uColor3;
+uniform vec3 uColor4;
+uniform vec3 uColor5;
+
+const int AMOUNT = 3;
+
+float createLen(float x,  float y, float speed, float offset) {
+  float time = offset + uTime / speed; 
+  
+  vec2 coord = 20.0 * (gl_FragCoord.xy - uResolution.xy) / min(uResolution.y, uResolution.x);
+
+  float len;
+  
+  for(int i = 0; i < AMOUNT; i++) {
+    len = length(vec2(coord.x, coord.y));
+    
+    coord.x = coord.x - cos(coord.y + sin(len)) + cos(time / x);
+    coord.y = coord.y + sin(coord.y + cos(len)) + sin(time / y);;
+  }
+  
+  return len;
+}
+  
+float createLen2(float x,  float y, float speed, float offset) {
+  float time = offset + uTime / speed; 
+  
+  vec2 coord = 20.0 * (gl_FragCoord.xy - uResolution.xy) / min(uResolution.y, uResolution.x);
+
+  float len;
+  
+  for(int i = 0; i < AMOUNT; i++) {
+    len = length(vec2(coord.x, coord.y));
+    coord.x = coord.x + sin(coord.y + cos(len)) + sin(time / x);
+    coord.y = coord.y - cos(coord.y + sin(len)) + cos(time / y);;
+  }
+  
+  return len;
+}
+  
+void main() {
+  float len = createLen(9.0, 12.0, 100.0, 10.0);
+  float len2 = createLen2(4.0, 5.0, 1.0, 100.0);
+  float len3 = createLen(12.0, 2.0, 20.0, 20.0);
+
+  vec3 color = vec3(uColor1[0] + cos(len), uColor1[1] + cos(len), uColor1[2] + cos(len));
+  
+  vec3 color2 = vec3(uColor2[0] + cos(len2), uColor2[1] + cos(len2), uColor2[2] + cos(len2));
+  
+  vec3 color3 = vec3(uColor3[0] + cos(len3), uColor3[1] + cos(len3), uColor3[2] + cos(len3));
+  
+  float r = cos(len2) * uColor1[0];
+  float g = cos(len2) * uColor1[1];
+  float b = cos(len2) * uColor1[2];
+  
+  r += cos(len) * uColor2[0];
+  g += cos(len) * uColor2[1];
+  b += cos(len) * uColor2[2];
+
+  r += cos(len3) * uColor3[0];
+  g += cos(len3) * uColor3[1];
+  b += cos(len3) * uColor3[2];
+  
+  gl_FragColor = vec4(r, g, b, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.3.1/p5.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

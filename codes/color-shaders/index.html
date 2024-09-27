@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - color shaders</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="vertShader" type="text">
+
+// attributes, in
+attribute vec3 aPosition;
+
+// matrices
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
+
+void main() {
+  gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+}
+</script>
+
+<script id="fragShader" type="text">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform float uTime;
+uniform float uSpeedColor;
+uniform vec2 uResolution;
+  
+uniform vec3 uColor1;
+uniform vec3 uColor2;
+uniform vec3 uColor3;
+uniform vec3 uColor4;
+uniform vec3 uColor5;
+
+const int AMOUNT = 2;
+
+float createLen(float x,  float y) {
+  float time = uTime / uSpeedColor; 
+  
+  vec2 coord = (gl_FragCoord.xy - uResolution.xy) / min(uResolution.y, uResolution.x);
+
+  float len;
+  
+  for(int i = 0; i < AMOUNT; i++) {
+    len = length(vec2(coord.x, coord.y));
+    
+    coord.x = coord.x - cos(coord.y + sin(len)) + cos(uTime / x);
+    coord.y = coord.y + sin(coord.y + cos(len)) + sin(uTime / y);;
+  }
+  
+  return len;
+}
+  
+  
+void main() {
+  float len = createLen(9.0, 12.0);
+  float len2 = createLen(10.0, 5.0);
+
+  float r = uColor2[0] + cos(len) * 0.5;
+  float g = uColor2[1] + cos(len) * 0.5;
+  float b = uColor2[2] + cos(len) * 0.5;
+  
+  gl_FragColor = vec4(r, g, b, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.3.1/p5.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

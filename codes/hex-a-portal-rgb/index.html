@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Hex-a-portal (RGB)</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="container">
+
+  <svg class="circleSVG" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="glow" y="-50%" height="200%">
+  <feGaussianBlur stdDeviation="12 1" result="coloredBlur"/>
+  <feGaussianBlur stdDeviation="12 1" result="coloredBlur"/>
+  <feGaussianBlur stdDeviation="12 1" result="coloredBlur"/>
+  <feMerge>
+    <feMergeNode in="coloredBlur"/>
+    <feMergeNode in="SourceGraphic"/>
+  </feMerge>
+</filter>  
+<path id="hexPath"  d="M300,194.183l91.64,52.908v105.817L300,405.817l-91.64-52.908V247.092
+	L300,194.183z" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-dasharray="112"/>  
+</defs>
+
+<g filter="url(#glow)" >
+ <use xlink:href="#hexPath" class="chaser" stroke="#FFFFFF" stroke-dashoffset="10100"/> 
+ <use xlink:href="#hexPath" class="chaser" stroke="#0000FF"  stroke-dashoffset="10060"/>
+ <use xlink:href="#hexPath" class="chaser" stroke="#00FF00" stroke-dashoffset="10040"/>
+ <use xlink:href="#hexPath" class="chaser"  stroke="#FF0000" stroke-dashoffset="10020"/>
+  <use xlink:href="#hexPath" class="chaser" stroke="#1d1d1d"  stroke-dashoffset="10000"/>
+</g> 
+
+</svg>
+
+
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/TweenMax.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

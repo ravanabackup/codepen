@@ -1,0 +1,14 @@
+body{
+  margin: 0;
+  overflow: clip;
+  background: #1B2021;
+}
+
+main{
+  display: flex;
+  height: 100vh;
+}
+
+canvas{
+  margin: auto;
+}

@@ -1,0 +1,387 @@
+.wrapper {
+	position: relative;
+	height: min(300px, 100% - 2px, 100vw - 18px);
+	min-height: 60px;
+	aspect-ratio: 1;
+	border: 1px solid;
+	border-radius: 4px;
+	--grid-size: 16;
+	--middle: (var(--grid-size) + 1) / 2;
+	--origin-x: var(--middle);
+	--origin-y: var(--middle);
+	> div {
+		--x: 1;
+		--y: 1;
+		--dx: (var(--x) - var(--origin-x));
+		--dy: (var(--y) - var(--origin-y));
+		--dist: hypot(var(--dy), var(--dx));
+		--angle: atan2(var(--dy), var(--dx));
+		--pixel: 0;
+		position: absolute;
+		left: calc(((var(--x) - 0.5) / var(--grid-size)) * 100%);
+		top: calc(((var(--y) - 0.5) / var(--grid-size)) * 100%);
+		width: calc(100% / var(--grid-size));
+		aspect-ratio: 1;
+		border: 0.1px solid transparent;
+		translate: -50% -50%;
+		background: currentColor;
+		scale: clamp(1 / var(--grid-size), var(--pixel), 1);
+		&:nth-child(16n + 2) { --x: 2; }
+		&:nth-child(16n + 3) { --x: 3; }
+		&:nth-child(16n + 4) { --x: 4; }
+		&:nth-child(16n + 5) { --x: 5; }
+		&:nth-child(16n + 6) { --x: 6; }
+		&:nth-child(16n + 7) { --x: 7; }
+		&:nth-child(16n + 8) { --x: 8; }
+		&:nth-child(16n + 9) { --x: 9; }
+		&:nth-child(16n + 10) { --x: 10; }
+		&:nth-child(16n + 11) { --x: 11; }
+		&:nth-child(16n + 12) { --x: 12; }
+		&:nth-child(16n + 13) { --x: 13; }
+		&:nth-child(16n + 14) { --x: 14; }
+		&:nth-child(16n + 15) { --x: 15; }
+		&:nth-child(16n + 16) { --x: 16; }
+		&:nth-child(n + 17) { --y: 2; }
+		&:nth-child(n + 33) { --y: 3; }
+		&:nth-child(n + 49) { --y: 4; }
+		&:nth-child(n + 65) { --y: 5; }
+		&:nth-child(n + 81) { --y: 6; }
+		&:nth-child(n + 97) { --y: 7; }
+		&:nth-child(n + 113) { --y: 8; }
+		&:nth-child(n + 129) { --y: 9; }
+		&:nth-child(n + 145) { --y: 10; }
+		&:nth-child(n + 161) { --y: 11; }
+		&:nth-child(n + 177) { --y: 12; }
+		&:nth-child(n + 193) { --y: 13; }
+		&:nth-child(n + 209) { --y: 14; }
+		&:nth-child(n + 225) { --y: 15; }
+		&:nth-child(n + 241) { --y: 16; }
+	}
+}
+
+
+@property --square-angle {
+	syntax: '<angle>';
+	inherits: true;
+	initial-value: 0deg;
+}
+@property --square-shape {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@property --square-size {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1;
+}
+@property --square-position {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@property --square-small-radius {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 0;
+}
+@keyframes square-angle {
+	from { --square-angle: 0deg; }
+	70%, to { --square-angle: 10turn; }
+}
+@keyframes square-shape {
+	from, 60%, 90%, to { --square-shape: 0; }
+	70%, 85% { --square-shape: 1; }
+}
+@keyframes square-size {
+	from, 75%, to { --square-size: 5; --square-position: 8.5; }
+	80%, 95% { --square-size: 0.5; --square-position: 8; }
+}
+@keyframes square-small-radius {
+	from, 75%, 90%, to { --square-small-radius: 0; }
+	80%, 85% { --square-small-radius: 50%; }
+}
+:root:has([value="square"]:checked) .wrapper {
+	animation: square-angle cubic-bezier(.8, 0, 1, .2), square-shape linear, square-size, square-small-radius;
+	animation-duration: 6s;
+	animation-iteration-count: infinite;
+	--origin-x: var(--square-position);
+	--origin-y: var(--square-position);
+	> div {
+		--final-angle: (var(--angle) - var(--square-angle));
+		--d1: max(cos(var(--final-angle)), -1 * cos(var(--final-angle)), sin(var(--final-angle)), -1 * sin(var(--final-angle)));
+		--edge-dist: var(--square-size) / (var(--square-shape) / sqrt(2) + (1 - var(--square-shape)) * var(--d1));
+		--pixel: (-2 * clamp(-0.5, var(--dist) - var(--edge-dist), 0));
+		border-radius: var(--square-small-radius);
+	}
+}
+
+
+@property --spiral-visibility {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1;
+}
+@property --spiral-twist {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1;
+}
+@property --spiral-angle {
+	syntax: '<angle>';
+	inherits: true;
+	initial-value: 0deg;
+}
+@property --spiral-branches {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1;
+}
+@keyframes spiral-visibility {
+	from, 5%, 100% { --spiral-visibility: 0; }
+	10%, 95% { --spiral-visibility: 1; }
+}
+@keyframes spiral-twist {
+	from { --spiral-twist: 4; }
+	20%, 65% { --spiral-twist: 1; }
+	to { --spiral-twist: 0; }
+}
+@keyframes spiral-angle {
+	75% { --spiral-angle: 3turn; animation-timing-function: cubic-bezier(.7, 0, 1, .3); }
+	to { --spiral-angle: 15turn; }
+}
+@keyframes spiral-branches {
+	0%,  20% { --spiral-branches: 1; }
+	25%, 45% { --spiral-branches: 2; }
+	50%, 70% { --spiral-branches: 3; }
+	75%,  to { --spiral-branches: 6; }
+}
+:root:has([value="spiral"]:checked) .wrapper {
+	animation: spiral-visibility, spiral-twist, spiral-angle linear, spiral-branches;
+	animation-duration: 6s;
+	animation-iteration-count: infinite;
+	> div {
+		--pixel: (1 - var(--spiral-visibility) * (1 -
+			sin(1rad * var(--spiral-twist) * var(--dist) + var(--spiral-branches) * var(--angle) - var(--spiral-angle))
+		));
+	}
+}
+
+
+@property --heart-size {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1;
+}
+@keyframes heart-size {
+	from { --heart-size: 0; }
+	to { --heart-size: 1; }
+}
+@keyframes heart-invert {
+	from, to { --heart-invert: 0; }
+	50% { --heart-invert: 1; }
+}
+:root:has([value="heart"]:checked) .wrapper {
+	animation: heart-size 1.5s ease-in infinite, heart-invert 3s step-end infinite;
+	--origin-y: (var(--middle) - 1.5);
+	--s: .35 * (1 - log(var(--heart-size) * 2.7182818 + 1e-8));
+	> div {
+		/* no abs in chrome yet :( */
+		--hx: (max(var(--dx), -1 * var(--dx)) * var(--s));
+		--hy: (-1 * var(--dy) * var(--s));
+		/* heart equation: https://www.quora.com/What-is-the-equation-that-gives-you-a-heart-on-the-graph/answers/20744130 */
+		--heart-top: clamp(0, 1 - (var(--hy) - sqrt(max(0, 1 - pow(var(--hx) - 1, 2)))), 1);
+		/* acos returns an angle which can't be used as a unitless value */
+		/* use the fact that sin(Θ) ≈ Θ for small Θ */
+		--ac: acos(clamp(-1, 1 - var(--hx), 1));
+		--heart-bottom: clamp(0, var(--hy) - (sin(var(--ac) / 1e9) * 1e9 - 3.1415926535), 1);
+		--heart-sides: clamp(0, 3 - var(--hx), 1);
+		--heart-value: var(--heart-top) * var(--heart-bottom) * var(--heart-sides);
+		--pixel: var(--heart-invert) + (1 - 2 * var(--heart-invert)) * var(--heart-value);
+	}
+}
+
+
+@property --hover-x {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 8.5;
+}
+@property --hover-y {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 8.5;
+}
+@property --hover-size {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@property --hover-pulse {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@keyframes hover-pulse { from { --hover-pulse: 0; } to { --hover-pulse: 1; } }
+:root:has([value="hover"]:checked) .wrapper {
+	transition: --hover-x .3s 1e6s, --hover-y .3s 1e6s, --hover-size .3s;
+	animation: hover-pulse 3s linear infinite;
+	&:hover { --hover-size: 5; }
+	&:active { --hover-size: 1; }
+	&:has(> div:hover) { transition-delay: 0s; }
+	&:has(> div:nth-child(16n + 1):hover) { --hover-x: 1; }
+	&:has(> div:nth-child(16n + 2):hover) { --hover-x: 2; }
+	&:has(> div:nth-child(16n + 3):hover) { --hover-x: 3; }
+	&:has(> div:nth-child(16n + 4):hover) { --hover-x: 4; }
+	&:has(> div:nth-child(16n + 5):hover) { --hover-x: 5; }
+	&:has(> div:nth-child(16n + 6):hover) { --hover-x: 6; }
+	&:has(> div:nth-child(16n + 7):hover) { --hover-x: 7; }
+	&:has(> div:nth-child(16n + 8):hover) { --hover-x: 8; }
+	&:has(> div:nth-child(16n + 9):hover) { --hover-x: 9; }
+	&:has(> div:nth-child(16n + 10):hover) { --hover-x: 10; }
+	&:has(> div:nth-child(16n + 11):hover) { --hover-x: 11; }
+	&:has(> div:nth-child(16n + 12):hover) { --hover-x: 12; }
+	&:has(> div:nth-child(16n + 13):hover) { --hover-x: 13; }
+	&:has(> div:nth-child(16n + 14):hover) { --hover-x: 14; }
+	&:has(> div:nth-child(16n + 15):hover) { --hover-x: 15; }
+	&:has(> div:nth-child(16n + 16):hover) { --hover-x: 16; }
+	&:has(> div:nth-child(n + 1):hover) { --hover-y: 1; }
+	&:has(> div:nth-child(n + 17):hover) { --hover-y: 2; }
+	&:has(> div:nth-child(n + 33):hover) { --hover-y: 3; }
+	&:has(> div:nth-child(n + 49):hover) { --hover-y: 4; }
+	&:has(> div:nth-child(n + 65):hover) { --hover-y: 5; }
+	&:has(> div:nth-child(n + 81):hover) { --hover-y: 6; }
+	&:has(> div:nth-child(n + 97):hover) { --hover-y: 7; }
+	&:has(> div:nth-child(n + 113):hover) { --hover-y: 8; }
+	&:has(> div:nth-child(n + 129):hover) { --hover-y: 9; }
+	&:has(> div:nth-child(n + 145):hover) { --hover-y: 10; }
+	&:has(> div:nth-child(n + 161):hover) { --hover-y: 11; }
+	&:has(> div:nth-child(n + 177):hover) { --hover-y: 12; }
+	&:has(> div:nth-child(n + 193):hover) { --hover-y: 13; }
+	&:has(> div:nth-child(n + 209):hover) { --hover-y: 14; }
+	&:has(> div:nth-child(n + 225):hover) { --hover-y: 15; }
+	&:has(> div:nth-child(n + 241):hover) { --hover-y: 16; }
+	> div {
+		--pulse-factor: (1 + .2 * sin(360deg * var(--hover-pulse)));
+		--pixel: hypot(var(--x) - var(--hover-x), var(--y) - var(--hover-y)) / (var(--hover-size) * var(--pulse-factor));
+	}
+}
+
+
+@property --polygon-d1 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@property --polygon-d2 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@property --polygon-d3 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@property --polygon-sides {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@property --polygon-end-sweep {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+@keyframes polygon-d1 { from      { --polygon-d1: var(--large-radius); } 10%, 60% { --polygon-d1: var(--small-radius); } 90%, to { --polygon-d1: 0; } }
+@keyframes polygon-d2 { from, 10% { --polygon-d2: var(--large-radius); } 20%, 60% { --polygon-d2: var(--small-radius); } 90%, to { --polygon-d2: 0; } }
+@keyframes polygon-d3 { from, 20% { --polygon-d3: var(--large-radius); } 30%, 60% { --polygon-d3: var(--small-radius); } 90%, to { --polygon-d3: 0; } }
+@keyframes polygon-sides {
+	0%,  30% { --polygon-sides: 3; }
+	40%, 45% { --polygon-sides: 4; }
+	55%, 60% { --polygon-sides: 5; }
+	95%,  to { --polygon-sides: 36; }
+}
+@keyframes polygon-end-sweep {
+	0%, 60% { --polygon-end-sweep: 0; }
+	to { --polygon-end-sweep: 1; }
+}
+:root:has([value="polygon"]:checked) .wrapper {
+	--large-radius: calc(sqrt(2) * var(--grid-size));
+	--small-radius: calc(var(--grid-size) / 2 - 2);
+	animation: polygon-d1, polygon-d2, polygon-d3, polygon-sides, polygon-end-sweep;
+	animation-duration: 6s;
+	animation-iteration-count: infinite;
+	> div {
+		--angle-1: 0 * 360deg / var(--polygon-sides);
+		--angle-2: 1 * 360deg / var(--polygon-sides);
+		--angle-3: 2 * 360deg / var(--polygon-sides);
+		--angle-4: 3 * 360deg / var(--polygon-sides);
+		--angle-5: 4 * 360deg / var(--polygon-sides);
+		--dot-1: (var(--dx) * cos(var(--angle-1)) + var(--dy) * sin(var(--angle-1)));
+		--dot-2: (var(--dx) * cos(var(--angle-2)) + var(--dy) * sin(var(--angle-2)));
+		--dot-3: (var(--dx) * cos(var(--angle-3)) + var(--dy) * sin(var(--angle-3)));
+		--dot-4: (var(--dx) * cos(var(--angle-4)) + var(--dy) * sin(var(--angle-4)));
+		--dot-5: (var(--dx) * cos(var(--angle-5)) + var(--dy) * sin(var(--angle-5)));
+		--edge-1: 1 - (var(--dot-1) - var(--polygon-d1) * cos(180deg / var(--polygon-sides)));
+		--edge-2: 1 - (var(--dot-2) - var(--polygon-d2) * cos(180deg / var(--polygon-sides)));
+		--edge-3: 1 - (var(--dot-3) - var(--polygon-d3) * cos(180deg / var(--polygon-sides)));
+		--edge-4: 1 - (var(--dot-4) - var(--polygon-d3) * cos(180deg / var(--polygon-sides)));
+		--edge-5: 1 - (var(--dot-5) - var(--polygon-d3) * cos(180deg / var(--polygon-sides)));
+		
+		--polygon: min(var(--edge-1), var(--edge-2), var(--edge-3), var(--edge-4), var(--edge-5));
+		--sweep: clamp(0, sin((atan2(var(--dx), var(--dy)) + 180deg - var(--polygon-end-sweep) * (1turn + 1rad)) / 1e9) * -1e9, 1);
+		--pixel: 1 - (1 - var(--sweep)) * (1 - var(--polygon));
+	}
+}
+
+
+/* General styling */
+/* --------------- */
+
+html, body { height: 100%; }
+body {
+	margin: 0;
+	background: #012; color: #eee;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 16px;
+	padding: 16px;
+	box-sizing: border-box;
+	font-family: sans-serif;
+	font-size: 16px;
+	@media (orientation: portrait) { flex-flow: column-reverse nowrap; }
+	@media (prefers-color-scheme: light) { background: #def; color: #111; }
+}
+.mode {
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: flex-end;
+	justify-content: center;
+	gap: 8px;
+	line-height: 1.5;
+	max-width: 300px;
+	@media (orientation: portrait) { flex-flow: row wrap; }
+	& label {
+		padding: 4px 16px;
+		border-radius: 5px;
+		cursor: pointer;
+		background: #123;
+		@media (prefers-color-scheme: light) { background: #cde; }
+		&:hover { color: #69d; }
+		&:focus-within {
+			outline: 1px solid currentColor;
+			outline-offset: 1px;
+		}
+		&:has(input:checked) {
+			background: #69d;
+			color: #111;
+		}
+	}
+	& input {
+		position: absolute;
+		opacity: 0;
+		scale: 0;
+	}
+}
