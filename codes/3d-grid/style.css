@@ -1,0 +1,53 @@
+body {
+  background: darkblue;
+  background: linear-gradient(
+    0deg,
+    rgba(5, 0, 87, 1) 0%,
+    rgba(11, 11, 176, 1) 100%
+  );
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  overflow: hidden;
+}
+div,
+div::after {
+  position: absolute;
+  width: 55vw;
+  height: 10vh;
+  left: 0;
+  top: -100px;
+  transform-origin: top left;
+  border-bottom: 1px solid hotpink;
+  border-radius: 0 0 0 100%;
+}
+div::after {
+  content: "";
+  left: 100%;
+  top: 100%;
+  border-radius: 0 100% 0 0;
+  border-top: 1px solid deeppink;
+  border-bottom: none;
+}
+div::before {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 6px;
+  background: #ffffff;
+  box-shadow: 0 0 20px #ffffff;
+  top: 0;
+  left: 0;
+  border-radius: 999px;
+  animation: spark 6000ms linear infinite;
+  transform: scale(0.1) translate(-20vw, 0);
+  animation-delay: inherit;
+}
+@keyframes spark {
+  0% {
+    transform: scale(0.1) translate(-20vw, 0);
+  }
+  100% {
+    transform: scale(1) translate(150vw, 100%);
+  }
+}

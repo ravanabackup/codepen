@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Bubble ring animation with Houdini magic 🎩✨🐇</title>
+  <link rel="stylesheet" href="./style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="bubble" style="--k: 0; --sf: 0.46; --rf: 0.99; --df: -0.12; --af: 1.13"></div>
+<div class="bubble" style="--k: 0.007; --sf: 0.54; --rf: 1.14; --df: -0.67; --af: 0.86"></div>
+<div class="bubble" style="--k: 0.013; --sf: 0.78; --rf: 1.06; --df: -0.64; --af: 0.92"></div>
+<div class="bubble" style="--k: 0.02; --sf: 0.57; --rf: 0.88; --df: -0.89; --af: 1.25"></div>
+<div class="bubble" style="--k: 0.027; --sf: 0.71; --rf: 0.77; --df: -0.05; --af: 1.01"></div>
+<div class="bubble" style="--k: 0.033; --sf: 0.48; --rf: 1.24; --df: -0.87; --af: 1.06"></div>
+<div class="bubble" style="--k: 0.04; --sf: 0.4; --rf: 0.77; --df: -0.18; --af: 0.84"></div>
+<div class="bubble" style="--k: 0.047; --sf: 0.59; --rf: 1.15; --df: -0.55; --af: 0.87"></div>
+<div class="bubble" style="--k: 0.053; --sf: 0.95; --rf: 0.97; --df: -0.04; --af: 0.78"></div>
+<div class="bubble" style="--k: 0.06; --sf: 1; --rf: 1.08; --df: -0.11; --af: 1.06"></div>
+<div class="bubble" style="--k: 0.067; --sf: 0.74; --rf: 1.23; --df: -0.74; --af: 1.25"></div>
+<div class="bubble" style="--k: 0.073; --sf: 0.46; --rf: 1.21; --df: -0.24; --af: 0.98"></div>
+<div class="bubble" style="--k: 0.08; --sf: 0.89; --rf: 1.16; --df: -0.36; --af: 0.89"></div>
+<div class="bubble" style="--k: 0.087; --sf: 0.9; --rf: 1.07; --df: -0.22; --af: 0.93"></div>
+<div class="bubble" style="--k: 0.093; --sf: 0.56; --rf: 0.96; --df: -0.08; --af: 0.75"></div>
+<div class="bubble" style="--k: 0.1; --sf: 0.85; --rf: 0.75; --df: -0.91; --af: 1.22"></div>
+<div class="bubble" style="--k: 0.107; --sf: 0.56; --rf: 0.87; --df: -0.68; --af: 1.03"></div>
+<div class="bubble" style="--k: 0.113; --sf: 0.37; --rf: 1.12; --df: -0.48; --af: 1.16"></div>
+<div class="bubble" style="--k: 0.12; --sf: 0.97; --rf: 0.97; --df: -0.39; --af: 1.21"></div>
+<div class="bubble" style="--k: 0.127; --sf: 0.85; --rf: 0.91; --df: -0.91; --af: 1.01"></div>
+<div class="bubble" style="--k: 0.133; --sf: 0.71; --rf: 1.02; --df: -0.99; --af: 1.04"></div>
+<div class="bubble" style="--k: 0.14; --sf: 0.41; --rf: 0.86; --df: -0.76; --af: 1.12"></div>
+<div class="bubble" style="--k: 0.147; --sf: 0.77; --rf: 1.22; --df: -0.66; --af: 0.98"></div>
+<div class="bubble" style="--k: 0.153; --sf: 0.36; --rf: 0.83; --df: -0.51; --af: 1.15"></div>
+<div class="bubble" style="--k: 0.16; --sf: 0.94; --rf: 0.99; --df: -0.76; --af: 0.84"></div>
+<div class="bubble" style="--k: 0.167; --sf: 0.42; --rf: 0.9; --df: -0.1; --af: 1.19"></div>
+<div class="bubble" style="--k: 0.173; --sf: 0.38; --rf: 1.21; --df: -0.35; --af: 1.04"></div>
+<div class="bubble" style="--k: 0.18; --sf: 0.71; --rf: 1.24; --df: -0.06; --af: 1.08"></div>
+<div class="bubble" style="--k: 0.187; --sf: 0.61; --rf: 0.84; --df: -0.74; --af: 0.91"></div>
+<div class="bubble" style="--k: 0.193; --sf: 0.99; --rf: 1.04; --df: -0.29; --af: 1.06"></div>
+<div class="bubble" style="--k: 0.2; --sf: 0.39; --rf: 1.2; --df: -0.04; --af: 1.06"></div>
+<div class="bubble" style="--k: 0.207; --sf: 0.8; --rf: 1.05; --df: -0.06; --af: 1.11"></div>
+<div class="bubble" style="--k: 0.213; --sf: 0.51; --rf: 1.04; --df: -0.18; --af: 1.22"></div>
+<div class="bubble" style="--k: 0.22; --sf: 0.97; --rf: 0.91; --df: -0.7; --af: 1.15"></div>
+<div class="bubble" style="--k: 0.227; --sf: 0.99; --rf: 0.96; --df: -0.8; --af: 1.08"></div>
+<div class="bubble" style="--k: 0.233; --sf: 0.73; --rf: 1.02; --df: 0; --af: 0.8"></div>
+<div class="bubble" style="--k: 0.24; --sf: 0.57; --rf: 0.97; --df: -0.62; --af: 1.2"></div>
+<div class="bubble" style="--k: 0.247; --sf: 0.87; --rf: 1.01; --df: -0.1; --af: 0.88"></div>
+<div class="bubble" style="--k: 0.253; --sf: 0.43; --rf: 1.06; --df: -0.96; --af: 1.19"></div>
+<div class="bubble" style="--k: 0.26; --sf: 0.85; --rf: 1.1; --df: -0.88; --af: 1.16"></div>
+<div class="bubble" style="--k: 0.267; --sf: 0.78; --rf: 1.16; --df: -0.98; --af: 1.18"></div>
+<div class="bubble" style="--k: 0.273; --sf: 0.75; --rf: 1.04; --df: -0.11; --af: 0.94"></div>
+<div class="bubble" style="--k: 0.28; --sf: 0.69; --rf: 1.1; --df: -0.54; --af: 0.98"></div>
+<div class="bubble" style="--k: 0.287; --sf: 0.62; --rf: 0.83; --df: -0.93; --af: 1.07"></div>
+<div class="bubble" style="--k: 0.293; --sf: 0.83; --rf: 1.11; --df: -0.88; --af: 0.82"></div>
+<div class="bubble" style="--k: 0.3; --sf: 0.99; --rf: 0.93; --df: -0.59; --af: 0.85"></div>
+<div class="bubble" style="--k: 0.307; --sf: 0.91; --rf: 1.14; --df: -0.87; --af: 0.86"></div>
+<div class="bubble" style="--k: 0.313; --sf: 0.47; --rf: 1.22; --df: -0.65; --af: 1.17"></div>
+<div class="bubble" style="--k: 0.32; --sf: 0.43; --rf: 0.91; --df: -0.9; --af: 0.86"></div>
+<div class="bubble" style="--k: 0.327; --sf: 0.78; --rf: 1; --df: -0.6; --af: 1.07"></div>
+<div class="bubble" style="--k: 0.333; --sf: 0.95; --rf: 0.9; --df: -0.85; --af: 0.87"></div>
+<div class="bubble" style="--k: 0.34; --sf: 0.94; --rf: 0.99; --df: -0.45; --af: 1.1"></div>
+<div class="bubble" style="--k: 0.347; --sf: 0.71; --rf: 0.85; --df: -0.34; --af: 1.04"></div>
+<div class="bubble" style="--k: 0.353; --sf: 0.75; --rf: 0.93; --df: -0.58; --af: 1.11"></div>
+<div class="bubble" style="--k: 0.36; --sf: 0.92; --rf: 1.13; --df: -0.88; --af: 0.92"></div>
+<div class="bubble" style="--k: 0.367; --sf: 0.42; --rf: 1.18; --df: -0.21; --af: 1.03"></div>
+<div class="bubble" style="--k: 0.373; --sf: 0.47; --rf: 1; --df: -0.12; --af: 0.92"></div>
+<div class="bubble" style="--k: 0.38; --sf: 0.47; --rf: 1.23; --df: -0.25; --af: 0.85"></div>
+<div class="bubble" style="--k: 0.387; --sf: 0.37; --rf: 1.08; --df: -0.53; --af: 0.93"></div>
+<div class="bubble" style="--k: 0.393; --sf: 0.38; --rf: 1.19; --df: -0.7; --af: 1.03"></div>
+<div class="bubble" style="--k: 0.4; --sf: 0.45; --rf: 1.15; --df: 0; --af: 1.1"></div>
+<div class="bubble" style="--k: 0.407; --sf: 0.5; --rf: 0.91; --df: -0.79; --af: 1.04"></div>
+<div class="bubble" style="--k: 0.413; --sf: 0.68; --rf: 1.22; --df: -0.38; --af: 0.87"></div>
+<div class="bubble" style="--k: 0.42; --sf: 0.73; --rf: 0.9; --df: -0.5; --af: 1.23"></div>
+<div class="bubble" style="--k: 0.427; --sf: 0.42; --rf: 1.16; --df: -0.65; --af: 0.75"></div>
+<div class="bubble" style="--k: 0.433; --sf: 0.97; --rf: 1.1; --df: -0.82; --af: 0.79"></div>
+<div class="bubble" style="--k: 0.44; --sf: 0.46; --rf: 0.82; --df: -0.35; --af: 1.08"></div>
+<div class="bubble" style="--k: 0.447; --sf: 0.49; --rf: 0.99; --df: -0.78; --af: 1.2"></div>
+<div class="bubble" style="--k: 0.453; --sf: 0.68; --rf: 1.08; --df: -0.9; --af: 1.25"></div>
+<div class="bubble" style="--k: 0.46; --sf: 1; --rf: 0.91; --df: -0.99; --af: 0.83"></div>
+<div class="bubble" style="--k: 0.467; --sf: 0.55; --rf: 0.96; --df: -0.4; --af: 1.08"></div>
+<div class="bubble" style="--k: 0.473; --sf: 0.5; --rf: 1.01; --df: -0.48; --af: 1.14"></div>
+<div class="bubble" style="--k: 0.48; --sf: 0.72; --rf: 1.03; --df: -0.61; --af: 1.06"></div>
+<div class="bubble" style="--k: 0.487; --sf: 0.77; --rf: 1.21; --df: -0.18; --af: 1.02"></div>
+<div class="bubble" style="--k: 0.493; --sf: 0.36; --rf: 1.04; --df: -0.85; --af: 0.93"></div>
+<div class="bubble" style="--k: 0.5; --sf: 0.61; --rf: 0.88; --df: -0.78; --af: 1.25"></div>
+<div class="bubble" style="--k: 0.507; --sf: 0.81; --rf: 1.12; --df: -0.86; --af: 1.11"></div>
+<div class="bubble" style="--k: 0.513; --sf: 0.97; --rf: 0.78; --df: -0.35; --af: 1.2"></div>
+<div class="bubble" style="--k: 0.52; --sf: 0.74; --rf: 1.03; --df: -0.36; --af: 1.11"></div>
+<div class="bubble" style="--k: 0.527; --sf: 0.74; --rf: 1.11; --df: -0.93; --af: 1.01"></div>
+<div class="bubble" style="--k: 0.533; --sf: 0.71; --rf: 0.79; --df: -0.03; --af: 1.23"></div>
+<div class="bubble" style="--k: 0.54; --sf: 0.67; --rf: 0.79; --df: -0.25; --af: 1.07"></div>
+<div class="bubble" style="--k: 0.547; --sf: 0.87; --rf: 0.91; --df: -0.57; --af: 0.81"></div>
+<div class="bubble" style="--k: 0.553; --sf: 0.83; --rf: 1.07; --df: -0.08; --af: 1.12"></div>
+<div class="bubble" style="--k: 0.56; --sf: 0.64; --rf: 1.15; --df: -0.5; --af: 0.99"></div>
+<div class="bubble" style="--k: 0.567; --sf: 0.45; --rf: 1.11; --df: -0.99; --af: 0.92"></div>
+<div class="bubble" style="--k: 0.573; --sf: 0.74; --rf: 0.97; --df: -0.96; --af: 1.13"></div>
+<div class="bubble" style="--k: 0.58; --sf: 0.43; --rf: 1.16; --df: -0.87; --af: 0.75"></div>
+<div class="bubble" style="--k: 0.587; --sf: 0.95; --rf: 0.92; --df: -0.24; --af: 0.95"></div>
+<div class="bubble" style="--k: 0.593; --sf: 0.58; --rf: 0.94; --df: -0.66; --af: 0.93"></div>
+<div class="bubble" style="--k: 0.6; --sf: 0.39; --rf: 0.89; --df: -0.45; --af: 0.78"></div>
+<div class="bubble" style="--k: 0.607; --sf: 0.63; --rf: 0.97; --df: -0.45; --af: 1.21"></div>
+<div class="bubble" style="--k: 0.613; --sf: 0.99; --rf: 0.98; --df: -0.34; --af: 1.05"></div>
+<div class="bubble" style="--k: 0.62; --sf: 0.97; --rf: 1.24; --df: -0.27; --af: 1.06"></div>
+<div class="bubble" style="--k: 0.627; --sf: 0.55; --rf: 1.04; --df: -0.95; --af: 0.95"></div>
+<div class="bubble" style="--k: 0.633; --sf: 0.7; --rf: 0.94; --df: -0.19; --af: 1.01"></div>
+<div class="bubble" style="--k: 0.64; --sf: 0.7; --rf: 1.09; --df: -0.44; --af: 0.91"></div>
+<div class="bubble" style="--k: 0.647; --sf: 0.72; --rf: 1.03; --df: -0.89; --af: 0.96"></div>
+<div class="bubble" style="--k: 0.653; --sf: 0.78; --rf: 0.85; --df: -0.65; --af: 0.97"></div>
+<div class="bubble" style="--k: 0.66; --sf: 0.43; --rf: 0.88; --df: -0.58; --af: 0.85"></div>
+<div class="bubble" style="--k: 0.667; --sf: 0.82; --rf: 0.95; --df: -0.76; --af: 0.85"></div>
+<div class="bubble" style="--k: 0.673; --sf: 0.56; --rf: 0.81; --df: -0.28; --af: 0.86"></div>
+<div class="bubble" style="--k: 0.68; --sf: 0.66; --rf: 0.9; --df: -0.8; --af: 0.82"></div>
+<div class="bubble" style="--k: 0.687; --sf: 0.35; --rf: 0.94; --df: -0.72; --af: 0.84"></div>
+<div class="bubble" style="--k: 0.693; --sf: 0.72; --rf: 1.17; --df: -0.54; --af: 1.02"></div>
+<div class="bubble" style="--k: 0.7; --sf: 0.91; --rf: 1.11; --df: -0.14; --af: 1.24"></div>
+<div class="bubble" style="--k: 0.707; --sf: 0.71; --rf: 1.21; --df: -0.71; --af: 0.87"></div>
+<div class="bubble" style="--k: 0.713; --sf: 0.97; --rf: 0.81; --df: -0.25; --af: 0.76"></div>
+<div class="bubble" style="--k: 0.72; --sf: 0.74; --rf: 1.12; --df: -0.94; --af: 1.03"></div>
+<div class="bubble" style="--k: 0.727; --sf: 0.85; --rf: 0.97; --df: -0.84; --af: 0.94"></div>
+<div class="bubble" style="--k: 0.733; --sf: 0.69; --rf: 1.18; --df: -0.43; --af: 0.83"></div>
+<div class="bubble" style="--k: 0.74; --sf: 0.99; --rf: 1; --df: -0.12; --af: 1.15"></div>
+<div class="bubble" style="--k: 0.747; --sf: 0.99; --rf: 0.87; --df: -0.46; --af: 1.09"></div>
+<div class="bubble" style="--k: 0.753; --sf: 0.77; --rf: 1.19; --df: -0.51; --af: 1.09"></div>
+<div class="bubble" style="--k: 0.76; --sf: 0.62; --rf: 0.91; --df: -0.69; --af: 0.99"></div>
+<div class="bubble" style="--k: 0.767; --sf: 0.9; --rf: 1.07; --df: -0.87; --af: 0.85"></div>
+<div class="bubble" style="--k: 0.773; --sf: 0.56; --rf: 1; --df: -0.52; --af: 1.24"></div>
+<div class="bubble" style="--k: 0.78; --sf: 0.46; --rf: 1.22; --df: -0.8; --af: 1.17"></div>
+<div class="bubble" style="--k: 0.787; --sf: 0.75; --rf: 1.03; --df: -0.58; --af: 1.02"></div>
+<div class="bubble" style="--k: 0.793; --sf: 0.93; --rf: 0.75; --df: -0.19; --af: 0.98"></div>
+<div class="bubble" style="--k: 0.8; --sf: 0.36; --rf: 0.86; --df: -0.41; --af: 0.89"></div>
+<div class="bubble" style="--k: 0.807; --sf: 0.56; --rf: 1.1; --df: -0.47; --af: 1.23"></div>
+<div class="bubble" style="--k: 0.813; --sf: 0.61; --rf: 0.76; --df: -0.89; --af: 0.77"></div>
+<div class="bubble" style="--k: 0.82; --sf: 0.9; --rf: 1.1; --df: -0.26; --af: 1.21"></div>
+<div class="bubble" style="--k: 0.827; --sf: 0.84; --rf: 1.06; --df: -0.87; --af: 1.1"></div>
+<div class="bubble" style="--k: 0.833; --sf: 0.7; --rf: 0.79; --df: -0.43; --af: 0.99"></div>
+<div class="bubble" style="--k: 0.84; --sf: 0.57; --rf: 1.07; --df: -0.88; --af: 0.93"></div>
+<div class="bubble" style="--k: 0.847; --sf: 0.63; --rf: 1.01; --df: -0.67; --af: 1"></div>
+<div class="bubble" style="--k: 0.853; --sf: 0.51; --rf: 1.22; --df: -0.91; --af: 0.8"></div>
+<div class="bubble" style="--k: 0.86; --sf: 0.92; --rf: 0.82; --df: -0.09; --af: 0.78"></div>
+<div class="bubble" style="--k: 0.867; --sf: 0.96; --rf: 1.23; --df: -0.87; --af: 1.2"></div>
+<div class="bubble" style="--k: 0.873; --sf: 0.45; --rf: 1.06; --df: -0.81; --af: 0.81"></div>
+<div class="bubble" style="--k: 0.88; --sf: 0.46; --rf: 0.95; --df: -0.63; --af: 1.21"></div>
+<div class="bubble" style="--k: 0.887; --sf: 0.68; --rf: 0.9; --df: -0.99; --af: 0.83"></div>
+<div class="bubble" style="--k: 0.893; --sf: 0.82; --rf: 1.22; --df: -0.46; --af: 0.79"></div>
+<div class="bubble" style="--k: 0.9; --sf: 0.83; --rf: 1.11; --df: -0.71; --af: 1.04"></div>
+<div class="bubble" style="--k: 0.907; --sf: 0.37; --rf: 0.99; --df: -0.45; --af: 0.98"></div>
+<div class="bubble" style="--k: 0.913; --sf: 0.58; --rf: 0.92; --df: -0.85; --af: 0.87"></div>
+<div class="bubble" style="--k: 0.92; --sf: 0.76; --rf: 1.23; --df: -0.8; --af: 0.79"></div>
+<div class="bubble" style="--k: 0.927; --sf: 0.44; --rf: 0.84; --df: -0.89; --af: 1.1"></div>
+<div class="bubble" style="--k: 0.933; --sf: 0.57; --rf: 0.94; --df: -0.95; --af: 0.81"></div>
+<div class="bubble" style="--k: 0.94; --sf: 0.4; --rf: 0.78; --df: -0.84; --af: 0.75"></div>
+<div class="bubble" style="--k: 0.947; --sf: 0.62; --rf: 0.84; --df: -0.86; --af: 1.15"></div>
+<div class="bubble" style="--k: 0.953; --sf: 0.69; --rf: 1.11; --df: -0.69; --af: 0.82"></div>
+<div class="bubble" style="--k: 0.96; --sf: 0.37; --rf: 1.15; --df: -0.54; --af: 0.91"></div>
+<div class="bubble" style="--k: 0.967; --sf: 0.43; --rf: 1.01; --df: -0.23; --af: 0.82"></div>
+<div class="bubble" style="--k: 0.973; --sf: 0.54; --rf: 0.92; --df: -0.3; --af: 1.23"></div>
+<div class="bubble" style="--k: 0.98; --sf: 0.55; --rf: 1.21; --df: -0.04; --af: 1.18"></div>
+<div class="bubble" style="--k: 0.987; --sf: 0.74; --rf: 0.92; --df: -0.05; --af: 0.9"></div>
+<div class="bubble" style="--k: 0.993; --sf: 0.53; --rf: 0.95; --df: -0.41; --af: 0.9"></div>
+<!-- partial -->
+  
+</body>
+</html>

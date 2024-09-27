@@ -1,0 +1,46 @@
+@property --p {
+  syntax: '<number>';
+  initial-value: 0;
+  inherits: true;
+}
+@keyframes p {
+  to {
+    --p: 1;
+  }
+}
+html, body, div {
+  display: grid;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  transform-style: preserve-3d;
+  background: #000;
+}
+
+.tri {
+  grid-area: 1/ 1;
+  color: hsl(calc((var(--p) + var(--i)/var(--n))*360), 100%, 35%);
+  transform: scale(var(--p)) rotate(calc(var(--p)*-1turn + var(--i)*-.5turn/var(--n))) translate3d(calc(var(--p)*2*9em), 0, calc((var(--p) - 1)*9em)) rotate(calc(var(--p)*120deg));
+  filter: drop-shadow(0 0 5px currentcolor) blur(2px) drop-shadow(0 0 5px currentcolor);
+  animation: p 5s ease-in-out calc(var(--i)*-10s/var(--n)) infinite alternate;
+}
+.tri::before, .tri::after {
+  grid-area: 1/ 1;
+  place-self: center;
+  margin: -9em;
+  padding: 9em;
+  background: currentcolor;
+  --poly: polygon(calc(50% + 9em*0) calc(50% + 9em*-1), calc(50% + 9em*0.86603) calc(50% + 9em*0.5), calc(50% + 9em*-0.86603) calc(50% + 9em*0.5), calc(50% + 9em*0) calc(50% + 9em*-1), calc(50% + 7.75em*0) calc(50% + 7.75em*-1), calc(50% + 7.75em*-0.86603) calc(50% + 7.75em*0.5), calc(50% + 7.75em*0.86603) calc(50% + 7.75em*0.5), calc(50% + 7.75em*0) calc(50% + 7.75em*-1));
+  -webkit-clip-path: var(--poly);
+  clip-path: var(--poly);
+  content: "";
+}
+.tri::after {
+  background: #fff;
+  --poly: polygon(calc(50% + 8.6875em*0) calc(50% + 8.6875em*-1), calc(50% + 8.6875em*0.86603) calc(50% + 8.6875em*0.5), calc(50% + 8.6875em*-0.86603) calc(50% + 8.6875em*0.5), calc(50% + 8.6875em*0) calc(50% + 8.6875em*-1), calc(50% + 8.0625em*0) calc(50% + 8.0625em*-1), calc(50% + 8.0625em*-0.86603) calc(50% + 8.0625em*0.5), calc(50% + 8.0625em*0.86603) calc(50% + 8.0625em*0.5), calc(50% + 8.0625em*0) calc(50% + 8.0625em*-1));
+}

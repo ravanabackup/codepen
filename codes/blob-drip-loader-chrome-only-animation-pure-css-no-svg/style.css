@@ -1,0 +1,133 @@
+@property --ra {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: true;
+}
+@property --dy {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --fx {
+  syntax: '<number>';
+  initial-value: 1;
+  inherits: false;
+}
+@property --fy {
+  syntax: '<number>';
+  initial-value: 1;
+  inherits: true;
+}
+*, :before, :after {
+  margin: 0;
+  padding: 0;
+}
+
+:before, :after {
+  content: "";
+}
+
+div, :before, :after {
+  position: absolute;
+}
+
+body {
+  height: 100vh;
+}
+body:before, body:after {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: red 50%/ 43.30127em 100%;
+}
+body:before {
+  background-image: repeating-conic-gradient(#a317ae, #ff17b8, #a317ae 10%);
+}
+body:after {
+  background-image: repeating-linear-gradient(90deg, #f45301, #f9a81b, #f45301 10%);
+  --m: repeating-conic-gradient(at 100% 100%, transparent, red 1%, red 2%, transparent 3%, transparent 4%);
+  -webkit-mask: var(--m);
+  mask: var(--m);
+}
+
+.a2d {
+  --ra: 0deg;
+  overflow: hidden;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  filter: contrast(20);
+  animation: ra 4.5s linear infinite;
+  mix-blend-mode: multiply;
+}
+
+.comp {
+  top: 50%;
+  left: 50%;
+  filter: blur(15px);
+}
+
+.s3gon {
+  transform: rotate(var(--ra));
+}
+.s3gon:before {
+  margin: -14.43376em;
+  padding: 14.43376em;
+  background: #fff;
+  clip-path: polygon(calc(50%*(1 + 0)) calc(50%*(1 + -1)), calc(50%*(1 + 0.86603)) calc(50%*(1 + 0.5)), calc(50%*(1 + -0.86603)) calc(50%*(1 + 0.5)), calc(50%*(1 + 0)) calc(50%*(1 + -1)), calc(50% + (50% - 4em)*0) calc(50% + (50% - 4em)*-1), calc(50% + (50% - 4em)*-0.86603) calc(50% + (50% - 4em)*0.5), calc(50% + (50% - 4em)*0.86603) calc(50% + (50% - 4em)*0.5), calc(50% + (50% - 4em)*0) calc(50% + (50% - 4em)*-1));
+}
+
+.blob {
+  --x: calc(var(--i)*22.17157em);
+  --az: calc(var(--k)*120deg + var(--ra));
+  transform: rotate(var(--az)) translate(var(--x), 6.21688em) rotate(calc(-1*var(--az))) translatey(var(--dy, 0)) scale(var(--fx, 1), var(--fy, 1));
+  animation: dy 4.5s cubic-bezier(0.895, 0.03, 0.685, 0.22) calc((var(--k) + var(--m) - .5)*-1.5s) infinite;
+  animation-name: dy, fx, fy;
+}
+.blob:before, .blob:after {
+  margin: -0.70711em;
+  padding: 0.70711em;
+  border-radius: 0 50% 50% 50%;
+  transform: rotate(45deg);
+  background: #fff;
+}
+.blob:after {
+  bottom: 50%;
+  margin-left: -0.35355em;
+  padding: 1.41421em 0.35355em;
+}
+
+@keyframes ra {
+  to {
+    --ra: 1turn;
+  }
+}
+@keyframes dy {
+  0%, 66.66667% {
+    --dy: 0px;
+  }
+  100% {
+    --dy: calc(50vh + 25em);
+  }
+}
+@keyframes fy {
+  0%, 66.66667% {
+    --fy: 1;
+  }
+  66.66667% {
+    --fy: 3;
+  }
+  100% {
+    --fy: 2;
+  }
+}
+@keyframes fx {
+  0%, 66.66667% {
+    --fx: 1;
+  }
+  66.66667%, 100% {
+    --fx: 1.25;
+  }
+}

@@ -1,0 +1,30 @@
+html, body {
+  display: grid;
+}
+
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  --tmpl: repeat(var(--n), 1.125em);
+  grid-template: var(--tmpl)/var(--tmpl);
+  place-content: center;
+}
+
+.tile {
+  --m: calc(.5*(var(--n) - 1));
+  --abs-i: max(var(--m) - var(--i), var(--i) - var(--m));
+  --abs-j: max(var(--m) - var(--j), var(--j) - var(--m));
+  --rat: calc((var(--abs-i)*var(--abs-i) + var(--abs-j)*var(--abs-j))/var(--m)/var(--m));
+  transform: translate(var(--x), var(--y));
+  background: #000;
+  animation: a 2s cubic-bezier(0.65, 0, 0.35, 1) calc((var(--rat) - 2)*2s) infinite alternate;
+}
+
+@keyframes a {
+  0% {
+    transform: scale(0.3333333333);
+  }
+}

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - #Codevember 2017 — Rock</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="main">
+	<div id="content">
+		<div id="title">Black<br>& White<br>Marble</div>
+		<div id="header">	  	
+			<div id="baseline">
+				<p id="date">2017/11/17</p>
+				<h1>#Codevember 15</h1>
+				<p id="description">GLSL fragment experiment<br>made for #codevember 2017.<br>The theme of the day was "Rock".</p>
+			</div>		  	
+			<div id="author">— Code & Design by <a href="https://www.arivaux.com" target = "_blank">Alexandre Rivaux</a></div>
+		</div>
+	</div>
+	<div id="container"></div>	
+</div>
+
+<!-- GLSL SCRIPT -->
+<!-- vertex shader -->
+<script id="vertexShader" type="x-shader/x-vertex">
+	void main() {
+		gl_Position = vec4(position, 1.0);
+	}
+</script>
+
+<!-- fragment shader -->
+<script id="fragmentShader" type="x-shader/x-fragment">
+		#define PI 3.14159265359
+		#define TWO_PI 6.28318530718
+
+		uniform vec2 resolution;
+		uniform float time;
+		uniform vec2 colsrows;
+		
+		float random(float value){
+			return fract(sin(value) * 43758.5453123);
+		}
+		
+		float random(vec2 tex){
+			return fract(sin(dot(tex.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+		}
+		
+		vec2 random2D(vec2 uv){
+			uv = vec2(dot(uv, vec2(127.1, 311.7)), dot(uv, vec2(269.5, 183.3)));
+			//return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+			return fract(sin(uv) * 43758.5453123); //return without offset on x, y
+		}
+
+		vec3 random3D(vec3 uv){
+			uv = vec3(dot(uv, vec3(127.1, 311.7, 120.9898)), dot(uv, vec3(269.5, 183.3, 150.457)), dot(uv, vec3(380.5, 182.3, 170.457)));
+			return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
+		}
+
+
+		vec3 cubicCurve(vec3 value){
+			return value * value * (3.0 - 2.0 * value); // custom cubic curve
+		}
+
+		float noise(vec3 uv){
+			vec3 iuv = floor(uv);
+			vec3 fuv = fract(uv);
+			vec3 suv = cubicCurve(fuv);
+
+			float dotAA_ = dot(random3D(iuv + vec3(0.0)), fuv - vec3(0.0));
+			float dotBB_ = dot(random3D(iuv + vec3(1.0, 0.0, 0.0)), fuv - vec3(1.0, 0.0, 0.0));
+			float dotCC_ = dot(random3D(iuv + vec3(0.0, 1.0, 0.0)), fuv - vec3(0.0, 1.0, 0.0));
+			float dotDD_ = dot(random3D(iuv + vec3(1.0, 1.0, 0.0)), fuv - vec3(1.0, 1.0, 0.0));
+
+			float dotEE_ = dot(random3D(iuv + vec3(0.0, 0.0, 1.0)), fuv - vec3(0.0, 0.0, 1.0));
+			float dotFF_ = dot(random3D(iuv + vec3(1.0, 0.0, 1.0)), fuv - vec3(1.0, 0.0, 1.0));
+			float dotGG_ = dot(random3D(iuv + vec3(0.0, 1.0, 1.0)), fuv - vec3(0.0, 1.0, 1.0));
+			float dotHH_ = dot(random3D(iuv + vec3(1.0, 1.0, 1.0)), fuv - vec3(1.0, 1.0, 1.0));
+
+			float passH0 = mix(
+				mix(dotAA_, dotBB_,	suv.x),
+				mix(dotCC_, dotDD_, suv.x),
+				suv.y);
+
+			float passH1 = mix(
+				mix(dotEE_, dotFF_,	suv.x),
+				mix(dotGG_, dotHH_, suv.x),
+				suv.y);
+
+			return mix(passH0, passH1, suv.z);
+		}
+		
+		vec2 remapToSquareUV(vec2 uv, float res){
+			uv.y /= res;
+			uv.y -= res * 0.5;
+
+			return uv;
+		}
+	
+		mat2 rotate2d(float _angle){
+			return mat2(cos(_angle),-sin(_angle),
+						sin(_angle),cos(_angle));
+		}
+
+		vec2 rotateFrom(vec2 uv, vec2 center, float angle){
+			vec2 uv_ = uv - center;
+			uv_ =  rotate2d(angle) * uv_;
+			uv_ = uv_ + center;
+
+			return uv_;
+		}
+		
+		vec4 addGrain(vec2 uv, float time, float grainIntensity){
+    		float grain = random(fract(uv * time)) * grainIntensity;
+    		return vec4(vec3(grain), 1.0);
+		}
+		
+		#define OCTAVES 8
+		float turbulence(vec3 uv, float freq, float lacunarity){
+			float value = 0.0;
+			for(int i=0; i<OCTAVES; i++){
+				value += abs(noise(uv * freq) / freq);
+				freq *= lacunarity;
+			}
+			
+			return value;
+		}
+	
+		#define CONTRAST 3
+		float marble(float x){
+			//get sin
+			float sinx = sin(x);
+			float nx = 0.5 * (sinx + 1.0);
+			
+			for(int i=0; i<CONTRAST; i++){
+				nx = sqrt(nx);
+			}
+			
+			float c = nx;
+			
+			return c;
+		}
+	
+		vec2 scaleUV(vec2 uv, float scale){
+			vec2 center = vec2(0.5, 0.5);
+			return (uv - center) * scale + center;
+		}
+	
+
+		void main(){
+			vec2 uv = gl_FragCoord.xy / resolution.xy;
+			float res = resolution.x / resolution.y;
+			vec2 ouv = uv;
+			
+			uv = scaleUV(uv, 0.65);
+			uv = rotateFrom(uv, vec2(0.5), time * 0.001 * TWO_PI);
+			
+			//uv.y = fract(uv.y + time);
+			vec2 nuv = fract(colsrows * uv);
+			
+			float amplitude = 25.0;
+			nuv.x += amplitude * turbulence(vec3(uv, uv.x * uv.y +  time * 0.005), 1.5, 2.07);
+			float marblex= 1.0 - marble(nuv.x);
+			float marbleStep = smoothstep(0., 0.65, marblex);
+			
+			vec3 white = vec3(0.35);
+			//vec3 gold = vec3(212.0 / 255.0, 175.0 / 255.0, 55.0 / 255.0);
+			white *= marbleStep;
+			
+			float amplitudey= 25.0;
+			nuv.y += amplitudey * turbulence(vec3(uv.yx, uv.x * uv.y +  time * 0.005), 1.5, 2.07);
+			float marbley = 1.0 - marble(nuv.y);
+			float marbleStepy = smoothstep(0., 0.5, marbley);
+			vec3 whitey = vec3(0.2);
+			whitey *= marbleStepy;
+			
+			//uv += (noise(vec3(uv + time, time)) * 2.0 - 1.0) * 0.01;
+			vec2 cuv = nuv * (colsrows * 1.0) + nuv;
+			vec2 iuv = floor(cuv);
+			vec2 fuv = fract(cuv);
+			
+			//draw dist
+			vec3 cellColor = vec3(0.0);
+			
+			//voronoi
+			float minDist = 1.0;
+			vec2 minPoint = vec2(0.0);
+			
+			//iterate through cell neighbors
+			for(int i = -1; i <= 1; i++){
+				for(int j = -1; j <= 1; j++){
+					vec2 cellNei = vec2(i, j);
+					vec2 point = random2D(iuv + cellNei);
+					
+					//animated with time;
+					float noiseAngle = noise(vec3(uv, time)) * 2.0 - 1.0;
+					point += noiseAngle * sin( + time + TWO_PI * point) * 0.05;
+					
+					vec2 diff = cellNei + point - fuv;
+					float dist = length(diff);
+					if(dist < minDist){
+						minDist = dist;
+						minPoint = point;
+					}
+				}
+			}
+			float grey = (minPoint.r + minPoint.g);
+			cellColor += pow(minDist, 3.25);
+			cellColor += dot(minPoint, vec2(0.5, 0.5)) * .5;
+			cellColor = clamp(cellColor, vec3(0.15), vec3(1.0));
+			
+			//shape
+			float noiseEdge = noise(vec3(nuv, time * 0.1)) * 0.025;
+			float speed = -0.025;
+			vec2 centerAnimated = vec2(0.5, -0.5 + fract(time * speed) * 2.0);
+			vec2 shadowAnimated = vec2(0.5, -0.5 + fract(time * speed) * 2.0);
+			shadowAnimated += vec2(0.01 + noiseEdge, -0.01 + noiseEdge);
+			
+			float shapelen = length(ouv - centerAnimated);
+			float shapeShadowlen = length(ouv - shadowAnimated);
+			float circle = 1.0 - smoothstep(0.25, 0.255, shapelen);
+			float circleShadowAnimated = 1.0 - smoothstep(0.25, 0.35, shapeShadowlen);
+			
+			
+			vec3 marbleBlack = (whitey + white + cellColor * 0.25) * circle;
+			marbleBlack *= marbleBlack * 1.25;
+			
+			
+			vec3 marbleWhite = (1.0 - (whitey + white + cellColor * 0.25)) * (1.0 - (circleShadowAnimated + circle));
+			vec3 marbleShadow = (1.0 - (whitey + white + cellColor * 0.25)) * (circleShadowAnimated - circle);
+			marbleShadow *= 0.4;
+			//marbleShadow -= circle;
+			marbleShadow = clamp(marbleShadow, vec3(0.0), vec3(1.0));
+			marbleWhite = clamp(marbleWhite, vec3(0.0), vec3(1.0));
+			
+			vec4 grain = addGrain(uv, time, 0.075);
+			
+			gl_FragColor = vec4(marbleWhite + marbleShadow + marbleBlack, 1.0) + grain;
+		}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/87/three.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

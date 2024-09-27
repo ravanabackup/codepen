@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - #Codevember 2017 — Galaxy</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="main">
+	<div id="content">
+		<div id="title">The Galaxy</div>
+		<div id="header">	  	
+			<div id="baseline">
+				<p id="date">2017/11/01</p>
+				<h1>#Codevember 01</h1>
+				<p id="description">GLSL fragment experiment<br>made for #codevember 2017.<br>The theme of the day was "galaxy".</p>
+			</div>		  	
+			<div id="author">— Code & Design by <a href="https://www.arivaux.com" target = "_blank">Alexandre Rivaux</a></div>
+		</div>
+	</div>
+	<div id="container"></div>	
+</div>
+
+<!-- GLSL SCRIPT -->
+<!-- vertex shader -->
+<script id="vertexShader" type="x-shader/x-vertex">
+	void main() {
+		gl_Position = vec4(position, 1.0);
+	}
+</script>
+
+<!-- fragment shader -->
+<script id="fragmentShader" type="x-shader/x-fragment">
+		#ifdef GL_ES
+precision mediump float;
+#endif
+
+#define PI 3.14159265359
+#define TWO_PI 6.28318530718
+#define OFFSET 43758.5453123
+#define OCTAVE 4
+
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform float u_mouse;
+
+float random(float value){
+	return fract(sin(value) * OFFSET);
+}
+
+float random(vec2 tex){
+	return fract(sin(dot(tex.xy, vec2(12.9898, 78.233))) * OFFSET);
+}
+
+vec2 random2D(vec2 uv){
+	uv = vec2(dot(uv, vec2(127.1, 311.7)), dot(uv, vec2(269.5, 183.3)));
+	return -1.0 + 2.0 * fract(sin(uv) * OFFSET);
+}
+
+vec3 random3D(vec3 uv){
+	uv = vec3(dot(uv, vec3(127.1, 311.7, 120.9898)), dot(uv, vec3(269.5, 183.3, 150.457)), dot(uv, vec3(380.5, 182.3, 170.457)));
+	return -1.0 + 2.0 * fract(sin(uv) * OFFSET);
+}
+
+
+float cubicCurve(float value){
+	return value * value * (3.0 - 2.0 * value); // custom cubic curve
+}
+
+vec2 cubicCurve(vec2 value){
+	return value * value * (3.0 - 2.0 * value); // custom cubic curve
+}
+
+vec3 cubicCurve(vec3 value){
+	return value * value * (3.0 - 2.0 * value); // custom cubic curve
+}
+
+float noise(vec2 uv){
+	vec2 iuv = floor(uv);
+	vec2 fuv = fract(uv);
+	vec2 suv = cubicCurve(fuv);
+
+	float dotAA_ = dot(random2D(iuv + vec2(0.0)), fuv - vec2(0.0));
+	float dotBB_ = dot(random2D(iuv + vec2(1.0, 0.0)), fuv - vec2(1.0, 0.0));
+	float dotCC_ = dot(random2D(iuv + vec2(0.0, 1.0)), fuv - vec2(0.0, 1.0));
+	float dotDD_ = dot(random2D(iuv + vec2(1.0, 1.0)), fuv - vec2(1.0, 1.0));
+	
+	return mix(
+		mix(dotAA_, dotBB_,	suv.x),
+		mix(dotCC_, dotDD_, suv.x),
+		suv.y);
+}
+
+float noise(vec3 uv){
+	vec3 iuv = floor(uv);
+	vec3 fuv = fract(uv);
+	vec3 suv = cubicCurve(fuv);
+
+	float dotAA_ = dot(random3D(iuv + vec3(0.0)), fuv - vec3(0.0));
+	float dotBB_ = dot(random3D(iuv + vec3(1.0, 0.0, 0.0)), fuv - vec3(1.0, 0.0, 0.0));
+	float dotCC_ = dot(random3D(iuv + vec3(0.0, 1.0, 0.0)), fuv - vec3(0.0, 1.0, 0.0));
+	float dotDD_ = dot(random3D(iuv + vec3(1.0, 1.0, 0.0)), fuv - vec3(1.0, 1.0, 0.0));
+
+	float dotEE_ = dot(random3D(iuv + vec3(0.0, 0.0, 1.0)), fuv - vec3(0.0, 0.0, 1.0));
+	float dotFF_ = dot(random3D(iuv + vec3(1.0, 0.0, 1.0)), fuv - vec3(1.0, 0.0, 1.0));
+	float dotGG_ = dot(random3D(iuv + vec3(0.0, 1.0, 1.0)), fuv - vec3(0.0, 1.0, 1.0));
+	float dotHH_ = dot(random3D(iuv + vec3(1.0, 1.0, 1.0)), fuv - vec3(1.0, 1.0, 1.0));
+
+	float passH0 = mix(
+		mix(dotAA_, dotBB_,	suv.x),
+		mix(dotCC_, dotDD_, suv.x),
+		suv.y);
+
+	float passH1 = mix(
+		mix(dotEE_, dotFF_,	suv.x),
+		mix(dotGG_, dotHH_, suv.x),
+		suv.y);
+	
+	return mix(passH0, passH1, suv.z);
+}
+
+float fbm(vec3 st, float amp, float freq, float lac, float gain){
+	//initial value
+	float fbm = 0.0;
+
+	for(int i = 0; i < OCTAVE; i++){
+		fbm += amp * noise(st * freq);
+		freq *= lac;
+		amp *= gain;
+	}
+
+	return fbm;
+}
+
+vec3 cloud(vec2 uv, vec2 colrow, float scale, float amplitude, float frequency, float lacunarity, float gain, float time){
+    vec3 pos = vec3(uv.x * colrow.x, uv.y * colrow.y, 1.0 * scale);
+	
+	float nc  = noise(pos + time);
+	float fractal = fbm(pos + time, amplitude, frequency, lacunarity, gain); 
+	return vec3(fractal * 0.5 + 0.5);
+}
+
+mat2 rotate2d(float _angle){
+    return mat2(cos(_angle),-sin(_angle),
+                sin(_angle),cos(_angle));
+}
+
+vec2 rotateFrom(vec2 uv, vec2 center, float angle){
+ 	vec2 uv_ = uv - center;
+  	uv_ =  rotate2d(angle) * uv_;
+  	uv_ = uv_ + center;
+
+  	return uv_;
+}
+
+vec4 addGrain(vec2 uv, float time, float grainIntensity){
+    float grain = random(fract(uv * time)) * grainIntensity;
+    return vec4(vec3(grain), 1.0);
+}
+
+float stroke(float x, float s, float w){
+	float d = step(s, x + w * 0.5) - step(s, x-w*0.5);
+	return clamp(d, 0.0, 1.0);
+}
+
+float strokeSmooth(float x, float s, float w, float smoothEdges){
+	float d = smoothstep(s - smoothEdges * 0.5, s + smoothEdges * 0.5, x + w * 0.5) - smoothstep(s - smoothEdges * 0.5, s + smoothEdges * 0.5, x-w*0.5);
+	return clamp(d, 0.0, 1.0);
+}
+
+float circle(vec2 st, vec2 center){
+	return length(st - center) * 2.0;
+}
+
+vec2 remapToSquareUV(vec2 uv, float res){
+	uv.y /= res;
+	uv.y -= res * 0.5;
+
+	return uv;
+}
+
+float getAngle(vec2 uv, vec2 center, float iteration){
+	vec2 toCenter = center - uv;
+	float theta = atan(toCenter.y, toCenter.x); //return an angle between -Pi & Pi
+
+	//add PI to that in order to change its range from -Pi, Pi to 0, 2*Pi
+	//Add to in order to turn
+	float gamma = TWO_PI / 2.0 + theta;
+
+	//map theta angle from -Pi, Pi to 0, 1
+	//float mapTheta = theta / TWO_PI + 0.5;
+	//Use to in order to count TurnArround angle
+	float eta = mod(gamma * iteration, TWO_PI) / TWO_PI;
+
+
+	return gamma * iteration;
+}
+
+float getNormAngle(vec2 uv, vec2 center, float iteration){
+	vec2 toCenter = center - uv;
+	float theta = atan(toCenter.y, toCenter.x); //return an angle between -Pi & Pi
+
+	//add PI to that in order to change its range from -Pi, Pi to 0, 2*Pi
+	//Add to in order to turn
+	float gamma = TWO_PI / 2.0 + theta;
+
+	//map theta angle from -Pi, Pi to 0, 1
+	//float mapTheta = theta / TWO_PI + 0.5;
+	//Use to in order to count TurnArround angle
+	float eta = mod(gamma * iteration, TWO_PI) / TWO_PI;
+
+
+	return eta;
+}
+
+void main(){
+	vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+	float res = u_resolution.x / u_resolution.y;
+    uv = remapToSquareUV(uv, res);
+	uv.y += 0.40;
+    vec2 ouv = uv;
+    
+    //use smoothstep for global star
+    float gsgridRes = 200.0;
+    vec2 fgsGrid = fract(ouv * gsgridRes);
+    vec2 igsGrid = floor(ouv * gsgridRes);
+    float gsDist = length(fgsGrid - vec2(0.5));
+    float globalStar = 1.0 - smoothstep(0.0, 0.65 * random(igsGrid * igsGrid), gsDist); 
+    float gsInc = random(igsGrid);
+    globalStar *= step(0.99, gsInc) * length(ouv - vec2(0.5)) * 0.35;
+	
+	float scaler = 1.25 - u_mouse * 0.65;
+	uv = (uv - vec2(0.5)) * (scaler) + vec2(0.5);
+    
+    
+	//define angle deformation
+	////redefine without sin in order to create a real offset such as en inc -1/1 to x and -1/1 to y then clamp to y. We will not need to use cancel row anymore
+	float angle = getAngle(uv, vec2(0.5), 1.0);
+	uv.y += (length(uv - vec2(0.5)) * sin(angle) * 0.85) * u_mouse;
+    //redefine angle
+    angle = getAngle(uv, vec2(0.5), 1.0);
+	uv.x -= (length(uv - vec2(0.5)) * sin(angle) * 0.45) * u_mouse;
+	
+    //store uv
+    vec2 duv = uv;
+    float colrow = 5.0;
+    vec4 clouds = vec4(cloud(uv, vec2(colrow), 1.0, .125, 8.0, 0.35, 3.0, u_time * .125) * 0.05, 1.0);
+    clouds = clamp(clouds, vec4(0.0), vec4(1.0));
+    
+    //define rotation
+	float dist = length(uv - vec2(0.5)) * TWO_PI;
+	float incDist = dist * (0.45 * 10.0);
+	uv = rotateFrom(uv, vec2(0.5), incDist - u_time * 0.25);
+	duv = rotateFrom(duv, vec2(0.5), incDist - u_time * 0.025);
+    
+
+	//define random offset
+	float rand = random(uv + u_time);
+	vec2 offset = vec2(0.01) * rand;
+
+	float gred = 0.0;
+	float ggreen = 0.0;
+	float gblue = 0.0;
+	int iteration = 6;
+	for(int i=0; i<6; i++){
+		float inc =  (0.75 / float (iteration)) * float(i);
+
+		float circleDistRed = circle(uv + offset, vec2(0.5));
+		float circleDistGreen = circle(uv, vec2(0.5));
+		float circleDistBlue = circle(uv - offset, vec2(0.5));
+
+		float angleRed = sin(getAngle(uv + offset, vec2(0.5), 4.0 * inc)) * inc + 0.95;
+		float angleGreen = sin(getAngle(uv, vec2(0.5), 4.0 * inc)) * inc + 0.95;
+		float angleBlue = sin(getAngle(uv - offset, vec2(0.5), 4.0 * inc)) * inc + 0.95;
+
+		float lineRed = strokeSmooth(circleDistRed, angleRed * 0.5, 0.25, 0.2);
+		float lineGreen = strokeSmooth(circleDistGreen, angleGreen * 0.5, 0.25, 0.2);
+		float lineBlue = strokeSmooth(circleDistBlue, angleBlue * 0.5, 0.25, 0.2);
+
+		gred += lineRed / float (iteration);
+		ggreen += lineGreen / float (iteration);
+		gblue += lineBlue / float (iteration);
+	}
+	gred = clamp(gred, 0.0, 1.0);
+	ggreen = clamp(ggreen, 0.0, 1.0);
+	gblue = clamp(gblue, 0.0, 1.0);
+
+	float globalIlluminationRed = 1.0 - smoothstep(0.0, 0.5, length((uv + offset) - vec2(0.5)));
+	float globalIlluminationGreen = 1.0 - smoothstep(0.0, 0.5, length(uv - vec2(0.5)));
+	float globalIlluminationBlue = 1.0 - smoothstep(0.0, 0.5, length((uv - offset) - vec2(0.5)));
+
+	float heartRed = 0.0;
+	float heartGreen = 0.0;
+	float heartBlue = 0.0;
+	float smoothEdge = 0.05;
+	int heartIteration = 4;
+	for(int i=0; i<4; i++){
+		float inc = (0.25 / float(heartIteration)) * float(i);
+		float iheartRed = 1.0 - smoothstep(inc - smoothEdge, inc + smoothEdge, length((uv + offset) - vec2(0.5)));
+		float iheartGreen = 1.0 - smoothstep(inc - smoothEdge, inc + smoothEdge, length(uv - vec2(0.5)));
+		float iheartBlue = 1.0 - smoothstep(inc - smoothEdge, inc + smoothEdge, length((uv - offset) - vec2(0.5)));
+		
+		heartRed += iheartRed / float(heartIteration);
+		heartGreen += iheartGreen / float(heartIteration);
+		heartBlue += iheartBlue / float(heartIteration);
+	}
+	heartRed += 1.0 - smoothstep(0.025 - smoothEdge, 0.025 + smoothEdge, length((uv + offset) - vec2(0.5)));
+	heartGreen += 1.0 - smoothstep(0.025 - smoothEdge, 0.025 + smoothEdge, length(uv - vec2(0.5)));
+	heartBlue += 1.0 - smoothstep(0.025 - smoothEdge, 0.025 + smoothEdge, length((uv - offset) - vec2(0.5)));
+
+	float red = gred + globalIlluminationRed * 0.25 + heartRed * 0.75;
+	float green = ggreen + globalIlluminationGreen * 0.25 + heartGreen * 0.75;
+	float blue = gblue + globalIlluminationBlue * 0.25 + heartBlue * 0.75;
+    
+    //inc lights
+    float lgridRes = 10.0;
+    vec2 flGrid = fract(uv * lgridRes);
+    vec2 ilGrid = floor(uv * lgridRes);
+    float lDist = length(flGrid - vec2(0.5));
+    float light = 1.0 - smoothstep(0.0, 0.5 * random(ilGrid * ilGrid), lDist); 
+    float lInc = random(ilGrid);
+    float heartLightDist = 1.0 - (length(uv - vec2(0.5)) * 2.0);
+    light *= smoothstep(0.0, (1.0 - heartLightDist * heartLightDist) * 1.0, lInc) * (pow(heartLightDist, 10.0));
+    light = pow(clamp(light, 0.0, 1.0), 1.0);
+    
+    //heart stars
+    float sgridRes = 1000.0;
+    vec2 fsGrid = fract(duv * sgridRes);
+    vec2 isGrid = floor(duv * sgridRes);
+    float sDist = length(fsGrid - vec2(0.5));
+    float star = 1.0 - smoothstep(0.0, 0.5 * random(isGrid * isGrid), sDist); 
+    float sInc = random(isGrid);
+    float heartDist = 1.0 - (length(uv - vec2(0.5)) * 2.0);
+    star *= step((1.0 - heartDist * heartDist) * 0.9, sInc) * (heartDist) * 20000.5;
+    star = clamp(star, 0.0, 0.075) * .5;
+
+	vec4 color = vec4(vec3(red, green, blue), 1.0);
+	vec4 grain = addGrain(ouv, u_time, 0.055);
+	float fog =  0.75 + clamp(1.0 - scaler, 0.0, 1.0) * 0.5;
+	
+	gl_FragColor = globalStar + star + (color * light + color) * fog + clouds + grain;
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/87/three.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

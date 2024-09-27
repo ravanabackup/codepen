@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Blob drip 🔺 loader (Chrome only animation, pure CSS, no SVG)</title>
+  <link rel="stylesheet" href="./style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<style>.blob { --k: 0 }.blob:nth-child(n + 6) { --k: 1 }.blob:nth-child(n + 11) { --k: 2 }.blob:nth-child(5n + 1) { --i: calc((0 + var(--m))/5 - .5*4/5) }.blob:nth-child(5n + 2) { --i: calc((1 + var(--m))/5 - .5*4/5) }.blob:nth-child(5n + 3) { --i: calc((2 + var(--m))/5 - .5*4/5) }.blob:nth-child(5n + 4) { --i: calc((3 + var(--m))/5 - .5*4/5) }.blob:nth-child(5n + 5) { --i: calc((4 + var(--m))/5 - .5*4/5) }
+</style>
+<div class="a2d">
+  <div class="comp s3gon"></div>
+  <div class="comp blobs">
+    <div class="blob" style="--m: -0.0774"></div>
+    <div class="blob" style="--m: -0.1548"></div>
+    <div class="blob" style="--m: 0.1634"></div>
+    <div class="blob" style="--m: -0.1032"></div>
+    <div class="blob" style="--m: -0.0258"></div>
+    <div class="blob" style="--m: -0.0129"></div>
+    <div class="blob" style="--m: -0.0645"></div>
+    <div class="blob" style="--m: 0.030100000000000002"></div>
+    <div class="blob" style="--m: -0.129"></div>
+    <div class="blob" style="--m: -0.0774"></div>
+    <div class="blob" style="--m: -0.021500000000000002"></div>
+    <div class="blob" style="--m: 0.0172"></div>
+    <div class="blob" style="--m: 0.1118"></div>
+    <div class="blob" style="--m: -0.0688"></div>
+    <div class="blob" style="--m: -0.060200000000000004"></div>
+  </div>
+</div>
+<!-- partial -->
+  <script src='https://leaverou.github.io/conic-gradient/conic-gradient.js'></script>
+</body>
+</html>

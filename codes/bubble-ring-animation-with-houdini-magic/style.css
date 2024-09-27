@@ -1,0 +1,65 @@
+@property --si {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+@property --o {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+@property --dr {
+  syntax: "<length>";
+  initial-value: 0px;
+  inherits: false;
+}
+@property --a1 {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+body {
+  background: #000;
+}
+
+.bubble {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  --r: calc(var(--sf)*0.75em);
+  margin: calc(-1*var(--r));
+  padding: var(--r);
+  border-radius: 50%;
+  --a0: calc(var(--k)*2*360deg);
+  --a: calc(var(--a0) + var(--a1, 0deg));
+  transform: rotate(var(--a)) translate(calc(25vmin + var(--dr, 0px))) scale(var(--si, 0));
+  --hsl: calc(var(--a)*4), 100%, 65%;
+  box-shadow: 0 0 37px HSL(var(--hsl)), inset 0 0 5px HSL(var(--hsl));
+  opacity: var(--o, 0);
+  background: HSLa(var(--hsl), 0.25);
+  --tro: calc(var(--rf)*9s);
+  --tam: calc(var(--af)*59s);
+  /**/
+  animation: si 8s ease-out calc(var(--k)*8s) infinite, o 8s ease-in calc(var(--k)*8s) infinite, dr var(--tro) ease-in-out calc(var(--df)*var(--tro)) infinite alternate, a1 var(--tam) linear infinite;
+}
+
+@keyframes si {
+  15%, 100% {
+    --si: 1 ;
+  }
+}
+@keyframes o {
+  0%, 25% {
+    --o: .99 ;
+  }
+}
+@keyframes dr {
+  to {
+    --dr: 0.75em ;
+  }
+}
+@keyframes a1 {
+  0% {
+    --a1: 1turn ;
+  }
+}
