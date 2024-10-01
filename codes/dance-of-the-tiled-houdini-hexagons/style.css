@@ -1,0 +1,174 @@
+:root {
+  --size: 6vmax;
+}
+li {
+  background: hsl(
+    var(--hue, 343), 
+    calc(var(--saturation, 1) * 100%),
+    calc(var(--lightness, 1) * 100%));
+  -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* oh Safari 11 */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  
+  animation: basic-dance 3000ms infinite alternate cubic-bezier(.57,-0.1,.53,1);
+}
+
+@keyframes basic-dance {
+  0% {
+    transform: scale(.96);
+  }
+  20%, 40% {
+    transform: scale(.8);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+/* Get fancy if possible */
+.css-vars-in-keyframes-supported li {
+  animation-name: fancy-dance;
+  animation-timing-function: ease-in-out;
+  animation-duration: 28000ms;
+  transform: 
+    scale(var(--s1))
+    rotateX(var(--rx3))
+    rotateY(var(--ry3))
+    translateX(var(--tx1))
+    translateY(var(--ty1))
+    rotateZ(var(--rz1))
+    rotateX(var(--rx1))
+    rotateY(var(--ry1))
+    translateX(var(--tx2))
+    rotateX(var(--rx2))
+    rotateY(var(--ry2))
+    translateY(var(--ty2))
+    rotateZ(var(--rz2));
+  
+  transition: 
+    --rx3 450ms ease-out,
+    --ry3 450ms ease-out;
+}
+
+@keyframes fancy-dance {
+  9%, 100% {
+    --s1: .8;
+    --ty1: 0vmax;
+  }
+  24%, 98% {
+    --tx1: 0vmax;
+    --tx2: 0vmax;
+  }
+  30%, 81% {
+    --tx1: -2vmax;
+    --tx2: 2vmax;
+  }
+  25.5% {
+    --ty1: 3.5vmax;
+    --ty2: -3.5vmax;
+  }
+  28%% {
+    --rz1: 0deg;
+    --rz2: 0deg;
+  }
+  100% {
+    --rz1: -360deg;
+    --rz2: 360deg;
+  }
+  40%, 91% {
+    --rz1: -310deg;
+    --rz2: 310deg;
+  }
+  18% {
+    --rx1: 0deg;
+    --ry2: 0deg;
+  }
+  60%, 91%, 100% {
+    --rx1: 1800deg;
+    --ry2: -720deg;
+  }
+  10%, 58% {
+    --rx2: 0deg;
+    --ry1: 0deg;
+  }
+  98%, 100% {
+    --rx2: 720deg;
+    --ry1: 1800deg;
+  }
+  28% {
+    --rx2: -180deg;
+  }
+}
+
+
+/* Tiling for Grid */
+
+ul {
+  display: grid;
+  grid-template-columns: repeat(20, var(--size));
+  grid-template-rows: repeat(24, calc(var(--size) * .75));
+  height: 100vh;
+  width: 100%;
+  transform: translate(calc(var(--size) * -1), calc(var(--size) * -1));
+  perspective: 100vmax;
+}
+li {
+  grid-column-end: span 2;
+  grid-row-end: span 2;
+  height: calc(var(--size) * 2);
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 4vmax;
+}
+li:first-of-type,
+li:nth-of-type(20),
+li:nth-of-type(39),
+li:nth-of-type(58),
+li:nth-of-type(77),
+li:nth-of-type(96),
+li:nth-of-type(115),
+li:nth-of-type(134) {
+  grid-column-start: 2;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: radial-gradient(circle, hsl(183, 10%, 12%), hsl(183, 10%, 8%));
+  font-family: system-ui, 'Segoe UI', sans-serif;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* for the dancing of comedy/tragedy (see JS) */
+li {
+  color: hsl(
+    var(--hue, 343), 
+    calc(var(--saturation, 1) * 100%),
+    calc(var(--lightness, 1) * 100%));
+}
+
+
+footer {
+  color: white;
+  background: rgba(0,0,0,0.6);
+  padding: .7rem;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  line-height: 1.5;
+  font-size: 14px;
+}
+code {
+  font-family: monospace;
+}
+.css-vars-in-keyframes-supported footer {
+  display: none;
+}

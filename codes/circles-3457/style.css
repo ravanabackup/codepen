@@ -1,0 +1,72 @@
+main, aside {
+  width: 60vmin;
+  height: 60vmin;
+  margin: auto;
+  position: absolute;
+  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 50%;
+}
+main {
+  z-index: 2;
+}
+
+
+
+div {
+  --duration: 1500ms;
+  --duration-2: calc(var(--duration) * 1.333);
+  width: calc(var(--i, 1) * 10vmin);
+  height: calc(var(--i, 1) * 10vmin);
+  background: hsl(calc(var(--i) * 60 - 18), 100%, 50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%,-50%) scale(.375);
+  animation: 
+    grow var(--duration-2) calc(var(--i) / 6 * var(--duration-2)) infinite alternate cubic-bezier(1, 0.4, 0.4, 1);
+}
+
+aside div {
+  animation-delay: calc(var(--i) / 6.25 * var(--duration-2));
+}
+
+@keyframes blurry {
+  100% {
+    filter: blur(.4vmin);
+  }
+}
+@keyframes grow {
+  100% {
+    transform: translate(-50%,-50%) scale(1);
+  }
+}
+
+body {
+  margin: 0;
+  display: flex;
+  background: hsl(183,100%,10%);
+}
+
+
+
+
+
+
+main {
+  animation: glitch 500ms 0ms infinite alternate linear;
+  --path-start: polygon(evenodd, 80.8554% 69.6509%, 82.6253% 68.9095%, 5.53225% 25.7773%, 35.7125% 28.314%, 53.3116% 46.8778%, 35.8056% 89.7625%, 53.6459% 39.1957%, 6.7834% 59.6726%, 18.885% 37.1451%, 84.6003% 0.193515%, 59.6738% 41.2343%, 90.014% 1.62551%, 17.4627% 35.3144%, 34.0956% 67.4793%, 2.74312% 82.8026%, 58.856% 83.7824%, 87.3224% 50.4474%, 73.6701% 53.8972%, 88.8233% 87.8396%, 61.097% 78.254%, 11.1512% 12.4587%, 48.2666% 78.3461%, 10.5036% 51.4961%, 58.2883% 17.6846%, 82.0105% 10.5242%, 83.8816% 29.7765%, 97.0065% 35.6109%, 50.7699% 65.348%, 26.2326% 24.7924%);
+  --path-end: polygon(evenodd, 84.428% 93.7216%, 48.4301% 89.8054%, 57.9892% 85.1926%, 4.19857% 19.1556%, 9.8317% 87.8438%, 98.5258% 6.52828%, 84.4535% 82.108%, 25.7895% 67.2165%, 91.5252% 97.0093%, 26.7602% 39.2401%, 60.4995% 8.73225%, 5.92828% 47.4215%, 5.27364% 64.2123%, 88.8187% 90.7993%, 44.2549% 85.4504%, 79.2162% 53.7624%, 72.8433% 59.9838%, 3.30589% 48.8046%, 63.1457% 42.2659%, 50.6326% 88.9688%, 44.626% 16.8467%, 61.5237% 45.1449%, 7.73648% 74.7282%, 52.0598% 40.2177%, 27.6951% 60.9144%, 37.3894% 66.3356%, 60.796% 78.1042%, 50.0143% 33.898%, 74.4231% 99.2696%);
+}
+
+@keyframes glitch {
+  0% {
+    -webkit-clip-path: var(--path-start);
+    clip-path: var(--path-start);
+  }
+  100% {
+    -webkit-clip-path: var(--path-end);
+    clip-path: var(--path-end);
+  }
+}

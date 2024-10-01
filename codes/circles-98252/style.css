@@ -1,0 +1,35 @@
+div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: var(--base);
+  --base: translate(-50%, -50%);
+  clip-path: polygon(0% 0%, 50% 50%, 100% 0%, 100% 100%, 0% 100%);
+  border: 4vmin dotted currentColor;
+  color: hsl(var(--h, 343), var(--s, 100%), var(--l, 50%));
+  border-radius: 50%;
+  height: var(--width);
+  width: var(--width);
+  --width: 60vmin;
+  mix-blend-mode: screen;
+  opacity: 1;
+}
+
+main {
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.5rem 1rem;
+}

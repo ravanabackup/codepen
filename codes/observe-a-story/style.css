@@ -1,0 +1,69 @@
+:root {
+  --c1: rgb(155,185,245);
+  --c2: rgb(92,120,198);
+  --c3: rgb(25,50,150);
+  --dark: rgb(0,0,0);
+  --w: 3vmin;
+}
+
+main {
+  position: relative;
+  height: 70vmin;
+  width: 100vmin;
+  overflow: hidden;
+  
+  /* Safari 12 still has this prefixed */
+  -webkit-clip-path: polygon(
+    0% 0%, 
+    100% 0%, 
+    100% 80%, 
+    75% 60%, 
+    46% 85%, 
+    23% 68%, 
+    0% 84%
+  );
+  
+  clip-path: polygon(
+    0% 0%, 
+    100% 0%, 
+    100% 80%, 
+    75% 60%, 
+    46% 85%, 
+    23% 68%, 
+    0% 84%
+  );
+}
+
+div {
+  border: var(--w) solid var(--c1);
+  border-right-color: var(--c2);
+  border-left-color: var(--c3);
+  border-bottom-color: var(--c3);
+  position: absolute;
+  top: -25vmin;
+  left: 0;
+  width: calc(var(--n) * var(--w) * 4);
+  height: calc(var(--n) * var(--w) * 4);
+  border-radius: 50%;
+  transform: translate(-50%,-50%) rotate(0deg);
+  animation: r 40000ms 0ms infinite linear;
+  animation-delay: calc(var(--n) * -5400ms);
+}
+
+@keyframes r {
+  100% {
+    transform: translate(-50%,-50%) rotate(360deg);
+  }
+}
+
+body {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dark);
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}

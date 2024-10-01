@@ -1,0 +1,40 @@
+body {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+ul {
+  flex: 1;
+  width: 120%;
+  margin-left: -10%;
+  display: flex;
+  background: blue;
+}
+ul:nth-of-type(2), ul:nth-of-type(5) {
+  width: 140%;
+  margin-left: -20%;
+}
+ul:nth-of-type(3), ul:nth-of-type(4) {
+  width: 180%;
+  margin-left: -40%;
+}
+
+li {
+  flex: 1;
+  transform: skewX(20deg);
+  background: #FE1101;
+}
+li:nth-of-type(n + 11) {
+  transform: skewX(-20deg);
+}
+
+ul:nth-of-type(n + 4) li {
+  flex: 1;
+  transform: skewX(-20deg);
+  background: green;
+}
+ul:nth-of-type(n + 4) li:nth-of-type(n + 11) {
+  transform: skewX(20deg);
+}

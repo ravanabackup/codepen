@@ -1,0 +1,69 @@
+div, p, span, i, b {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80vmin;
+  height: 80vmin;
+  background: hsl(var(--h, 343), 100%, 50%);
+  border-radius: 50%;
+  animation: adapt 80000ms var(--delay, 0ms) infinite linear;
+  mix-blend-mode: screen;
+}
+div {
+  filter: blur(10vmin);
+  transform-origin: 48% 53%;
+  animation-direction: alternate;
+}
+p {
+  --h: 33;
+  --s-from: .9;
+  --s-to: .7;
+  transform-origin: 55% 56%;
+  --delay: -1234ms;
+  animation-duration: 50000ms;
+}
+span {
+  --h: 83;
+  --s-from: .9;
+  --s-to: .6;
+  transform-origin: 45% 46%;
+  --delay: -3034ms;
+  animation-duration: 150000ms;
+}
+i {
+  --h: 183;
+  --s-from: .8;
+  --s-to: .5;
+  transform-origin: 52% 46%;
+  --delay: -10234ms;
+  animation-duration: 40000ms;
+}
+b {
+  --h: 283;
+  --s-from: 1;
+  --s-to: .3;
+  transform-origin: 57% 46%;
+  --delay: -40234ms;
+  animation-duration: 20000ms;
+}
+
+@keyframes adapt {
+  0% {
+    transform: scale(var(--s-from, 1)) rotate(var(--d-from, 0deg));
+  }
+  100% {
+    transform: scale(var(--s-to, .2)) rotate(var(--d-to, 720deg));
+  }
+}
+
+body {
+  background: hsl(193,20%,12%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}

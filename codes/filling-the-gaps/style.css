@@ -1,0 +1,80 @@
+svg {
+  height: 80vmin;
+  width: 80vmin;
+}
+circle:nth-of-type(n + 2) {
+  fill: none;
+  stroke-width: 3px;
+  stroke: hsl(var(--hue, 343), 90%, 55%);
+  -webkit-clip-path: var(--path, none);
+  clip-path: var(--path, none);
+  transform-origin: 50% 50%;
+  
+  --path: polygon(
+    -10% 50%,
+    110% 50%,
+    100% 0%,
+    0% 100%,
+    50% 110%,
+    50% 50%,
+    0% 0%
+  );
+}
+circle:nth-of-type(2) {
+  transform: rotate(180deg);
+}
+circle:nth-of-type(3) {
+  --hue: 183;
+}
+circle:nth-of-type(4) {
+  --hue: 143;
+  transform: rotate(270deg);
+}
+circle:nth-of-type(5) {
+  --hue: 43;
+  transform: rotate(315deg)
+}
+
+line {
+  stroke: var(--bg);
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+form {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: .5em;
+  background: var(--bg);
+  z-index: 1;
+}
+label {
+  margin: 0em .667em;
+}
+
+main {
+  transform: rotateX(var(--rotate, 0deg))
+}
+body {
+  perspective: 100vmin;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bg: #fafcff;
+  background: var(--bg)
+}
