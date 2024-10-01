@@ -1,3 +1,3 @@
 cdp
 
-Dan Wilson
+Daniel
