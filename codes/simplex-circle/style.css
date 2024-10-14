@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: black;
+}
+body:before {
+  content: "";
+  width: var(--radius);
+  height: var(--radius);
+  --shadow: calc(var(--radius) * .1);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0 0 var(--shadow) var(--shadow) black, 0 0 0 10px black;
+}
+body:after {
+  content: "";
+  width: var(--radius);
+  height: var(--radius);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  border-radius: 50%;
+  mix-blend-mode: overlay;
+}
+
+canvas {
+  border-radius: 50%;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+.tp-dfwv {
+  z-index: 10;
+}

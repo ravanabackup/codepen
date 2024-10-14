@@ -1,0 +1,69 @@
+@import url("https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy");
+html,
+body {
+  height: 100%;
+  width: 100%;
+  background-color: #222222;
+  font-family: "Sorts Mill Goudy", serif;
+  overflow: hidden;
+}
+html #fuzz,
+body #fuzz {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/40429/noise.jpg);
+  background-size: cover;
+  opacity: 0.037;
+}
+html #intro-wrapper,
+body #intro-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: white;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+html #intro-wrapper #play,
+body #intro-wrapper #play {
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 25px;
+  letter-spacing: 5px;
+}
+html #intro-wrapper #title,
+body #intro-wrapper #title {
+  position: relative;
+  letter-spacing: 15px;
+  font-size: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding-top: 30px;
+  padding-bottom: 28px;
+  padding-left: 30px;
+  padding-right: 15px;
+  box-sizing: border-box;
+  filter: blur(25px);
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+}
+html #intro-wrapper.ready #title,
+body #intro-wrapper.ready #title {
+  opacity: 1;
+  filter: blur(0px);
+}
+html #intro-wrapper.play #title,
+body #intro-wrapper.play #title {
+  opacity: 1;
+  filter: blur(0px);
+  transition: opacity 1s, filter 2.5s;
+}
+html #intro-wrapper.out #title,
+body #intro-wrapper.out #title {
+  opacity: 0;
+  filter: blur(25px);
+  transition: opacity 1s, filter 2.5s;
+}

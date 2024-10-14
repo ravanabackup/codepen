@@ -1,0 +1,15 @@
+body {
+  background-color: #000;
+  font-family: Arial, sans-serif;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  margin: calc(50vh - 240px) auto 0;
+  background-color: #000;
+}
+
+p {
+  text-align: center;
+}

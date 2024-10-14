@@ -1,0 +1,33 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  background-color: #222024;
+  overflow: hidden;
+}
+
+#fuzz {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  width: 572px;
+  height: 759px;
+  background-image: url("http://orig01.deviantart.net/bd50/f/2011/353/f/e/tv_noise__static__snow_by_n4pgamer-d4jknzk.png");
+  z-index: 10;
+  opacity: 0.035;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  background: #eaeaea;
+  box-shadow: 0px 0px 13px 1px rgba(0, 0, 0, 0.3);
+  border: 10px solid #eee7de;
+}

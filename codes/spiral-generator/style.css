@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: url(https://raw.githubusercontent.com/supahfunk/supah-codepen/master/spiral.jpg);
+  background-size: cover;
+}
+
+.dg.main .close-button,
+.dg li.title {
+  background: #111 !important;
+}
+
+img {
+  position: a;
+}

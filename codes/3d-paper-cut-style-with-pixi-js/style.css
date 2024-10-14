@@ -1,0 +1,11 @@
+html,
+body {
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  background: #00121f;
+}
+
+canvas {
+  height: 100vh;
+}
