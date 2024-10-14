@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - dots-and-loops-1.0.0 [fork]</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="js-app"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+  void main() {
+    gl_Position = vec4(position, 1.0);
+  }
+</script>
+
+<script id="fragmentShader" type="x-shader/x-vertex">
+  #ifdef GL_ES
+  precision mediump float;
+  #endif
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  
+  float PI = 3.14159265359;
+
+  mat2 rotate2d(float angle){
+    return mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+  }
+  
+  float drawFlame (vec2 f_st, float t, float offset) {
+  	float val = 0.0;
+    if (mod(t, PI * 2.0) > PI) {
+    	t -= PI;
+    }
+    float angle = cos(t + offset);
+    float phi = (angle + 1.0) / 2.0;
+    float size = 0.3 - (0.1 + phi * 0.2);
+    if (size < 0.06) {
+    	size = size * 0.5;
+    }
+    if (size < 0.01) {
+    	size = 0.0;
+    }
+    float position = (phi * 1.0);
+    if (f_st.y < position && f_st.x < position) {
+      val += step(position - (size / 2.0), f_st.y);
+      val -= step(position + (size / 2.0), f_st.y);
+      val += step(position - (size / 2.0), f_st.x);
+      val -= step(position + (size / 2.0), f_st.x);
+    }
+  	return val;
+  }
+
+  vec3 pickColor (float pct) {
+  	if (pct > 0.75) {
+      return mix(
+        vec3(227.0/255.0, 155.0/255.0, 14.0/255.0), // e39b0e
+        vec3(28.0/255.0, 20.0/255.0, 12.0/255.0), // 1c140c
+        (pct - 0.75) / 0.25
+      );
+    } else if (pct > 0.0) {
+      return mix(
+        vec3(217.0/255.0, 53.0/255.0, 28.0/255.0), // d9341c
+        vec3(227.0/255.0, 155.0/255.0, 14.0/255.0), // e39b0e
+        pct
+      );
+    } else {
+    	return vec3(28.0/255.0, 20.0/255.0, 12.0/255.0); // 1c140c
+    }
+  }
+
+	# define COUNT 9
+
+  void main () {
+    vec2 st = gl_FragCoord.xy / u_resolution.xy;
+    if (u_resolution.y > u_resolution.x) {
+      st.y *= u_resolution.y / u_resolution.x;
+    } else {
+      st.x *= u_resolution.x / u_resolution.y;
+    }
+    st -= vec2(0.5);
+    st = rotate2d(PI * 0.25) * st;
+    st += vec2(0.5);
+    st *= 5.0;
+    vec3 color = vec3(28.0/255.0, 20.0/255.0, 12.0/255.0); // 1c140c
+    vec2 f_st = fract(st);
+    vec2 i_st = floor(st);
+    float t = (u_time * 0.1) * PI;
+    float stepSize = (PI * 2.0) / (float(COUNT) * 2.0);
+    for (int i = 0; i < COUNT; i++) {
+      float q = drawFlame(f_st, t + stepSize * float(i), PI);
+      if (q > 0.0) {
+        color = pickColor((mod(t + stepSize * float(i), PI)) / PI);
+      }
+    }
+    gl_FragColor = vec4(color, 1.0);
+  }
+</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

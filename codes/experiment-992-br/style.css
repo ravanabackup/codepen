@@ -1,0 +1,23 @@
+body{
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+#list{
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  text-align: center;
+}
+#list div{
+  background: transparent;
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  margin: 10px;
+  padding: 0;
+  line-height: 0;
+  outline: 4px solid #333;
+  box-sizing: border-box;
+  outline-offset: -4px;
+}
