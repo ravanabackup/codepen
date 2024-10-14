@@ -1,0 +1,39 @@
+html{
+  background:#000;
+  
+}
+ 
+
+.demoWrapper { 
+  position: absolute;
+  top: 20%;
+  left: 50%;
+}
+
+.stage {
+  box-shadow: 0 0 50px 25px #ccc; 
+}
+
+.box {
+  width: 200px;
+  height: 200px;
+  background: transparent;
+  border: 10px solid #888;
+  border-radius: 100px;
+  box-shadow: 0 0 2px 1px #000, inset 0 0 1px 1px #000;
+  position: absolute;
+  top: -10px;
+  left: -10px;
+}
+
+.box > img {
+  visibility:hidden;
+  width:180px;
+  height:auto;
+  border:0 solid #transparent;
+  outline:0 solid #transparent;
+}
+
+.stage .box {  
+  background: hsla( 0, 0%, 0%, 0.8);
+}

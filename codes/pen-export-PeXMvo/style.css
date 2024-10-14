@@ -1,0 +1,25 @@
+body{
+  overflow: hidden;
+  background: rgb(22, 25, 22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+#defaultCanvas0{
+  display: block;
+}
+div#hello {
+  font-family: "Arial Narrow", Arial, sans-serif;;
+  font-size: 14px;
+  letter-spacing: 1.2px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  bottom: 14px;
+  color: rgba(256, 256, 256, 0.9);
+}
+
+* {
+  user-select: none;
+}
