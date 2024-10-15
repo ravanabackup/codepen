@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - #curiouslyminded with Flopine</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- Shader Session with Flopine | 2021
+ *
+ * Flopine: 
+ * https://twitter.com/FlopineYeah
+ * https://www.instagram.com/flopine_makes_shaders/
+ *
+ * We're curiouslyminded (eliza & ilithya):
+ * https://www.curiouslyminded.xyz
+ * https://www.twitch.tv/curiouslyminded
+ * https://www.youtube.com/curiouslyminded -->
+
+<div id="shadercollab"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+#define PI 3.14159265359
+// pos, period of repition and limit
+#define clamprepetition(p,per,l) p=p-per*clamp(floor(p/per + 0.5), -l, l)
+
+uniform vec2 u_resolution;
+uniform float u_time;
+	
+const int RAYMARCH_MAX_STEPS = 200;
+const float RAYMARCH_MAX_DIST = 50.;
+const float EPSILON = 0.0001;
+
+mat2 rot (float a) {
+	return mat2(cos(a),sin(a),-sin(a),cos(a));
+}
+	
+// p: position c: corner
+float sdBox(vec3 p, vec3 c) {
+  vec3 q = abs(p) - c;
+  return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
+}
+	
+float scene(vec3 pos) {
+	pos.yz *= rot(atan(1./sqrt(2.)));
+	pos.xz *= rot(PI/4.); 
+	
+	float period = 4.+(sin(u_time*5.)*0.5+0.5);
+	vec2 id = floor(pos.xz/period + 0.5); // floor +0.5 instead of round which is supported as of openGL 4.0
+	clamprepetition(pos.xz, period, 2.); // Keep the last float as an int not a decimal float
+	pos.xz *= rot(u_time*length(id+2.));
+	float box = sdBox(pos, vec3(1.));
+	
+	return box;
+}
+
+vec3 getnormalsmall(vec3 p) {
+	vec2 epsilon = vec2(0.001, 0.);
+	
+	return normalize(
+		scene(p) - vec3(scene(p-epsilon.xyy),
+		scene(p-epsilon.yxy),
+		scene(p-epsilon.yyx))
+	);
+}
+	
+vec4 raymarch(vec3 rayDir, vec3 pos) {
+	// Define the start state
+	// reset to 0 steps
+	float currentDist = 0.0; // signed distance
+	float rayDepth = 0.0;
+	vec3 rayLength = vec3(0.0);
+	
+	vec3 light = normalize(vec3(1.,2.,2.));
+	vec4 bgColor = vec4(0., 0., 0., 1.);
+	
+	// shooting the ray
+ 	for (int i=0; i < RAYMARCH_MAX_STEPS; i++) {
+     	// steps traveled
+		vec3 new_p = pos + rayDir * rayDepth;
+		currentDist = scene(new_p);
+		rayDepth += currentDist;
+		
+		vec3 normals = getnormalsmall(new_p);
+		float lighting = max(0.,dot(normals,light));
+ 		vec4 shapeColor = mix(
+			vec4(0.2,0.,0.3, 1.0),
+			vec4(0.4,0.8,0.9, 1.0),
+			lighting
+		);
+		
+ 	    if (currentDist < EPSILON) return shapeColor; // We're inside the scene - magic happens here
+ 		if (rayDepth > RAYMARCH_MAX_DIST) return bgColor; // We've gone too far
+	}
+	
+	return bgColor;
+}
+	
+void main() {
+	vec2 uv = (gl_FragCoord.xy - u_resolution * .5) / u_resolution.yy; 
+	
+	vec3 camPos = vec3(uv*10., 30.); // x, y, z axis	
+	vec3 rayDir = normalize(vec3(0.,0., -1.0)); // DOF
+	
+    gl_FragColor = vec4(raymarch(rayDir, camPos));
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

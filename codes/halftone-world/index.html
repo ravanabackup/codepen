@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Halftone World</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="container"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() {
+		gl_Position = vec4(position, 1.0);
+	}
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+// Only random and circle functions by @patriciogv - 2015 - patricio.io
+float random (vec2 st) {
+    return fract(
+		sin(
+			dot(
+				st.xy,
+				vec2(12.9898,78.233)
+			)
+		)*43758.5453123
+	);
+}
+
+float circle(vec2 _st, float _radius){	
+    vec2 pos = vec2(.5)-_st;
+		
+    return smoothstep(1.0-_radius, 1.0-_radius+_radius*0.2, 1.-dot(pos,pos)*3.14*6.);
+}
+	
+void main() {
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+	st.x *= u_resolution.x/u_resolution.y;
+	
+	float i = 40.;
+    vec2 str = st;
+	str *= i;
+    vec2 ipos = ceil(str);	
+    vec3 color = vec3(1.0-circle(fract(st*i), abs(sin(u_time*3.*random(ipos)))), .50, .71);
+
+    gl_FragColor = vec4(color, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r99/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

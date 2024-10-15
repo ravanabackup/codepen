@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Summer Screen</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="container"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+void main() {
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+	float fr = u_resolution.x/40.0;	
+    vec3 x = vec3(st.x);
+    vec3 y = vec3(st.y);
+
+	vec3 colorA = vec3(0.5, 0., 0.5);
+	vec3 colorB = vec3(1.0, 0.41, 0.71);
+	vec3 colorC = vec3(0.0, 1.0, 1.0);
+
+	vec3 color1 = mix(colorA, colorB, fract(x*fr+cos(u_time)));
+	vec3 color2 = mix(colorB, colorC, (y-sin(u_time))*0.5);
+	vec3 color3 = mix(color1, color2, x*cos(u_time+2.));
+
+    gl_FragColor = vec4(color3, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

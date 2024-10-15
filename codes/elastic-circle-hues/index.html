@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Elastic Circle Hues</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="elastic-circles"></div>
+
+<div class="tooltip p-flex-hzt-center">
+	<p class="tooltip__content p-text">
+		<span class="tooltip__title">Talk to me in Chrome</span><br>
+		<span class="tooltip__txt">
+			Allow the use of your mic in browser and speak<br>
+			<span class="tooltip__title">Color</span><br>
+			blue / purple / pink<br>
+			<span class="tooltip__title">Motion</span><br>
+			stop or wait / play or go
+		</span>
+	</p>
+</div>
+
+<p class="credit p-text"><a href="https://www.ilithya.rocks/" target="blank" rel="external noopener" class="credit__link">by ilithya.rocks</a></p>
+
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform float u_anim;
+uniform float u_color;
+uniform vec2 u_resolution;
+uniform float u_time;
+
+void main() {
+	vec2 st = (gl_FragCoord.xy - u_resolution * .5) / u_resolution.yy;
+	st += vec2(0.5); // Centerings
+
+    float circle = distance(st, vec2(0.5)); // The dist from the pixel to the center
+	float fr = 15.0;
+	float anim = (sin(u_time*2.) + 1.2) + .35;
+	float u_anim = u_anim == 1.0 ? u_anim : anim;
+	float grad_anim = abs(sin(u_time/2.));  // Nice gradient anim to switch colors
+	float u_color = u_color == 10.0 ? grad_anim : u_color;
+
+	vec3 color = vec3(u_color, fract(circle*fr*u_anim), .71);
+	gl_FragColor = vec4(color, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

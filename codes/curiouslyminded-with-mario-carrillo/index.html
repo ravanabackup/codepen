@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - #curiouslyminded with Mario Carrillo</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- Shader Session with Mario Carrillo | 2023
+ *
+ * Mario Carrillo: 
+ * https://twitter.com/marioecg
+ * https://www.instagram.com/marioecg/
+ *
+ * We're curiouslyminded:
+ * https://www.curiouslyminded.xyz
+ * https://www.twitch.tv/curiouslyminded
+ * https://www.youtube.com/curiouslyminded -->
+<div id="shadercollab"></div>
+
+<script id="fragment" type="x-shader/x-fragment">
+uniform sampler2D   u_doubleBuffer0;
+uniform sampler2D	u_buffer0;
+
+uniform vec2        u_resolution;
+uniform float       u_time;
+
+#include "lygia/math/const.glsl"
+#include "lygia/math/map.glsl"
+#include "lygia/space/ratio.glsl"
+#include "lygia/space/scale.glsl"
+#include "lygia/draw/circle.glsl"
+#include "lygia/color/palette.glsl"
+#include "lygia/generative/curl.glsl"
+#include "lygia/space/kaleidoscope.glsl"
+
+void main() {
+  vec3 color = vec3(0.0);
+  vec2 pixel = 1.0/u_resolution.xy;
+  vec2 st = gl_FragCoord.xy * pixel;
+
+  #if defined(DOUBLE_BUFFER_0) // create a feedback loop
+  	// noise
+  	float freq = 20.0;
+  	vec3 cpos = vec3(st * freq, u_time * 0.25);
+	vec3 curly = curl(cpos);
+  
+    // st.y += 0.0015;
+  	float scl = map(cos(u_time), -1.0, 1.0, 0.975, 0.99);
+  	st = scale(st, scl);
+	st += curly.xy * 0.001;
+	// st -= 0.5;
+	// st *= 0.99;
+	// st += 0.5;
+    color = texture2D(u_doubleBuffer0, st).rgb * 0.998;
+	
+	vec2 cst = ratio(st, u_resolution);
+	float circ = circle(cst, 0.25) * 0.015;
+	// color += step(distance(cst, vec2(0.5)), 0.25) * 0.015;
+
+	// Gradient color with cosine palette
+	float behave = sin(length(cst - 0.5) * 10.0 + u_time);
+	vec3 gradient = palette(
+		behave,
+		vec3(0.5, 0.5, 0.5), // brightness
+		vec3(0.5, 0.5, 0.5), // contrast
+		vec3(1.0, 1.0, 1.0), // oscillation
+		vec3(0.0, 0.05, 0.1) // phase
+	);
+
+	color += gradient * circ;
+    color = mix(color, vec3(0.0), 0.01);
+	
+  #elif defined(BUFFER_0)
+  	color = texture2D(u_doubleBuffer0, st).rgb; // store feedback in a texture
+  #else
+  	// st.x += cos(st.x * 50.0) * 0.05;
+  	st = kaleidoscope(ratio(st, u_resolution), 8.0, u_time);
+  	vec3 img = texture2D(u_buffer0, st).rgb; // sample buffer in a texture
+    color = img;
+
+  #endif
+
+   gl_FragColor = vec4(color, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/0.146.0/three.min.js'></script>
+<script src='https://cdn.jsdelivr.net/gh/marioecg/glsl-pipeline@main/cdn.js'></script>
+<script src='https://lygia.xyz/resolve.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

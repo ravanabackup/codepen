@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - #curiouslyminded with Dan Shiffman (coding train)</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- Shader Session with Dan Shiffman (coding train) | 2021
+ *
+ * Dan: 
+ * https://thecodingtrain.com/
+ * https://twitter.com/shiffman/
+ * https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw
+ *
+ * We're curiouslyminded:
+ * https://www.curiouslyminded.xyz
+ * https://www.twitch.tv/curiouslyminded
+ * https://www.youtube.com/curiouslyminded -->
+<div id="shadercollab"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+const float pi = 3.14159265359;  
+const float pi2 = 2.0 * pi;  
+	
+void main() {
+	vec2 uv = (gl_FragCoord.xy - u_resolution * .5) / u_resolution.yy;
+	
+ 	float time = u_time;
+	
+	const float COUNT = 100.0;
+	float c = 0.03;
+	
+	vec3 color = vec3(0.);
+	
+	float r = fract( length(uv) * 40.*sin(time*0.2)); //sqrt(uv.x*uv.x + uv.y * uv.y);
+	float theta = pi + atan(uv.y, uv.x);
+	
+	float pr = c * sqrt(time);
+	float ptheta = (time) * pi*(137.5/180.0);
+	
+	float mr = sin(mod(r + pr, pi2));
+	float mtheta = mod(theta + ptheta, pi*(137.5/180.0));
+	
+	float bb = mr;
+	float rr = mtheta/(pi*(137.5/180.0));
+	float gg = 1.-mr;
+	color += vec3(rr,gg,bb);
+	
+	// Phyllotaxis explorations
+	
+	// for (float i = 0.0; i < COUNT; i+=1.) {
+		// float a = i * pi*(137.5/180.0);
+		// float x = r * cos(a);
+		// float y = r * sin(a);			
+		// vec2 circleCoord = 0.5 *  vec2(x, y);  
+		// float circle = distance(uv, circleCoord);
+		// circle = step(0.01, circle);
+		// color += 1. - circle;
+	// }
+	
+	// for (float i = 0.0; i < COUNT; i+=1.) {
+	// 	float a = i * pi*(137.5/180.0);
+	// 	float r = c*sqrt(i);
+	// 	float x = r * cos(a);
+	// 	float y = r * sin(a);			
+	// 	vec2 circleCoord = 0.5 *  vec2(x, y);  
+	// 	float circle = distance(uv, circleCoord);
+	// 	circle = step(0.01, circle);
+	// 	color += 1. - circle;
+	// }
+	
+	gl_FragColor = vec4(color, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
