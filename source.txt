@@ -512,3 +512,27 @@ https://ravanabackup.github.io/codepen/codes/react-flow-field-v3/index.html
 https://ravanabackup.github.io/codepen/codes/repeating-blobs/index.html
 https://ravanabackup.github.io/codepen/codes/rift/index.html
 https://ravanabackup.github.io/codepen/codes/simplex-circle/index.html
+https://ravanabackup.github.io/codepen/codes/css-glowy-disk-spinner-firefox/index.html
+https://ravanabackup.github.io/codepen/codes/css-only-shimmering-neon-text-original/index.html
+https://ravanabackup.github.io/codepen/codes/css-water-ripples-with-blend-modes/index.html
+https://ravanabackup.github.io/codepen/codes/cyber-cells/index.html
+https://ravanabackup.github.io/codepen/codes/cyber-cells-square/index.html
+https://ravanabackup.github.io/codepen/codes/galaxy/index.html
+https://ravanabackup.github.io/codepen/codes/glitchy-css-background-cpu-warning/index.html
+https://ravanabackup.github.io/codepen/codes/native-css-particle-animation-with-sin-and-cos/index.html
+https://ravanabackup.github.io/codepen/codes/particle-helixchaos/index.html
+https://ravanabackup.github.io/codepen/codes/particle-helixcorruption/index.html
+https://ravanabackup.github.io/codepen/codes/particle-helixdynamic-spritesheet/index.html
+https://ravanabackup.github.io/codepen/codes/particle-helixmultiple/index.html
+https://ravanabackup.github.io/codepen/codes/something-moving/index.html
+https://ravanabackup.github.io/codepen/codes/something-moving-photosensitivity-warning/index.html
+https://ravanabackup.github.io/codepen/codes/something-weird/index.html
+https://ravanabackup.github.io/codepen/codes/stars/index.html
+https://ravanabackup.github.io/codepen/codes/threejs/index.html
+https://ravanabackup.github.io/codepen/codes/threejs (1)/threejs/dist/index.html
+https://ravanabackup.github.io/codepen/codes/warning-flashing-hypnosnake-2/index.html
+https://ravanabackup.github.io/codepen/codes/webgl-point-spheregsap-3/index.html
+https://ravanabackup.github.io/codepen/codes/apparently-transparent/index.html
+https://ravanabackup.github.io/codepen/codes/codevemberday-1/index.html
+https://ravanabackup.github.io/codepen/codes/css-box-shadow-particles-v6/index.html
+https://ravanabackup.github.io/codepen/codes/css-glowy-disk-spinner-chrome-fix/index.html
