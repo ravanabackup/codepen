@@ -1,0 +1,25 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  align-items: center;
+  background-color: #000;
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+}
+
+canvas {
+  background-color: #000;
+  box-shadow: 0 0 0 3px #fff;
+  cursor: -webkit-grab;
+  cursor: grab;
+  display: block;
+}
+
+canvas:active {
+  cursor: -webkit-grabbing;
+  cursor: grabbing; 
+}

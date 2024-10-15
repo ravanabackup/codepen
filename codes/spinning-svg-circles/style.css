@@ -1,0 +1,827 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+circle {
+  transform-origin: center;
+  animation-name: rotate;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+circle:nth-child(0) {
+  animation-direction: reverse;
+  animation-duration: 20000ms;
+}
+circle:nth-child(1) {
+  animation-direction: normal;
+  animation-duration: 20800ms;
+}
+circle:nth-child(2) {
+  animation-direction: reverse;
+  animation-duration: 21600ms;
+}
+circle:nth-child(3) {
+  animation-direction: normal;
+  animation-duration: 22400ms;
+}
+circle:nth-child(4) {
+  animation-direction: reverse;
+  animation-duration: 23200ms;
+}
+circle:nth-child(5) {
+  animation-direction: normal;
+  animation-duration: 24000ms;
+}
+circle:nth-child(6) {
+  animation-direction: reverse;
+  animation-duration: 24800ms;
+}
+circle:nth-child(7) {
+  animation-direction: normal;
+  animation-duration: 25600ms;
+}
+circle:nth-child(8) {
+  animation-direction: reverse;
+  animation-duration: 26400ms;
+}
+circle:nth-child(9) {
+  animation-direction: normal;
+  animation-duration: 27200ms;
+}
+circle:nth-child(10) {
+  animation-direction: reverse;
+  animation-duration: 28000ms;
+}
+circle:nth-child(11) {
+  animation-direction: normal;
+  animation-duration: 28800ms;
+}
+circle:nth-child(12) {
+  animation-direction: reverse;
+  animation-duration: 29600ms;
+}
+circle:nth-child(13) {
+  animation-direction: normal;
+  animation-duration: 30400ms;
+}
+circle:nth-child(14) {
+  animation-direction: reverse;
+  animation-duration: 31200ms;
+}
+circle:nth-child(15) {
+  animation-direction: normal;
+  animation-duration: 32000ms;
+}
+circle:nth-child(16) {
+  animation-direction: reverse;
+  animation-duration: 32800ms;
+}
+circle:nth-child(17) {
+  animation-direction: normal;
+  animation-duration: 33600ms;
+}
+circle:nth-child(18) {
+  animation-direction: reverse;
+  animation-duration: 34400ms;
+}
+circle:nth-child(19) {
+  animation-direction: normal;
+  animation-duration: 35200ms;
+}
+circle:nth-child(20) {
+  animation-direction: reverse;
+  animation-duration: 36000ms;
+}
+circle:nth-child(21) {
+  animation-direction: normal;
+  animation-duration: 36800ms;
+}
+circle:nth-child(22) {
+  animation-direction: reverse;
+  animation-duration: 37600ms;
+}
+circle:nth-child(23) {
+  animation-direction: normal;
+  animation-duration: 38400ms;
+}
+circle:nth-child(24) {
+  animation-direction: reverse;
+  animation-duration: 39200ms;
+}
+circle:nth-child(25) {
+  animation-direction: normal;
+  animation-duration: 40000ms;
+}
+circle:nth-child(26) {
+  animation-direction: reverse;
+  animation-duration: 40800ms;
+}
+circle:nth-child(27) {
+  animation-direction: normal;
+  animation-duration: 41600ms;
+}
+circle:nth-child(28) {
+  animation-direction: reverse;
+  animation-duration: 42400ms;
+}
+circle:nth-child(29) {
+  animation-direction: normal;
+  animation-duration: 43200ms;
+}
+circle:nth-child(30) {
+  animation-direction: reverse;
+  animation-duration: 44000ms;
+}
+circle:nth-child(31) {
+  animation-direction: normal;
+  animation-duration: 44800ms;
+}
+circle:nth-child(32) {
+  animation-direction: reverse;
+  animation-duration: 45600ms;
+}
+circle:nth-child(33) {
+  animation-direction: normal;
+  animation-duration: 46400ms;
+}
+circle:nth-child(34) {
+  animation-direction: reverse;
+  animation-duration: 47200ms;
+}
+circle:nth-child(35) {
+  animation-direction: normal;
+  animation-duration: 48000ms;
+}
+circle:nth-child(36) {
+  animation-direction: reverse;
+  animation-duration: 48800ms;
+}
+circle:nth-child(37) {
+  animation-direction: normal;
+  animation-duration: 49600ms;
+}
+circle:nth-child(38) {
+  animation-direction: reverse;
+  animation-duration: 50400ms;
+}
+circle:nth-child(39) {
+  animation-direction: normal;
+  animation-duration: 51200ms;
+}
+circle:nth-child(40) {
+  animation-direction: reverse;
+  animation-duration: 52000ms;
+}
+circle:nth-child(41) {
+  animation-direction: normal;
+  animation-duration: 52800ms;
+}
+circle:nth-child(42) {
+  animation-direction: reverse;
+  animation-duration: 53600ms;
+}
+circle:nth-child(43) {
+  animation-direction: normal;
+  animation-duration: 54400ms;
+}
+circle:nth-child(44) {
+  animation-direction: reverse;
+  animation-duration: 55200ms;
+}
+circle:nth-child(45) {
+  animation-direction: normal;
+  animation-duration: 56000ms;
+}
+circle:nth-child(46) {
+  animation-direction: reverse;
+  animation-duration: 56800ms;
+}
+circle:nth-child(47) {
+  animation-direction: normal;
+  animation-duration: 57600ms;
+}
+circle:nth-child(48) {
+  animation-direction: reverse;
+  animation-duration: 58400ms;
+}
+circle:nth-child(49) {
+  animation-direction: normal;
+  animation-duration: 59200ms;
+}
+circle:nth-child(50) {
+  animation-direction: reverse;
+  animation-duration: 60000ms;
+}
+circle:nth-child(51) {
+  animation-direction: normal;
+  animation-duration: 60800ms;
+}
+circle:nth-child(52) {
+  animation-direction: reverse;
+  animation-duration: 61600ms;
+}
+circle:nth-child(53) {
+  animation-direction: normal;
+  animation-duration: 62400ms;
+}
+circle:nth-child(54) {
+  animation-direction: reverse;
+  animation-duration: 63200ms;
+}
+circle:nth-child(55) {
+  animation-direction: normal;
+  animation-duration: 64000ms;
+}
+circle:nth-child(56) {
+  animation-direction: reverse;
+  animation-duration: 64800ms;
+}
+circle:nth-child(57) {
+  animation-direction: normal;
+  animation-duration: 65600ms;
+}
+circle:nth-child(58) {
+  animation-direction: reverse;
+  animation-duration: 66400ms;
+}
+circle:nth-child(59) {
+  animation-direction: normal;
+  animation-duration: 67200ms;
+}
+circle:nth-child(60) {
+  animation-direction: reverse;
+  animation-duration: 68000ms;
+}
+circle:nth-child(61) {
+  animation-direction: normal;
+  animation-duration: 68800ms;
+}
+circle:nth-child(62) {
+  animation-direction: reverse;
+  animation-duration: 69600ms;
+}
+circle:nth-child(63) {
+  animation-direction: normal;
+  animation-duration: 70400ms;
+}
+circle:nth-child(64) {
+  animation-direction: reverse;
+  animation-duration: 71200ms;
+}
+circle:nth-child(65) {
+  animation-direction: normal;
+  animation-duration: 72000ms;
+}
+circle:nth-child(66) {
+  animation-direction: reverse;
+  animation-duration: 72800ms;
+}
+circle:nth-child(67) {
+  animation-direction: normal;
+  animation-duration: 73600ms;
+}
+circle:nth-child(68) {
+  animation-direction: reverse;
+  animation-duration: 74400ms;
+}
+circle:nth-child(69) {
+  animation-direction: normal;
+  animation-duration: 75200ms;
+}
+circle:nth-child(70) {
+  animation-direction: reverse;
+  animation-duration: 76000ms;
+}
+circle:nth-child(71) {
+  animation-direction: normal;
+  animation-duration: 76800ms;
+}
+circle:nth-child(72) {
+  animation-direction: reverse;
+  animation-duration: 77600ms;
+}
+circle:nth-child(73) {
+  animation-direction: normal;
+  animation-duration: 78400ms;
+}
+circle:nth-child(74) {
+  animation-direction: reverse;
+  animation-duration: 79200ms;
+}
+circle:nth-child(75) {
+  animation-direction: normal;
+  animation-duration: 80000ms;
+}
+circle:nth-child(76) {
+  animation-direction: reverse;
+  animation-duration: 80800ms;
+}
+circle:nth-child(77) {
+  animation-direction: normal;
+  animation-duration: 81600ms;
+}
+circle:nth-child(78) {
+  animation-direction: reverse;
+  animation-duration: 82400ms;
+}
+circle:nth-child(79) {
+  animation-direction: normal;
+  animation-duration: 83200ms;
+}
+circle:nth-child(80) {
+  animation-direction: reverse;
+  animation-duration: 84000ms;
+}
+circle:nth-child(81) {
+  animation-direction: normal;
+  animation-duration: 84800ms;
+}
+circle:nth-child(82) {
+  animation-direction: reverse;
+  animation-duration: 85600ms;
+}
+circle:nth-child(83) {
+  animation-direction: normal;
+  animation-duration: 86400ms;
+}
+circle:nth-child(84) {
+  animation-direction: reverse;
+  animation-duration: 87200ms;
+}
+circle:nth-child(85) {
+  animation-direction: normal;
+  animation-duration: 88000ms;
+}
+circle:nth-child(86) {
+  animation-direction: reverse;
+  animation-duration: 88800ms;
+}
+circle:nth-child(87) {
+  animation-direction: normal;
+  animation-duration: 89600ms;
+}
+circle:nth-child(88) {
+  animation-direction: reverse;
+  animation-duration: 90400ms;
+}
+circle:nth-child(89) {
+  animation-direction: normal;
+  animation-duration: 91200ms;
+}
+circle:nth-child(90) {
+  animation-direction: reverse;
+  animation-duration: 92000ms;
+}
+circle:nth-child(91) {
+  animation-direction: normal;
+  animation-duration: 92800ms;
+}
+circle:nth-child(92) {
+  animation-direction: reverse;
+  animation-duration: 93600ms;
+}
+circle:nth-child(93) {
+  animation-direction: normal;
+  animation-duration: 94400ms;
+}
+circle:nth-child(94) {
+  animation-direction: reverse;
+  animation-duration: 95200ms;
+}
+circle:nth-child(95) {
+  animation-direction: normal;
+  animation-duration: 96000ms;
+}
+circle:nth-child(96) {
+  animation-direction: reverse;
+  animation-duration: 96800ms;
+}
+circle:nth-child(97) {
+  animation-direction: normal;
+  animation-duration: 97600ms;
+}
+circle:nth-child(98) {
+  animation-direction: reverse;
+  animation-duration: 98400ms;
+}
+circle:nth-child(99) {
+  animation-direction: normal;
+  animation-duration: 99200ms;
+}
+circle:nth-child(100) {
+  animation-direction: reverse;
+  animation-duration: 100000ms;
+}
+circle:nth-child(101) {
+  animation-direction: normal;
+  animation-duration: 100800ms;
+}
+circle:nth-child(102) {
+  animation-direction: reverse;
+  animation-duration: 101600ms;
+}
+circle:nth-child(103) {
+  animation-direction: normal;
+  animation-duration: 102400ms;
+}
+circle:nth-child(104) {
+  animation-direction: reverse;
+  animation-duration: 103200ms;
+}
+circle:nth-child(105) {
+  animation-direction: normal;
+  animation-duration: 104000ms;
+}
+circle:nth-child(106) {
+  animation-direction: reverse;
+  animation-duration: 104800ms;
+}
+circle:nth-child(107) {
+  animation-direction: normal;
+  animation-duration: 105600ms;
+}
+circle:nth-child(108) {
+  animation-direction: reverse;
+  animation-duration: 106400ms;
+}
+circle:nth-child(109) {
+  animation-direction: normal;
+  animation-duration: 107200ms;
+}
+circle:nth-child(110) {
+  animation-direction: reverse;
+  animation-duration: 108000ms;
+}
+circle:nth-child(111) {
+  animation-direction: normal;
+  animation-duration: 108800ms;
+}
+circle:nth-child(112) {
+  animation-direction: reverse;
+  animation-duration: 109600ms;
+}
+circle:nth-child(113) {
+  animation-direction: normal;
+  animation-duration: 110400ms;
+}
+circle:nth-child(114) {
+  animation-direction: reverse;
+  animation-duration: 111200ms;
+}
+circle:nth-child(115) {
+  animation-direction: normal;
+  animation-duration: 112000ms;
+}
+circle:nth-child(116) {
+  animation-direction: reverse;
+  animation-duration: 112800ms;
+}
+circle:nth-child(117) {
+  animation-direction: normal;
+  animation-duration: 113600ms;
+}
+circle:nth-child(118) {
+  animation-direction: reverse;
+  animation-duration: 114400ms;
+}
+circle:nth-child(119) {
+  animation-direction: normal;
+  animation-duration: 115200ms;
+}
+circle:nth-child(120) {
+  animation-direction: reverse;
+  animation-duration: 116000ms;
+}
+circle:nth-child(121) {
+  animation-direction: normal;
+  animation-duration: 116800ms;
+}
+circle:nth-child(122) {
+  animation-direction: reverse;
+  animation-duration: 117600ms;
+}
+circle:nth-child(123) {
+  animation-direction: normal;
+  animation-duration: 118400ms;
+}
+circle:nth-child(124) {
+  animation-direction: reverse;
+  animation-duration: 119200ms;
+}
+circle:nth-child(125) {
+  animation-direction: normal;
+  animation-duration: 120000ms;
+}
+circle:nth-child(126) {
+  animation-direction: reverse;
+  animation-duration: 120800ms;
+}
+circle:nth-child(127) {
+  animation-direction: normal;
+  animation-duration: 121600ms;
+}
+circle:nth-child(128) {
+  animation-direction: reverse;
+  animation-duration: 122400ms;
+}
+circle:nth-child(129) {
+  animation-direction: normal;
+  animation-duration: 123200ms;
+}
+circle:nth-child(130) {
+  animation-direction: reverse;
+  animation-duration: 124000ms;
+}
+circle:nth-child(131) {
+  animation-direction: normal;
+  animation-duration: 124800ms;
+}
+circle:nth-child(132) {
+  animation-direction: reverse;
+  animation-duration: 125600ms;
+}
+circle:nth-child(133) {
+  animation-direction: normal;
+  animation-duration: 126400ms;
+}
+circle:nth-child(134) {
+  animation-direction: reverse;
+  animation-duration: 127200ms;
+}
+circle:nth-child(135) {
+  animation-direction: normal;
+  animation-duration: 128000ms;
+}
+circle:nth-child(136) {
+  animation-direction: reverse;
+  animation-duration: 128800ms;
+}
+circle:nth-child(137) {
+  animation-direction: normal;
+  animation-duration: 129600ms;
+}
+circle:nth-child(138) {
+  animation-direction: reverse;
+  animation-duration: 130400ms;
+}
+circle:nth-child(139) {
+  animation-direction: normal;
+  animation-duration: 131200ms;
+}
+circle:nth-child(140) {
+  animation-direction: reverse;
+  animation-duration: 132000ms;
+}
+circle:nth-child(141) {
+  animation-direction: normal;
+  animation-duration: 132800ms;
+}
+circle:nth-child(142) {
+  animation-direction: reverse;
+  animation-duration: 133600ms;
+}
+circle:nth-child(143) {
+  animation-direction: normal;
+  animation-duration: 134400ms;
+}
+circle:nth-child(144) {
+  animation-direction: reverse;
+  animation-duration: 135200ms;
+}
+circle:nth-child(145) {
+  animation-direction: normal;
+  animation-duration: 136000ms;
+}
+circle:nth-child(146) {
+  animation-direction: reverse;
+  animation-duration: 136800ms;
+}
+circle:nth-child(147) {
+  animation-direction: normal;
+  animation-duration: 137600ms;
+}
+circle:nth-child(148) {
+  animation-direction: reverse;
+  animation-duration: 138400ms;
+}
+circle:nth-child(149) {
+  animation-direction: normal;
+  animation-duration: 139200ms;
+}
+circle:nth-child(150) {
+  animation-direction: reverse;
+  animation-duration: 140000ms;
+}
+circle:nth-child(151) {
+  animation-direction: normal;
+  animation-duration: 140800ms;
+}
+circle:nth-child(152) {
+  animation-direction: reverse;
+  animation-duration: 141600ms;
+}
+circle:nth-child(153) {
+  animation-direction: normal;
+  animation-duration: 142400ms;
+}
+circle:nth-child(154) {
+  animation-direction: reverse;
+  animation-duration: 143200ms;
+}
+circle:nth-child(155) {
+  animation-direction: normal;
+  animation-duration: 144000ms;
+}
+circle:nth-child(156) {
+  animation-direction: reverse;
+  animation-duration: 144800ms;
+}
+circle:nth-child(157) {
+  animation-direction: normal;
+  animation-duration: 145600ms;
+}
+circle:nth-child(158) {
+  animation-direction: reverse;
+  animation-duration: 146400ms;
+}
+circle:nth-child(159) {
+  animation-direction: normal;
+  animation-duration: 147200ms;
+}
+circle:nth-child(160) {
+  animation-direction: reverse;
+  animation-duration: 148000ms;
+}
+circle:nth-child(161) {
+  animation-direction: normal;
+  animation-duration: 148800ms;
+}
+circle:nth-child(162) {
+  animation-direction: reverse;
+  animation-duration: 149600ms;
+}
+circle:nth-child(163) {
+  animation-direction: normal;
+  animation-duration: 150400ms;
+}
+circle:nth-child(164) {
+  animation-direction: reverse;
+  animation-duration: 151200ms;
+}
+circle:nth-child(165) {
+  animation-direction: normal;
+  animation-duration: 152000ms;
+}
+circle:nth-child(166) {
+  animation-direction: reverse;
+  animation-duration: 152800ms;
+}
+circle:nth-child(167) {
+  animation-direction: normal;
+  animation-duration: 153600ms;
+}
+circle:nth-child(168) {
+  animation-direction: reverse;
+  animation-duration: 154400ms;
+}
+circle:nth-child(169) {
+  animation-direction: normal;
+  animation-duration: 155200ms;
+}
+circle:nth-child(170) {
+  animation-direction: reverse;
+  animation-duration: 156000ms;
+}
+circle:nth-child(171) {
+  animation-direction: normal;
+  animation-duration: 156800ms;
+}
+circle:nth-child(172) {
+  animation-direction: reverse;
+  animation-duration: 157600ms;
+}
+circle:nth-child(173) {
+  animation-direction: normal;
+  animation-duration: 158400ms;
+}
+circle:nth-child(174) {
+  animation-direction: reverse;
+  animation-duration: 159200ms;
+}
+circle:nth-child(175) {
+  animation-direction: normal;
+  animation-duration: 160000ms;
+}
+circle:nth-child(176) {
+  animation-direction: reverse;
+  animation-duration: 160800ms;
+}
+circle:nth-child(177) {
+  animation-direction: normal;
+  animation-duration: 161600ms;
+}
+circle:nth-child(178) {
+  animation-direction: reverse;
+  animation-duration: 162400ms;
+}
+circle:nth-child(179) {
+  animation-direction: normal;
+  animation-duration: 163200ms;
+}
+circle:nth-child(180) {
+  animation-direction: reverse;
+  animation-duration: 164000ms;
+}
+circle:nth-child(181) {
+  animation-direction: normal;
+  animation-duration: 164800ms;
+}
+circle:nth-child(182) {
+  animation-direction: reverse;
+  animation-duration: 165600ms;
+}
+circle:nth-child(183) {
+  animation-direction: normal;
+  animation-duration: 166400ms;
+}
+circle:nth-child(184) {
+  animation-direction: reverse;
+  animation-duration: 167200ms;
+}
+circle:nth-child(185) {
+  animation-direction: normal;
+  animation-duration: 168000ms;
+}
+circle:nth-child(186) {
+  animation-direction: reverse;
+  animation-duration: 168800ms;
+}
+circle:nth-child(187) {
+  animation-direction: normal;
+  animation-duration: 169600ms;
+}
+circle:nth-child(188) {
+  animation-direction: reverse;
+  animation-duration: 170400ms;
+}
+circle:nth-child(189) {
+  animation-direction: normal;
+  animation-duration: 171200ms;
+}
+circle:nth-child(190) {
+  animation-direction: reverse;
+  animation-duration: 172000ms;
+}
+circle:nth-child(191) {
+  animation-direction: normal;
+  animation-duration: 172800ms;
+}
+circle:nth-child(192) {
+  animation-direction: reverse;
+  animation-duration: 173600ms;
+}
+circle:nth-child(193) {
+  animation-direction: normal;
+  animation-duration: 174400ms;
+}
+circle:nth-child(194) {
+  animation-direction: reverse;
+  animation-duration: 175200ms;
+}
+circle:nth-child(195) {
+  animation-direction: normal;
+  animation-duration: 176000ms;
+}
+circle:nth-child(196) {
+  animation-direction: reverse;
+  animation-duration: 176800ms;
+}
+circle:nth-child(197) {
+  animation-direction: normal;
+  animation-duration: 177600ms;
+}
+circle:nth-child(198) {
+  animation-direction: reverse;
+  animation-duration: 178400ms;
+}
+circle:nth-child(199) {
+  animation-direction: normal;
+  animation-duration: 179200ms;
+}
+circle:nth-child(200) {
+  animation-direction: reverse;
+  animation-duration: 180000ms;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(1turn);
+  }
+}
