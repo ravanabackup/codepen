@@ -1,0 +1,25 @@
+html, body {
+  margin: 0;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  overflow: hidden;
+  -webkit-animation-name: rotate;
+          animation-name: rotate; 
+  -webkit-animation-duration: 3s; 
+          animation-duration: 3s; 
+  -webkit-animation-iteration-count: infinite; 
+          animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
+}
+
+@-webkit-keyframes rotate {
+  to { filter: hue-rotate(360deg); }
+}
+
+@keyframes rotate {
+  to { filter: hue-rotate(360deg); }
+}

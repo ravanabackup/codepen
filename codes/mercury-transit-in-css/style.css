@@ -1,0 +1,44 @@
+body {
+  background-color: #111;
+  overflow: hidden;
+}
+#sun {
+  width: auto;
+  height: auto;
+  transform: translateY(-35%) scale(6);
+  position: absolute;
+  top: 0;
+  left: 100%;
+  -webkit-animation: transit 25s infinite linear;
+          animation: transit 25s infinite linear;
+}
+#core {
+  transform-origin: center center;
+  transform: scale(2);
+}
+.mercury {
+  height: 30px;
+  width: 30px;
+  background-color: #000;
+  position: absolute;
+  left: 50%;
+  margin-left: -15px;
+  bottom: 20%;
+  border-radius: 100%;
+}
+@-webkit-keyframes transit {
+  0% {
+    transform: translateY(-35%) scale(6) translateX(50%);
+  }
+  100% {
+    transform: translateY(-35%) scale(6) translateX(-125%);
+  }
+}
+@keyframes transit {
+  0% {
+    transform: translateY(-35%) scale(6) translateX(50%);
+  }
+  100% {
+    transform: translateY(-35%) scale(6) translateX(-125%);
+  }
+}

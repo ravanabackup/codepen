@@ -1,0 +1,19 @@
+* {
+  box-sizing: border-box;
+}
+:root {
+  --hue: 328;
+}
+body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  background: #1a1a1a;
+}
+.squares {
+  height: 300px;
+  width: 300px;
+  overflow: visible !important;
+  stroke: hsl(var(--hue), 100%, 54%);
+  filter: drop-shadow(0 -1px 1px hsl(0, 10%, 0%)) drop-shadow(0 0 4px hsl(var(--hue), 100%, 54%, 0.5)) brightness(1.2);
+}

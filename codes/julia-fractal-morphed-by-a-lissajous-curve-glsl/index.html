@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Julia Fractal Morphed by a Lissajous Curve | GLSL</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="container"></div>
+<script id="vertexShader" type="x-shader/x-vertex">
+
+  void main() {
+    gl_Position = vec4(position, 1.0);
+  }
+
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+
+  uniform vec2 iResolution;
+  uniform float iGlobalTime;
+  
+#define PI 3.14159265
+
+const float a = 5.0;
+const float b = 4.0;
+const float w = PI / 2.0;
+
+// From Stackoveflow
+// http://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl
+vec3 hsv2rgb(vec3 c)
+{
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+vec2 lissajous() {
+    float t = iGlobalTime/10.0+219.17;
+    float x = sin(a * t + w);
+    float y = sin(b * t);
+	return vec2(x, y);
+}
+
+void main(void) {
+    float xmin = -2.0;
+    float ymin = -1.4;
+    float xmax = 2.0;
+    float ymax = 1.4;
+    float xDelta;
+    float yDelta;
+    xDelta = (xmax - xmin) / iResolution.x;
+    yDelta = (ymax - ymin) / iResolution.y;
+    int iteration = 0;
+    const int max_iteration = 100;
+    vec2 l = lissajous();
+    float x = xmin + gl_FragCoord.x * xDelta;
+    float y = ymin + gl_FragCoord.y * yDelta;
+    // while loop not supported on iPhone !!
+    // Using a for loop with break condition instead.
+    for (int i = 0; i < max_iteration; i++) {
+        // Multiplication of complex numbers:
+        // (a+bi) (c+di) = (ac-bd) + (bc+ad)i
+        // c^2 = (x+yi) (x+yi) = (xx-yy) + (yx+yx)i = (xx-yy) + (2xy)i
+        float xtemp = x * x - y * y + l.x;
+        y = 2.0 * x * y + l.y;
+        x = xtemp;
+        iteration = i;
+        if(x*x + y*y > 16.0) break;
+    }
+ 
+    float log_zn;
+    float nu;
+    float sm = float(iteration);
+    float s = 0.0;
+    float v = 0.0;
+    if (iteration < max_iteration ) {
+        // sqrt of inner term removed using log simplification rules.
+        log_zn = log( x*x + y*y ) / 2.0;
+        nu = log( log_zn / log(2.0) ) / log(2.0);
+        // Rearranging the potential function.
+        // Dividing log_zn by log(2) instead of log(N = 1<<8)
+        // because we want the entire palette to range from the
+        // center to radius 2, NOT our bailout radius.
+        sm=float(iteration) + 1.0 - nu;
+        s = 1.0;
+        v = 0.5;
+    }
+    
+    float c = sm / float(max_iteration)*50.0 + iGlobalTime/10.0;
+    vec3 hsv = hsv2rgb(vec3(c, s, v));
+    gl_FragColor = vec4(hsv, 1.0);
+}  
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  align-items: center;
+  background: #111;
+  display: flex;
+  margin: 0;
+  min-height: 100vh;
+  justify-content: center;
+  overflow: hidden;
+}
+canvas {
+  height: 50vmin;
+  width: 50vmin;
+  max-height: 600px;
+  max-width: 600px;
+  min-height: 300px;
+  min-width: 300px;
+  transition: transform 0.25s ease;
+  transform: translate(calc(var(--x, 0) * 1%), calc(var(--y, 0) * 1%));
+}
+canvas.showcase {
+  --x: -17.5;
+  --y: -17.5;
+}
