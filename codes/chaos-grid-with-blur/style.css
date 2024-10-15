@@ -1,0 +1,289 @@
+/* 
+  Johan Karlsson (DonKarlssonSan)
+
+  A slightly modified version of:
+  #codevember #27 Chaos Grid  
+  https://codepen.io/DonKarlssonSan/pen/ObjoqW
+*/
+html, body {
+  margin: 0;
+  background-color: black;
+}
+
+.dot {
+  mix-blend-mode: difference;
+  position: absolute;
+  background-color: white;
+  width: 10vmin;
+  height: 10vmin;
+  -webkit-animation-name: scale;
+          animation-name: scale;
+  -webkit-animation-duration: 4s;
+          animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+          animation-direction: alternate;
+}
+.dot:nth-child(1) {
+  border-radius: 10%;
+  -webkit-animation-delay: 3200ms;
+          animation-delay: 3200ms;
+  -webkit-animation-timing-function: cubic-bezier(0.5, 0.8, 0.8, 0.8);
+          animation-timing-function: cubic-bezier(0.5, 0.8, 0.8, 0.8);
+  filter: blur(0px);
+  left: calc(calc(50vw - 35vmin) + 0vmin);
+  top: calc(calc(50vh - 35vmin) + 0vmin);
+}
+.dot:nth-child(2) {
+  border-radius: 16%;
+  -webkit-animation-delay: 4000ms;
+          animation-delay: 4000ms;
+  -webkit-animation-timing-function: cubic-bezier(0.5, 0.4, 0.1, 0.7);
+          animation-timing-function: cubic-bezier(0.5, 0.4, 0.1, 0.7);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 0vmin);
+  top: calc(calc(50vh - 35vmin) + 14vmin);
+}
+.dot:nth-child(3) {
+  border-radius: 12%;
+  -webkit-animation-delay: 12800ms;
+          animation-delay: 12800ms;
+  -webkit-animation-timing-function: cubic-bezier(0.3, 0.4, 0.2, 0.3);
+          animation-timing-function: cubic-bezier(0.3, 0.4, 0.2, 0.3);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 0vmin);
+  top: calc(calc(50vh - 35vmin) + 28vmin);
+}
+.dot:nth-child(4) {
+  border-radius: 17%;
+  -webkit-animation-delay: 4800ms;
+          animation-delay: 4800ms;
+  -webkit-animation-timing-function: cubic-bezier(0.5, 1, 0.2, 0.3);
+          animation-timing-function: cubic-bezier(0.5, 1, 0.2, 0.3);
+  filter: blur(2px);
+  left: calc(calc(50vw - 35vmin) + 0vmin);
+  top: calc(calc(50vh - 35vmin) + 42vmin);
+}
+.dot:nth-child(5) {
+  border-radius: 4%;
+  -webkit-animation-delay: 5600ms;
+          animation-delay: 5600ms;
+  -webkit-animation-timing-function: cubic-bezier(1, 0.5, 0.3, 0.1);
+          animation-timing-function: cubic-bezier(1, 0.5, 0.3, 0.1);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 0vmin);
+  top: calc(calc(50vh - 35vmin) + 56vmin);
+}
+.dot:nth-child(6) {
+  border-radius: 1%;
+  -webkit-animation-delay: 7200ms;
+          animation-delay: 7200ms;
+  -webkit-animation-timing-function: cubic-bezier(0.6, 0.6, 0.8, 0.6);
+          animation-timing-function: cubic-bezier(0.6, 0.6, 0.8, 0.6);
+  filter: blur(0px);
+  left: calc(calc(50vw - 35vmin) + 14vmin);
+  top: calc(calc(50vh - 35vmin) + 0vmin);
+}
+.dot:nth-child(7) {
+  border-radius: 25%;
+  -webkit-animation-delay: 5600ms;
+          animation-delay: 5600ms;
+  -webkit-animation-timing-function: cubic-bezier(0.8, 1, 0.3, 0.7);
+          animation-timing-function: cubic-bezier(0.8, 1, 0.3, 0.7);
+  filter: blur(0px);
+  left: calc(calc(50vw - 35vmin) + 14vmin);
+  top: calc(calc(50vh - 35vmin) + 14vmin);
+}
+.dot:nth-child(8) {
+  border-radius: 20%;
+  -webkit-animation-delay: 800ms;
+          animation-delay: 800ms;
+  -webkit-animation-timing-function: cubic-bezier(0.3, 0.8, 0.2, 0.1);
+          animation-timing-function: cubic-bezier(0.3, 0.8, 0.2, 0.1);
+  filter: blur(0px);
+  left: calc(calc(50vw - 35vmin) + 14vmin);
+  top: calc(calc(50vh - 35vmin) + 28vmin);
+}
+.dot:nth-child(9) {
+  border-radius: 7%;
+  -webkit-animation-delay: 1600ms;
+          animation-delay: 1600ms;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.8, 1, 0.4);
+          animation-timing-function: cubic-bezier(0.1, 0.8, 1, 0.4);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 14vmin);
+  top: calc(calc(50vh - 35vmin) + 42vmin);
+}
+.dot:nth-child(10) {
+  border-radius: 29%;
+  -webkit-animation-delay: 6400ms;
+          animation-delay: 6400ms;
+  -webkit-animation-timing-function: cubic-bezier(0.3, 0.5, 0.8, 0.4);
+          animation-timing-function: cubic-bezier(0.3, 0.5, 0.8, 0.4);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 14vmin);
+  top: calc(calc(50vh - 35vmin) + 56vmin);
+}
+.dot:nth-child(11) {
+  border-radius: 1%;
+  -webkit-animation-delay: 5600ms;
+          animation-delay: 5600ms;
+  -webkit-animation-timing-function: cubic-bezier(0.9, 0.7, 0.5, 0.8);
+          animation-timing-function: cubic-bezier(0.9, 0.7, 0.5, 0.8);
+  filter: blur(2px);
+  left: calc(calc(50vw - 35vmin) + 28vmin);
+  top: calc(calc(50vh - 35vmin) + 0vmin);
+}
+.dot:nth-child(12) {
+  border-radius: 9%;
+  -webkit-animation-delay: 800ms;
+          animation-delay: 800ms;
+  -webkit-animation-timing-function: cubic-bezier(0.9, 0.8, 0.3, 0.3);
+          animation-timing-function: cubic-bezier(0.9, 0.8, 0.3, 0.3);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 28vmin);
+  top: calc(calc(50vh - 35vmin) + 14vmin);
+}
+.dot:nth-child(13) {
+  border-radius: 16%;
+  -webkit-animation-delay: 7200ms;
+          animation-delay: 7200ms;
+  -webkit-animation-timing-function: cubic-bezier(0.8, 0.6, 0.5, 0.3);
+          animation-timing-function: cubic-bezier(0.8, 0.6, 0.5, 0.3);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 28vmin);
+  top: calc(calc(50vh - 35vmin) + 28vmin);
+}
+.dot:nth-child(14) {
+  border-radius: 7%;
+  -webkit-animation-delay: 3200ms;
+          animation-delay: 3200ms;
+  -webkit-animation-timing-function: cubic-bezier(0.8, 0.5, 0.9, 0.5);
+          animation-timing-function: cubic-bezier(0.8, 0.5, 0.9, 0.5);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 28vmin);
+  top: calc(calc(50vh - 35vmin) + 42vmin);
+}
+.dot:nth-child(15) {
+  border-radius: 19%;
+  -webkit-animation-delay: 9600ms;
+          animation-delay: 9600ms;
+  -webkit-animation-timing-function: cubic-bezier(0.4, 1, 0.8, 0.4);
+          animation-timing-function: cubic-bezier(0.4, 1, 0.8, 0.4);
+  filter: blur(2px);
+  left: calc(calc(50vw - 35vmin) + 28vmin);
+  top: calc(calc(50vh - 35vmin) + 56vmin);
+}
+.dot:nth-child(16) {
+  border-radius: 22%;
+  -webkit-animation-delay: 12000ms;
+          animation-delay: 12000ms;
+  -webkit-animation-timing-function: cubic-bezier(0.5, 0.4, 0.2, 0.5);
+          animation-timing-function: cubic-bezier(0.5, 0.4, 0.2, 0.5);
+  filter: blur(0px);
+  left: calc(calc(50vw - 35vmin) + 42vmin);
+  top: calc(calc(50vh - 35vmin) + 0vmin);
+}
+.dot:nth-child(17) {
+  border-radius: 12%;
+  -webkit-animation-delay: 12800ms;
+          animation-delay: 12800ms;
+  -webkit-animation-timing-function: cubic-bezier(0.7, 0.5, 0.5, 0.2);
+          animation-timing-function: cubic-bezier(0.7, 0.5, 0.5, 0.2);
+  filter: blur(0px);
+  left: calc(calc(50vw - 35vmin) + 42vmin);
+  top: calc(calc(50vh - 35vmin) + 14vmin);
+}
+.dot:nth-child(18) {
+  border-radius: 9%;
+  -webkit-animation-delay: 12800ms;
+          animation-delay: 12800ms;
+  -webkit-animation-timing-function: cubic-bezier(0.7, 1, 0.8, 0.4);
+          animation-timing-function: cubic-bezier(0.7, 1, 0.8, 0.4);
+  filter: blur(2px);
+  left: calc(calc(50vw - 35vmin) + 42vmin);
+  top: calc(calc(50vh - 35vmin) + 28vmin);
+}
+.dot:nth-child(19) {
+  border-radius: 18%;
+  -webkit-animation-delay: 12000ms;
+          animation-delay: 12000ms;
+  -webkit-animation-timing-function: cubic-bezier(0.5, 0.9, 1, 0.1);
+          animation-timing-function: cubic-bezier(0.5, 0.9, 1, 0.1);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 42vmin);
+  top: calc(calc(50vh - 35vmin) + 42vmin);
+}
+.dot:nth-child(20) {
+  border-radius: 9%;
+  -webkit-animation-delay: 1600ms;
+          animation-delay: 1600ms;
+  -webkit-animation-timing-function: cubic-bezier(0.8, 0.6, 0.2, 0.8);
+          animation-timing-function: cubic-bezier(0.8, 0.6, 0.2, 0.8);
+  filter: blur(2px);
+  left: calc(calc(50vw - 35vmin) + 42vmin);
+  top: calc(calc(50vh - 35vmin) + 56vmin);
+}
+.dot:nth-child(21) {
+  border-radius: 25%;
+  -webkit-animation-delay: 7200ms;
+          animation-delay: 7200ms;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.2, 0.8, 0.2);
+          animation-timing-function: cubic-bezier(0.1, 0.2, 0.8, 0.2);
+  filter: blur(2px);
+  left: calc(calc(50vw - 35vmin) + 56vmin);
+  top: calc(calc(50vh - 35vmin) + 0vmin);
+}
+.dot:nth-child(22) {
+  border-radius: 4%;
+  -webkit-animation-delay: 4000ms;
+          animation-delay: 4000ms;
+  -webkit-animation-timing-function: cubic-bezier(0.1, 0.9, 0.9, 0.8);
+          animation-timing-function: cubic-bezier(0.1, 0.9, 0.9, 0.8);
+  filter: blur(2px);
+  left: calc(calc(50vw - 35vmin) + 56vmin);
+  top: calc(calc(50vh - 35vmin) + 14vmin);
+}
+.dot:nth-child(23) {
+  border-radius: 14%;
+  -webkit-animation-delay: 5600ms;
+          animation-delay: 5600ms;
+  -webkit-animation-timing-function: cubic-bezier(0.2, 0.4, 0.9, 0.8);
+          animation-timing-function: cubic-bezier(0.2, 0.4, 0.9, 0.8);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 56vmin);
+  top: calc(calc(50vh - 35vmin) + 28vmin);
+}
+.dot:nth-child(24) {
+  border-radius: 23%;
+  -webkit-animation-delay: 5600ms;
+          animation-delay: 5600ms;
+  -webkit-animation-timing-function: cubic-bezier(0.6, 0.9, 0.8, 1);
+          animation-timing-function: cubic-bezier(0.6, 0.9, 0.8, 1);
+  filter: blur(0px);
+  left: calc(calc(50vw - 35vmin) + 56vmin);
+  top: calc(calc(50vh - 35vmin) + 42vmin);
+}
+.dot:nth-child(25) {
+  border-radius: 14%;
+  -webkit-animation-delay: 11200ms;
+          animation-delay: 11200ms;
+  -webkit-animation-timing-function: cubic-bezier(0.3, 0.5, 0.5, 0.6);
+          animation-timing-function: cubic-bezier(0.3, 0.5, 0.5, 0.6);
+  filter: blur(1px);
+  left: calc(calc(50vw - 35vmin) + 56vmin);
+  top: calc(calc(50vh - 35vmin) + 56vmin);
+}
+
+@-webkit-keyframes scale {
+  to {
+    transform: scale(3) rotate(90deg);
+  }
+}
+
+@keyframes scale {
+  to {
+    transform: scale(3) rotate(90deg);
+  }
+}

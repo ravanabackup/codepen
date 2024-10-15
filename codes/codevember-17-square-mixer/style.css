@@ -1,0 +1,226 @@
+/*
+  Johan Karlsson (DonKarlssonSan)
+
+  All my #codevember Pens:
+  https://codepen.io/collection/XwMkWm/
+*/
+html, body {
+  background-color: black;
+  margin: 0;
+  overflow: hidden;
+}
+
+.square {
+  mix-blend-mode: difference;
+  position: absolute;
+  -webkit-animation-name: spin;
+          animation-name: spin;
+  -webkit-animation-duration: 8s;
+          animation-duration: 8s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+          animation-direction: alternate;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+}
+
+.square:nth-child(odd) {
+  background-color: white;
+}
+
+.square:nth-child(even) {
+  background-color: black;
+}
+
+.square:nth-child(1) {
+  -webkit-animation-delay: 100ms;
+          animation-delay: 100ms;
+  width: 4vmin;
+  height: 4vmin;
+  top: calc(50% - 2vmin);
+  left: calc(50% - 2vmin);
+}
+
+.square:nth-child(2) {
+  -webkit-animation-delay: 200ms;
+          animation-delay: 200ms;
+  width: 8vmin;
+  height: 8vmin;
+  top: calc(50% - 4vmin);
+  left: calc(50% - 4vmin);
+}
+
+.square:nth-child(3) {
+  -webkit-animation-delay: 300ms;
+          animation-delay: 300ms;
+  width: 12vmin;
+  height: 12vmin;
+  top: calc(50% - 6vmin);
+  left: calc(50% - 6vmin);
+}
+
+.square:nth-child(4) {
+  -webkit-animation-delay: 400ms;
+          animation-delay: 400ms;
+  width: 16vmin;
+  height: 16vmin;
+  top: calc(50% - 8vmin);
+  left: calc(50% - 8vmin);
+}
+
+.square:nth-child(5) {
+  -webkit-animation-delay: 500ms;
+          animation-delay: 500ms;
+  width: 20vmin;
+  height: 20vmin;
+  top: calc(50% - 10vmin);
+  left: calc(50% - 10vmin);
+}
+
+.square:nth-child(6) {
+  -webkit-animation-delay: 600ms;
+          animation-delay: 600ms;
+  width: 24vmin;
+  height: 24vmin;
+  top: calc(50% - 12vmin);
+  left: calc(50% - 12vmin);
+}
+
+.square:nth-child(7) {
+  -webkit-animation-delay: 700ms;
+          animation-delay: 700ms;
+  width: 28vmin;
+  height: 28vmin;
+  top: calc(50% - 14vmin);
+  left: calc(50% - 14vmin);
+}
+
+.square:nth-child(8) {
+  -webkit-animation-delay: 800ms;
+          animation-delay: 800ms;
+  width: 32vmin;
+  height: 32vmin;
+  top: calc(50% - 16vmin);
+  left: calc(50% - 16vmin);
+}
+
+.square:nth-child(9) {
+  -webkit-animation-delay: 900ms;
+          animation-delay: 900ms;
+  width: 36vmin;
+  height: 36vmin;
+  top: calc(50% - 18vmin);
+  left: calc(50% - 18vmin);
+}
+
+.square:nth-child(10) {
+  -webkit-animation-delay: 1000ms;
+          animation-delay: 1000ms;
+  width: 40vmin;
+  height: 40vmin;
+  top: calc(50% - 20vmin);
+  left: calc(50% - 20vmin);
+}
+
+.square:nth-child(11) {
+  -webkit-animation-delay: 1100ms;
+          animation-delay: 1100ms;
+  width: 44vmin;
+  height: 44vmin;
+  top: calc(50% - 22vmin);
+  left: calc(50% - 22vmin);
+}
+
+.square:nth-child(12) {
+  -webkit-animation-delay: 1200ms;
+          animation-delay: 1200ms;
+  width: 48vmin;
+  height: 48vmin;
+  top: calc(50% - 24vmin);
+  left: calc(50% - 24vmin);
+}
+
+.square:nth-child(13) {
+  -webkit-animation-delay: 1300ms;
+          animation-delay: 1300ms;
+  width: 52vmin;
+  height: 52vmin;
+  top: calc(50% - 26vmin);
+  left: calc(50% - 26vmin);
+}
+
+.square:nth-child(14) {
+  -webkit-animation-delay: 1400ms;
+          animation-delay: 1400ms;
+  width: 56vmin;
+  height: 56vmin;
+  top: calc(50% - 28vmin);
+  left: calc(50% - 28vmin);
+}
+
+.square:nth-child(15) {
+  -webkit-animation-delay: 1500ms;
+          animation-delay: 1500ms;
+  width: 60vmin;
+  height: 60vmin;
+  top: calc(50% - 30vmin);
+  left: calc(50% - 30vmin);
+}
+
+.square:nth-child(16) {
+  -webkit-animation-delay: 1600ms;
+          animation-delay: 1600ms;
+  width: 64vmin;
+  height: 64vmin;
+  top: calc(50% - 32vmin);
+  left: calc(50% - 32vmin);
+}
+
+.square:nth-child(17) {
+  -webkit-animation-delay: 1700ms;
+          animation-delay: 1700ms;
+  width: 68vmin;
+  height: 68vmin;
+  top: calc(50% - 34vmin);
+  left: calc(50% - 34vmin);
+}
+
+.square:nth-child(18) {
+  -webkit-animation-delay: 1800ms;
+          animation-delay: 1800ms;
+  width: 72vmin;
+  height: 72vmin;
+  top: calc(50% - 36vmin);
+  left: calc(50% - 36vmin);
+}
+
+.square:nth-child(19) {
+  -webkit-animation-delay: 1900ms;
+          animation-delay: 1900ms;
+  width: 76vmin;
+  height: 76vmin;
+  top: calc(50% - 38vmin);
+  left: calc(50% - 38vmin);
+}
+
+.square:nth-child(20) {
+  -webkit-animation-delay: 2000ms;
+          animation-delay: 2000ms;
+  width: 80vmin;
+  height: 80vmin;
+  top: calc(50% - 40vmin);
+  left: calc(50% - 40vmin);
+}
+
+@-webkit-keyframes spin {
+  to {
+    transform: rotate(540deg);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(540deg);
+  }
+}

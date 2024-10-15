@@ -1,0 +1,741 @@
+/* 
+  Johan Karlsson (DonKarlssonSan)
+
+  All my #codevember Pens:
+  https://codepen.io/collection/XwMkWm/
+*/
+html, body {
+  margin: 0;
+  background-color: black;
+  overflow: hidden;
+}
+
+.dot {
+  border-radius: 50%;
+  mix-blend-mode: difference;
+  position: absolute;
+  background-color: white;
+  width: 5vmin;
+  height: 5vmin;
+  -webkit-animation-name: scale;
+  animation-name: scale;
+  -webkit-animation-duration: 6s;
+  animation-duration: 6s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+  -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
+}
+
+.dot:nth-child(1) {
+  -webkit-animation-delay: 5091.1688245431ms;
+  animation-delay: 5091.1688245431ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(2) {
+  -webkit-animation-delay: 4560.7017003966ms;
+  animation-delay: 4560.7017003966ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(3) {
+  -webkit-animation-delay: 4118.2520563948ms;
+  animation-delay: 4118.2520563948ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(4) {
+  -webkit-animation-delay: 3794.7331922021ms;
+  animation-delay: 3794.7331922021ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(5) {
+  -webkit-animation-delay: 3622.154055255ms;
+  animation-delay: 3622.154055255ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(6) {
+  -webkit-animation-delay: 3622.154055255ms;
+  animation-delay: 3622.154055255ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(7) {
+  -webkit-animation-delay: 3794.7331922021ms;
+  animation-delay: 3794.7331922021ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(8) {
+  -webkit-animation-delay: 4118.2520563948ms;
+  animation-delay: 4118.2520563948ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(9) {
+  -webkit-animation-delay: 4560.7017003966ms;
+  animation-delay: 4560.7017003966ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(10) {
+  -webkit-animation-delay: 5091.1688245431ms;
+  animation-delay: 5091.1688245431ms;
+  left: calc(calc(50vw - 42.5vmin) + 0vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+.dot:nth-child(11) {
+  -webkit-animation-delay: 4560.7017003966ms;
+  animation-delay: 4560.7017003966ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(12) {
+  -webkit-animation-delay: 3959.7979746447ms;
+  animation-delay: 3959.7979746447ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(13) {
+  -webkit-animation-delay: 3440.9301068171ms;
+  animation-delay: 3440.9301068171ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(14) {
+  -webkit-animation-delay: 3046.3092423456ms;
+  animation-delay: 3046.3092423456ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(15) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(16) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(17) {
+  -webkit-animation-delay: 3046.3092423456ms;
+  animation-delay: 3046.3092423456ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(18) {
+  -webkit-animation-delay: 3440.9301068171ms;
+  animation-delay: 3440.9301068171ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(19) {
+  -webkit-animation-delay: 3959.7979746447ms;
+  animation-delay: 3959.7979746447ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(20) {
+  -webkit-animation-delay: 4560.7017003966ms;
+  animation-delay: 4560.7017003966ms;
+  left: calc(calc(50vw - 42.5vmin) + 9vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+.dot:nth-child(21) {
+  -webkit-animation-delay: 4118.2520563948ms;
+  animation-delay: 4118.2520563948ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(22) {
+  -webkit-animation-delay: 3440.9301068171ms;
+  animation-delay: 3440.9301068171ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(23) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(24) {
+  -webkit-animation-delay: 2332.3807579381ms;
+  animation-delay: 2332.3807579381ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(25) {
+  -webkit-animation-delay: 2039.6078054371ms;
+  animation-delay: 2039.6078054371ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(26) {
+  -webkit-animation-delay: 2039.6078054371ms;
+  animation-delay: 2039.6078054371ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(27) {
+  -webkit-animation-delay: 2332.3807579381ms;
+  animation-delay: 2332.3807579381ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(28) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(29) {
+  -webkit-animation-delay: 3440.9301068171ms;
+  animation-delay: 3440.9301068171ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(30) {
+  -webkit-animation-delay: 4118.2520563948ms;
+  animation-delay: 4118.2520563948ms;
+  left: calc(calc(50vw - 42.5vmin) + 18vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+.dot:nth-child(31) {
+  -webkit-animation-delay: 3794.7331922021ms;
+  animation-delay: 3794.7331922021ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(32) {
+  -webkit-animation-delay: 3046.3092423456ms;
+  animation-delay: 3046.3092423456ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(33) {
+  -webkit-animation-delay: 2332.3807579381ms;
+  animation-delay: 2332.3807579381ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(34) {
+  -webkit-animation-delay: 1697.0562748477ms;
+  animation-delay: 1697.0562748477ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(35) {
+  -webkit-animation-delay: 1264.9110640674ms;
+  animation-delay: 1264.9110640674ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(36) {
+  -webkit-animation-delay: 1264.9110640674ms;
+  animation-delay: 1264.9110640674ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(37) {
+  -webkit-animation-delay: 1697.0562748477ms;
+  animation-delay: 1697.0562748477ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(38) {
+  -webkit-animation-delay: 2332.3807579381ms;
+  animation-delay: 2332.3807579381ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(39) {
+  -webkit-animation-delay: 3046.3092423456ms;
+  animation-delay: 3046.3092423456ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(40) {
+  -webkit-animation-delay: 3794.7331922021ms;
+  animation-delay: 3794.7331922021ms;
+  left: calc(calc(50vw - 42.5vmin) + 27vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+.dot:nth-child(41) {
+  -webkit-animation-delay: 3622.154055255ms;
+  animation-delay: 3622.154055255ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(42) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(43) {
+  -webkit-animation-delay: 2039.6078054371ms;
+  animation-delay: 2039.6078054371ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(44) {
+  -webkit-animation-delay: 1264.9110640674ms;
+  animation-delay: 1264.9110640674ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(45) {
+  -webkit-animation-delay: 565.6854249492ms;
+  animation-delay: 565.6854249492ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(46) {
+  -webkit-animation-delay: 565.6854249492ms;
+  animation-delay: 565.6854249492ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(47) {
+  -webkit-animation-delay: 1264.9110640674ms;
+  animation-delay: 1264.9110640674ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(48) {
+  -webkit-animation-delay: 2039.6078054371ms;
+  animation-delay: 2039.6078054371ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(49) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(50) {
+  -webkit-animation-delay: 3622.154055255ms;
+  animation-delay: 3622.154055255ms;
+  left: calc(calc(50vw - 42.5vmin) + 36vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+.dot:nth-child(51) {
+  -webkit-animation-delay: 3622.154055255ms;
+  animation-delay: 3622.154055255ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(52) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(53) {
+  -webkit-animation-delay: 2039.6078054371ms;
+  animation-delay: 2039.6078054371ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(54) {
+  -webkit-animation-delay: 1264.9110640674ms;
+  animation-delay: 1264.9110640674ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(55) {
+  -webkit-animation-delay: 565.6854249492ms;
+  animation-delay: 565.6854249492ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(56) {
+  -webkit-animation-delay: 565.6854249492ms;
+  animation-delay: 565.6854249492ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(57) {
+  -webkit-animation-delay: 1264.9110640674ms;
+  animation-delay: 1264.9110640674ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(58) {
+  -webkit-animation-delay: 2039.6078054371ms;
+  animation-delay: 2039.6078054371ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(59) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(60) {
+  -webkit-animation-delay: 3622.154055255ms;
+  animation-delay: 3622.154055255ms;
+  left: calc(calc(50vw - 42.5vmin) + 45vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+.dot:nth-child(61) {
+  -webkit-animation-delay: 3794.7331922021ms;
+  animation-delay: 3794.7331922021ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(62) {
+  -webkit-animation-delay: 3046.3092423456ms;
+  animation-delay: 3046.3092423456ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(63) {
+  -webkit-animation-delay: 2332.3807579381ms;
+  animation-delay: 2332.3807579381ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(64) {
+  -webkit-animation-delay: 1697.0562748477ms;
+  animation-delay: 1697.0562748477ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(65) {
+  -webkit-animation-delay: 1264.9110640674ms;
+  animation-delay: 1264.9110640674ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(66) {
+  -webkit-animation-delay: 1264.9110640674ms;
+  animation-delay: 1264.9110640674ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(67) {
+  -webkit-animation-delay: 1697.0562748477ms;
+  animation-delay: 1697.0562748477ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(68) {
+  -webkit-animation-delay: 2332.3807579381ms;
+  animation-delay: 2332.3807579381ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(69) {
+  -webkit-animation-delay: 3046.3092423456ms;
+  animation-delay: 3046.3092423456ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(70) {
+  -webkit-animation-delay: 3794.7331922021ms;
+  animation-delay: 3794.7331922021ms;
+  left: calc(calc(50vw - 42.5vmin) + 54vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+.dot:nth-child(71) {
+  -webkit-animation-delay: 4118.2520563948ms;
+  animation-delay: 4118.2520563948ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(72) {
+  -webkit-animation-delay: 3440.9301068171ms;
+  animation-delay: 3440.9301068171ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(73) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(74) {
+  -webkit-animation-delay: 2332.3807579381ms;
+  animation-delay: 2332.3807579381ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(75) {
+  -webkit-animation-delay: 2039.6078054371ms;
+  animation-delay: 2039.6078054371ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(76) {
+  -webkit-animation-delay: 2039.6078054371ms;
+  animation-delay: 2039.6078054371ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(77) {
+  -webkit-animation-delay: 2332.3807579381ms;
+  animation-delay: 2332.3807579381ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(78) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(79) {
+  -webkit-animation-delay: 3440.9301068171ms;
+  animation-delay: 3440.9301068171ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(80) {
+  -webkit-animation-delay: 4118.2520563948ms;
+  animation-delay: 4118.2520563948ms;
+  left: calc(calc(50vw - 42.5vmin) + 63vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+.dot:nth-child(81) {
+  -webkit-animation-delay: 4560.7017003966ms;
+  animation-delay: 4560.7017003966ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(82) {
+  -webkit-animation-delay: 3959.7979746447ms;
+  animation-delay: 3959.7979746447ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(83) {
+  -webkit-animation-delay: 3440.9301068171ms;
+  animation-delay: 3440.9301068171ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(84) {
+  -webkit-animation-delay: 3046.3092423456ms;
+  animation-delay: 3046.3092423456ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(85) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(86) {
+  -webkit-animation-delay: 2828.4271247462ms;
+  animation-delay: 2828.4271247462ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(87) {
+  -webkit-animation-delay: 3046.3092423456ms;
+  animation-delay: 3046.3092423456ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(88) {
+  -webkit-animation-delay: 3440.9301068171ms;
+  animation-delay: 3440.9301068171ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(89) {
+  -webkit-animation-delay: 3959.7979746447ms;
+  animation-delay: 3959.7979746447ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(90) {
+  -webkit-animation-delay: 4560.7017003966ms;
+  animation-delay: 4560.7017003966ms;
+  left: calc(calc(50vw - 42.5vmin) + 72vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+.dot:nth-child(91) {
+  -webkit-animation-delay: 5091.1688245431ms;
+  animation-delay: 5091.1688245431ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 0vmin);
+}
+
+.dot:nth-child(92) {
+  -webkit-animation-delay: 4560.7017003966ms;
+  animation-delay: 4560.7017003966ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 9vmin);
+}
+
+.dot:nth-child(93) {
+  -webkit-animation-delay: 4118.2520563948ms;
+  animation-delay: 4118.2520563948ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 18vmin);
+}
+
+.dot:nth-child(94) {
+  -webkit-animation-delay: 3794.7331922021ms;
+  animation-delay: 3794.7331922021ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 27vmin);
+}
+
+.dot:nth-child(95) {
+  -webkit-animation-delay: 3622.154055255ms;
+  animation-delay: 3622.154055255ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 36vmin);
+}
+
+.dot:nth-child(96) {
+  -webkit-animation-delay: 3622.154055255ms;
+  animation-delay: 3622.154055255ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 45vmin);
+}
+
+.dot:nth-child(97) {
+  -webkit-animation-delay: 3794.7331922021ms;
+  animation-delay: 3794.7331922021ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 54vmin);
+}
+
+.dot:nth-child(98) {
+  -webkit-animation-delay: 4118.2520563948ms;
+  animation-delay: 4118.2520563948ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 63vmin);
+}
+
+.dot:nth-child(99) {
+  -webkit-animation-delay: 4560.7017003966ms;
+  animation-delay: 4560.7017003966ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 72vmin);
+}
+
+.dot:nth-child(100) {
+  -webkit-animation-delay: 5091.1688245431ms;
+  animation-delay: 5091.1688245431ms;
+  left: calc(calc(50vw - 42.5vmin) + 81vmin);
+  top: calc(calc(50vh - 42.5vmin) + 81vmin);
+}
+
+@-webkit-keyframes scale {
+  to {
+    transform: scale(5);
+  }
+}
+@keyframes scale {
+  to {
+    transform: scale(5);
+  }
+}
