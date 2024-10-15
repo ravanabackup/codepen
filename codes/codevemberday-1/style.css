@@ -1,0 +1,29 @@
+/* Go crazy here! :) */
+body {
+  padding: 5em calc(50% - 200px);
+  overflow: hidden;
+}
+
+body div {
+  animation: anim 8s infinite alternate ease-in;
+  border-radius: 100%;
+  box-shadow: 
+    inset 0 0 0 4px #6746e8,
+    inset 0 0 0 8px #43e4cd,
+    inset 0 0 0 16px #e54676,
+    inset 0 0 0 32px #f07a79, 
+    inset 0 0 0 64px #fbce7b;
+  width: 400px;
+  height: 400px;
+}
+
+@keyframes anim {
+  50% {
+    transform: 
+      scale(0.85) 
+      perspective(200px)
+      rotateX(20deg)
+      rotateZ(180deg)  
+      rotateY(10deg);
+  }
+}

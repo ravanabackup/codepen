@@ -2,7 +2,6 @@
 
 var canvas = document.getElementById('canvas'),
   ctx = canvas.getContext('2d'),
-  image = new Image(),
   w = canvas.width = window.innerWidth,
   h = canvas.height = window.innerHeight,
     
@@ -10,8 +9,6 @@ var canvas = document.getElementById('canvas'),
   stars = [],
   count = 0,
   maxStars = 1400;
-
-  image.src = 'https://source.unsplash.com/8FwiZcXiX_g';
 
 // Thanks @jackrugile for the performance tip! https://codepen.io/jackrugile/pen/BjBGoM
 // Cache gradient
@@ -48,20 +45,14 @@ function random(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function maxOrbit(x,y) {
-  var max = Math.max(x,y),
-      diameter = Math.round(Math.sqrt(max*max + max*max));
-  return diameter/2;
-}
-
 var Star = function() {
 
-  this.orbitRadius = random(maxOrbit(w,h));
-  this.radius = random(60, this.orbitRadius) / 12;
+  this.orbitRadius = random(w / 2 - 50);
+  this.radius = random(100, this.orbitRadius) / 10;
   this.orbitX = w / 2;
   this.orbitY = h / 2;
   this.timePassed = random(0, maxStars);
-  this.speed = random(this.orbitRadius) / 50000;
+  this.speed = random(this.orbitRadius) / 100000;
   this.alpha = random(2, 10) / 10;
 
   count++;
@@ -69,8 +60,8 @@ var Star = function() {
 }
 
 Star.prototype.draw = function() {
-  var x = Math.sin(this.timePassed) * this.orbitRadius + this.orbitX,
-      y = Math.cos(this.timePassed) * this.orbitRadius + this.orbitY,
+  var x = Math.sin(this.timePassed + 1) * this.orbitRadius + this.orbitX,
+      y = Math.cos(this.timePassed) * this.orbitRadius/2 + this.orbitY,
       twinkle = random(10);
 
   if (twinkle === 1 && this.alpha > 0) {
@@ -91,7 +82,8 @@ for (var i = 0; i < maxStars; i++) {
 function animation() {
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = 0.8;
-    ctx.drawImage(image, 0, 0, w, h);
+    ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 1)';
+    ctx.fillRect(0, 0, w, h)
   
   ctx.globalCompositeOperation = 'lighter';
   for (var i = 1, l = stars.length; i < l; i++) {

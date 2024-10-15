@@ -1,0 +1,37 @@
+.stuff {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  -webkit-animation: ouch 7s infinite alternate;
+          animation: ouch 7s infinite alternate;
+  background: radial-gradient(28vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 56vw 10vh, radial-gradient(28vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 35vw 88vh, radial-gradient(4vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 40vw 24vh, radial-gradient(1vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 3vw 47vh, radial-gradient(68vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 36vw 6vh, radial-gradient(32vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 58vw 75vh, radial-gradient(71vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 9vw 36vh, radial-gradient(95vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 20vw 16vh, radial-gradient(42vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 35vw 54vh, radial-gradient(32vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 22vw 71vh, radial-gradient(72vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 92vw 43vh, radial-gradient(95vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 63vw 18vh, radial-gradient(72vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 84vw 70vh, radial-gradient(87vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 14vw 63vh, radial-gradient(92vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 40vw 10vh, radial-gradient(80vw, #ffffff 0%, #333333 50%, #ffffff, #000000, #eeeeee) 67vw 62vh;
+  background-color: #000;
+  background-blend-mode: difference;
+}
+.stuff::before, .stuff::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.stuff::before {
+  background: #0082ab;
+  mix-blend-mode: color-burn;
+}
+
+@-webkit-keyframes ouch {
+  100% {
+    background-position: 87vw 27vh, 119vw 116vh, -17vw 80vh, -25vw 66vh, 4vw -33vh, 1vw 47vh, 98vw 71vh, 144vw 79vh, 43vw 122vh, 126vw 145vh, 32vw -27vh, -15vw 90vh, 54vw 102vh, 125vw -30vh, 149vw 101vh, 100vw 80vh;
+  }
+}
+
+@keyframes ouch {
+  100% {
+    background-position: 87vw 27vh, 119vw 116vh, -17vw 80vh, -25vw 66vh, 4vw -33vh, 1vw 47vh, 98vw 71vh, 144vw 79vh, 43vw 122vh, 126vw 145vh, 32vw -27vh, -15vw 90vh, 54vw 102vh, 125vw -30vh, 149vw 101vh, 100vw 80vh;
+  }
+}

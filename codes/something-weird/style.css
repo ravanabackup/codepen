@@ -1,0 +1,42 @@
+body {
+  background: #000;
+  overflow: hidden;
+}
+
+.o {
+  width: 40vw;
+  height: 40vw;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -20vw;
+  margin-left: -20vw;
+}
+.o::before, .o::after {
+  -webkit-animation: eyes 2s infinite alternate ease-in-out;
+          animation: eyes 2s infinite alternate ease-in-out;
+  background: radial-gradient(circle, #537ea7, #000, #9b866a, #000, #74bfea, #000 70%);
+  content: "";
+  mix-blend-mode: difference;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.o::before {
+  animation-direction: alternate-reverse;
+  transform-origin: 70% 60%;
+}
+
+@-webkit-keyframes eyes {
+  100% {
+    transform: perspective(20vw) rotate(180deg) translate3d(4%, 4%, 0);
+  }
+}
+
+@keyframes eyes {
+  100% {
+    transform: perspective(20vw) rotate(180deg) translate3d(4%, 4%, 0);
+  }
+}
