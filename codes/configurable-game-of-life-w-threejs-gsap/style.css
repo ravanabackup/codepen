@@ -1,0 +1,12 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  background: #eee;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+.dg .cr.function:last-of-type {
+  border-left: 3px solid #80ff00;
+}
