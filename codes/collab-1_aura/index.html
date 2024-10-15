@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Collab — 1_Aura</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- Shader Collab
+ * By eliza & ilithya | 2020
+ *
+ * https://www.elizasj.com/
+ * https://twitter.com/iamelizasj
+ *
+ * https://www.ilithya.rocks/
+ * https://twitter.com/ilithya_rocks -->
+
+<div id="shadercollab"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+	
+#define PI 3.14159265359
+
+void main() {
+	vec2 uv = (gl_FragCoord.xy - u_resolution * .5) / u_resolution.yy; // Move center to the top right and resize our pixels
+	
+	/* uv.x -> from right to left */
+	/* uv.y -> from top to bottom */
+	
+	// Use polar coordinates instead of cartesian
+    vec2 toCenter = vec2(0.5)-uv;
+	float angle = atan(toCenter.y, toCenter.x);
+    float radius = length(toCenter)*2.0;    
+	 
+    float background = uv.y + 0.5; 
+	float curvePi = PI*(angle - sin(u_time + radius));
+    float curves = cos(uv.y*curvePi) + sin(uv.x*curvePi);
+	
+    float r = sin(background*.7);
+    float g = cos(curves);
+    float b = 5.; // influences color of bg & curves
+	
+	vec3 color = vec3(r, g, b); // bg & curves
+	vec3 softenColor = mix(
+		color, 
+		vec3(0.5, .2, 0.1), 
+		0.5 // interpolation value - floating number
+	);
+		
+	gl_FragColor = vec4(softenColor, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

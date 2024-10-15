@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - #curiouslyminded with cacheflowe</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- Shader Session with cacheflowe | 2022
+ *
+ * cacheflowe: 
+ * https://cacheflowe.com
+ * https://www.instagram.com/cacheflowe/
+ *
+ * We're curiouslyminded:
+ * https://www.curiouslyminded.xyz
+ * https://www.twitch.tv/curiouslyminded
+ * https://www.youtube.com/curiouslyminded --><!-- Shader Session with cacheflowe | 2022
+ *
+ * cacheflowe: 
+ * https://cacheflowe.com
+ * https://www.instagram.com/cacheflowe/
+ *
+ * We're curiouslyminded:
+ * https://www.curiouslyminded.xyz
+ * https://www.twitch.tv/curiouslyminded
+ * https://www.youtube.com/curiouslyminded -->
+
+<div id="shadercollab"></div>
+
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+////////////////////////
+// helpers
+////////////////////////
+
+#define PI     3.14159265358
+#define TWO_PI 6.28318530718
+
+vec2 rotateCoord(vec2 uv, float rads) {
+    uv *= mat2(cos(rads), sin(rads), -sin(rads), cos(rads));
+    return uv;
+}
+
+float saw(float rads) {
+    rads += PI * 0.5;
+    float percent = fract(rads/PI);
+    float dir = sign(sin(rads));
+    return dir * (2. * percent  - 1.);
+}
+
+float oscBetween(float low, float high, float time, float offset) {
+  float range = abs(high - low);
+  float halfRange = range / 2.;
+  float midPoint = low + halfRange;
+  return midPoint + halfRange * sin(offset + time);
+}
+
+////////////////////////
+// patterns
+////////////////////////
+
+vec3 drawChevronStripes(vec2 uv) {
+    // rotate
+    float rotate = oscBetween(-1., 1., u_time/2., 0.);
+    uv = rotateCoord(uv, rotate * -1.);
+    uv.y *= u_resolution.y / u_resolution.x;
+    // build params
+    float altTime = u_time * 0.5;
+    float chevronAmp = 0.06;
+    float freqAmp = oscBetween(0., 1., u_time/2., 0.);
+    float freq = 10. + freqAmp * 20.;
+    float zoom = oscBetween(0., 1., u_time/3., PI);
+    float numLines = 20. + zoom * 100.;
+    float x = uv.x;
+    // lerp between saw & sin
+    float sawWaveDisp = saw(x * freq);
+    float sinWaveDisp = sin(x * freq);
+    uv.y += chevronAmp * mix(sawWaveDisp, sinWaveDisp, 0.5 + 0.5 * sin(altTime));
+    float col = 0.5 + 0.5 * sin(uv.y * numLines);
+    return vec3(0.0, col, 0.0);
+}
+
+vec3 drawWarpVortex(vec2 uv) {
+    float rotate = oscBetween(-1., 1., u_time/3., 0.);
+    float altTime = u_time * 0.05;
+    float rads = atan(uv.x, uv.y) + rotate; 
+    float zoom = oscBetween(0.3, 1., u_time/3., PI);
+    float dist = length(uv) * zoom;
+    float spinAmp = oscBetween(-2., 2., u_time/4., 0.);
+    float spinFreq = oscBetween(0.3, 5., u_time/3., PI);;
+    rads += sin(altTime + dist * spinFreq) * spinAmp * (1. - dist/8.);
+    float radialStripes = 24.;
+    float col = 0.5 + 0.5 * sin(rads * radialStripes);
+    return vec3(col);
+}
+	
+vec3 newPattern(vec2 uv) {	
+	float rotate = oscBetween(-1., 1., u_time/2., 0.);
+    uv = rotateCoord(uv, rotate * -1.);
+    uv.y *= u_resolution.y / u_resolution.x;
+
+	
+	float stripes = fract(
+		uv.y * 5.0 + u_time
+	);
+	
+	return vec3(stripes, 0., 0.);
+}
+
+////////////////////////
+// main! combine the patterns
+////////////////////////
+
+void main()
+{
+    // Centered pixel coordinates
+    //c2 uv =  (-iResolution.xy + 2.0*fragCoord)/iResolution.y;
+	vec2 uv = (gl_FragCoord.xy - (u_resolution.xy * .5)) / u_resolution.yy;
+	uv *= 3.; // zoom a bit
+	
+    // oscillated pattern mix
+    float drawFunc1Mix = oscBetween(0.5, 1., u_time/3., 0.);
+    float drawFunc2Mix = oscBetween(0.5, 1., u_time/2., PI/2.);
+	float drawFunc3Mix = oscBetween(0.5, 1., u_time/1., 0.);
+
+    // sum of patterns
+    vec3 col = vec3(0.);
+    col += drawFunc1Mix * drawChevronStripes(uv);
+    col += drawFunc2Mix * drawWarpVortex(uv);
+	col += drawFunc3Mix * newPattern(uv);
+    
+    // test individual patterns
+    
+	//col = newPattern(uv);
+
+    // "threshold" combine patterns & output
+    col = smoothstep(0.45, 0.55, col);
+    gl_FragColor = vec4(col, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/0.146.0/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

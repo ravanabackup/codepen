@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Collab — 4_RayMarch</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- Shader Collab
+ * By eliza & ilithya | 2020
+ *
+ * https://www.elizasj.com/
+ * https://twitter.com/iamelizasj
+ *
+ * https://www.ilithya.rocks/
+ * https://twitter.com/ilithya_rocks -->
+
+<div id="shadercollab"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+	
+const int RAYMARCH_MAX_STEPS = 200;
+const float RAYMARCH_MAX_DIST = 10.;
+const float EPSILON = 0.0001;
+	
+// Pallete function by Inigo Quilez - iquilezles.org
+// a - brigthness, b - contrast, c - osc, d - phase
+vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d) { return a + b*cos( 6.28318*(c*t+d) ); }
+	
+// Got rotation functions from akella - twitter.com/akella
+mat4 rotationMatrix(vec3 axis, float angle) {
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c, 
+				oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           
+				oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           
+				0.0,
+                0.0,                                
+				0.0,                                
+				0.0,                                
+				1.0);
+}
+
+vec3 rotate(vec3 v, vec3 axis, float angle) {
+	mat4 m = rotationMatrix(axis, angle);
+	return (m * vec4(v, 1.0)).xyz;
+}
+
+// Torus function by Inigo Quilez - iquilezles.org
+// p - position, t - size
+float sdTorus(vec3 p, vec2 t) {
+	vec2 q = vec2(length(p.xz)-t.x,p.y);
+	return length(q)-t.y;
+}
+	
+float scene(vec3 pos) {
+	vec3 rotation = rotate(vec3(pos.x, pos.y, pos.z+1.5), vec3(1.), u_time*2.);	
+	float size = 0.5;	
+	float torus = sdTorus(rotation, vec2(size, size*0.6));
+	
+	return torus;
+}
+
+vec4 raymarch(vec3 rayDir, vec3 rayStep) {
+	// Define the start state
+	// reset to 0 steps
+	float currentDist = 0.0; // signed distance
+	float rayDepth = 0.0;
+	vec3 rayLength = rayDir;
+
+	vec3 gradient = mix(vec3(0.0, 0.0, sin(u_time)*.2), vec3(0.5, 0.0 ,0.5), rayDir.y);
+	vec4 bgColor = vec4(gradient, 1.);
+	
+	// shooting the ray
+ 	for (int i=0; i < RAYMARCH_MAX_STEPS; i++) {
+     	// steps traveled
+		currentDist = scene(rayLength);
+		rayDepth += currentDist;
+		rayLength += (currentDist*rayStep)*2.5; // Move along the view ray
+
+		vec3 color = palette(
+			rayDepth,
+			vec3(0.65, 0.95, 0.85), // brightness
+			rayLength * 2., // contrast
+			rayLength + vec3(rayDepth) * 0.3, // osc
+			vec3(.50, .20, .25) // phase
+		);
+ 		vec4 shapeColor = vec4(color, 1.0);
+		
+ 	    if (currentDist < EPSILON) return shapeColor; // We're inside the scene - magic happens here
+ 		if (rayDepth > RAYMARCH_MAX_DIST) return bgColor; // We've gone too far
+	}
+	
+	return bgColor;
+}
+	
+void main() {
+	vec2 uv = (gl_FragCoord.xy - u_resolution * .5) / u_resolution.yy; 
+	
+	vec3 camPos = vec3(0.0, 0.0, 0.1); // x, y, z axis	
+	float z = mix(0.3, 0.7, abs(sin(u_time*.8)));
+	vec3 rayDir = normalize(vec3(uv, -z)); // DOF
+	vec3 rayStep = camPos + rayDir;
+	
+    gl_FragColor = vec4(raymarch(rayDir, rayStep));
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r122/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

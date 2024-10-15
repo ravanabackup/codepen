@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Collab — 3_Pattern</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- Shader Collab
+ * By eliza & ilithya | 2020
+ *
+ * https://www.elizasj.com/
+ * https://twitter.com/iamelizasj
+ *
+ * https://www.ilithya.rocks/
+ * https://twitter.com/ilithya_rocks -->
+
+<div id="shadercollab"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+	
+// Pallete function by Inigo Quilez - iquilezles.org
+vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d) { return a + b*cos( 6.28318*(c*t+d) ); }
+			
+void main() {
+	vec2 uv=(gl_FragCoord.xy-u_resolution*.5)/u_resolution.yy+.5;
+
+	float fr = 4.;
+	
+	float avg = .5; 
+	float minus_xy = uv.x - uv.y * avg;
+	float minus_yx = uv.y - uv.x * avg;
+	float plus_xy = uv.x + uv.y * avg;		
+	float plus_yx = uv.y + uv.x * avg;	
+	
+	float anim_01 = fract(-.25*minus_xy*fr*2.) * sin(u_time/1.5) * avg;
+	float anim_02 = fract(-.5*plus_yx *fr*2.) * cos(1.25) * avg;
+
+	vec3 color_01 = vec3(.5-fract(minus_xy*fr+anim_01), fract(plus_xy*fr+anim_02), 1.);
+	vec3 color_02 = vec3(.5-fract(minus_yx*fr-anim_01), fract(plus_xy*fr-anim_02), 1.);
+	
+	vec3 cPalette = palette(
+		.5,
+		color_01 + vec3(color_01.y, color_01.x, color_02.x),
+		vec3(0.0, color_02.x, 0.0) + cos(u_time*.5) * .55,
+		color_02,
+		vec3(0.0, .5, 0.0)
+	);
+
+	gl_FragColor = vec4(cPalette, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

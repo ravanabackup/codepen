@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - #curiouslyminded — 3_LiveShaderCodingSession</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- Shader Collab
+ * By eliza & ilithya | 2021
+ *
+ * We're curiouslyminded:
+ * https://www.twitch.tv/curiouslyminded
+ * https://www.youtube.com/curiouslyminded -->
+
+<div id="shadercollab"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float hash(vec2 p) {
+	vec3 p3 = fract(vec3(p.xyx) * 0.13); p3 += dot(p3, p3.yzx + 3.333); 
+	return fract((p3.x + p3.y) * p3.z); 
+}
+	
+float noise(vec2 x) {
+    vec2 i = floor(x);
+    vec2 f = fract(x);
+
+	// Four corners in 2D of a tile
+	float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+	
+	// Same code, with the clamps in smoothstep and common subexpressions
+	// optimized away.
+    vec2 u = f * f * (3.0 - 2.0 * f);
+	return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+	
+void main() {
+	vec2 uv = (gl_FragCoord.xy - u_resolution * .5) / u_resolution.yy + 0.5;
+	
+	vec3 c1 = vec3(1., 1., 0.); // yellow 
+	vec3 c2 = vec3(.5, 0., .5); // purple 
+
+	float n = 15.0;
+
+	float noise = noise(uv*1.35);
+	float gridX = mod(noise * n + sin(u_time), 1.0);
+	float gridY = mod(noise * n * 0.5 + cos(u_time), 1.0);
+	
+	float outlineGridX = smoothstep(1.3, .7, gridX);
+	float outlineGridY = smoothstep(1.5, .6, gridY);
+
+	vec3 color = vec3(
+		vec2(
+			outlineGridX+gridX*0.5-0.2, 
+			outlineGridY
+		), 
+		4. * sin(uv.x + uv.y)
+	);
+	color *= mix(c2, c1, 1. - uv.y);
+	
+	gl_FragColor = vec4(color, 1.);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r124/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

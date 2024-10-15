@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Colorful Juggle</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- By ilithya | 2020
+ * https://www.ilithya.rocks/
+ * https://twitter.com/ilithya_rocks 
+ * https://www.instagram.com/ilithya_rocks/  -->
+
+<div id="raymarching"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+
+// Pallete and shape functions by Inigo Quilez - iquilezles.org
+vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d) {
+    return a + b*cos(6.28318*(c*t+d));
+}
+
+float sdSphere(vec3 p, float s) {
+  return length(p)-s;
+}
+	
+float sdTorus(vec3 p, vec2 t) {
+  vec2 q = vec2(length(p.xz)-t.x,p.y);
+  return length(q)-t.y;
+}
+	
+// Got rotation functions from akella - twitter.com/akella
+mat4 rotationMatrix(vec3 axis, float angle) {
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c, 
+				oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           
+				oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           
+				0.0,
+                0.0,                                
+				0.0,                                
+				0.0,                                
+				1.0);
+}
+
+vec3 rotate(vec3 v, vec3 axis, float angle) {
+	mat4 m = rotationMatrix(axis, angle);
+	return (m * vec4(v, 1.0)).xyz;
+}
+	
+// Geometry union function by Jamie Wong - jamie-wong.com/
+float joinGeom(float distA, float distB) {
+    return min(distA, distB);
+}
+
+// As of here starts my idea for this raymarching 3d scene after a mix of learnings from workshops and blog posts from a few folks :) Find them on twitter — @CharStiles, @akella, @jlfwong 
+float scene(vec3 pos){
+	float anim = u_time*2.5;
+	
+	vec3 rotPos = rotate(vec3(pos.x, pos.y, pos.z+2.4+cos(anim)), vec3(1.), anim);
+	float torus = sdTorus(rotPos, vec2(.55, .2));
+	
+	float cosAnim = cos(anim)*3.5;
+	float sinAnim = sin(anim)+4.;
+	float radius = 0.5;
+	float spheres = sdSphere(vec3(pos.x+cosAnim, pos.y, pos.z+sinAnim), radius);
+	spheres = joinGeom(spheres, sdSphere(vec3(pos.x-cosAnim, pos.y, pos.z+sinAnim), radius));
+
+    return joinGeom(torus, spheres);
+}
+
+const int MARCH_MAX_STEPS = 60;
+const float EPSILON = 0.0001; // FYI: Epsilon is used to express numbers infinitely close to zero but not zero
+const float RAY_MAX_DIST = 100.;
+	
+vec4 raymarch(vec3 start, vec3 direction, float shineAnim) {
+    float dist = 0.0;
+    float rayDepth = 0.0;
+    vec3 rayLength = start;
+	vec4 bgColor = vec4(1.0, 0.41, 0.71, 1.0);
+	
+    for(int i=0 ; i < MARCH_MAX_STEPS; i++){
+        dist = scene(rayLength);
+        rayLength += dist*direction;
+        rayDepth += dist;
+ 
+		vec3 cospalette = palette(shineAnim, vec3(.75), rayLength/1.5, vec3(1.), vec3(0.0, rayDepth, 0.77));
+		vec4 sceneObjColor = vec4(cospalette, 1.0);
+
+        if (dist < EPSILON) return sceneObjColor;
+        if (rayDepth > RAY_MAX_DIST) return bgColor;
+    }
+    
+    return bgColor;
+}
+	
+void main() {
+	vec2 uv = (gl_FragCoord.xy - u_resolution * .5) / u_resolution.yy; // To center our object and resize it  
+    vec3 camPos = vec3(0.0);
+	vec3 rayDir = normalize(vec3(uv, -0.5)); // To get our desired DOF
+	vec3 rayPos = camPos + rayDir;
+	
+	uv.y += u_time/1.7;
+	float shineAnim = fract(uv.x+uv.y);
+    vec4 color = vec4(raymarch(rayDir, rayPos, shineAnim)); 
+    
+    gl_FragColor = color;
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Collab — 2_Movement</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- Shader Collab
+ * By eliza & ilithya | 2020
+ *
+ * https://www.elizasj.com/
+ * https://twitter.com/iamelizasj
+ *
+ * https://www.ilithya.rocks/
+ * https://twitter.com/ilithya_rocks -->
+
+<div id="shadercollab"></div>
+<script id="vertex" type="x-shader/x-vertex">
+	void main() { gl_Position = vec4(position, 1.0); }
+</script>
+
+<script id="fragment" type="x-shader/x-fragment">
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+	
+#define PI 3.14159265359
+
+// Pallete function by Inigo Quilez - iquilezles.org
+vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d) { return a + b*cos( 6.28318*(c*t+d) ); }
+			
+void main() {
+	vec2 uv = gl_FragCoord.xy/u_resolution.xy;
+	uv.x *= u_resolution.x/u_resolution.y;
+
+	float wave = PI * 2.;
+	float anim_01 = sin(u_time/1.5);
+	float anim_02 = cos(u_time/2.5);
+	float size = 2.15;
+	float amount = 1.73;
+
+	/* Frequency is the combiantion of oscilation and phase. */
+	/* Oscillation is the repetitive variation. */
+	/* Phase is an angle representing the number of periods spanned by that variable. */
+	
+	vec3 color_palette = palette(
+		.5, // Keep the color spectrum balanced
+		vec3(fract(sin(uv.x*wave)*anim_01 * size + cos(uv.y*wave)*anim_02*amount + uv.yyx)), // shape 
+		vec3(fract(cos(uv.x*wave)*anim_02 * size + sin(uv.y*wave)*anim_01*amount + uv.xxy)), // mirror shape
+		vec3(sin(u_time/2.)/2., .06, 1.0), // Color
+		vec3(.5) // Keep the color spectrum balanced
+	);	
+	
+	gl_FragColor = vec4(color_palette, 1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
