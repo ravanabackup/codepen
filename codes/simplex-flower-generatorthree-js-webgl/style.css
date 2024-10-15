@@ -1,0 +1,51 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #000;
+  overflow: hidden;
+}
+
+canvas {
+  bottom: 0;
+  cursor: move;
+  cursor: -webkit-grab;
+  cursor: grab;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+}
+
+canvas:active {
+  cursor: move;
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+.variaboard-panel {
+  -webkit-animation: slide-in 500ms 3000ms ease-out forwards;
+          animation: slide-in 500ms 3000ms ease-out forwards;
+  font-family: "Source Code Pro", monospace;
+  opacity: 0;
+  transform: translateY(5px);
+  visibility: hidden;
+}
+
+@-webkit-keyframes slide-in {
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+  }
+}
+
+@keyframes slide-in {
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+  }
+}

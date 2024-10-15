@@ -1,0 +1,34 @@
+body {
+  background: #000;
+  overflow: hidden;
+}
+
+canvas {
+  background: #000;
+  display: block;
+}
+
+.variaboard-panel {
+  -webkit-animation: slide-in 2000ms 500ms ease-out forwards;
+          animation: slide-in 2000ms 500ms ease-out forwards;
+  font-family: "Source Code Pro", monospace;
+  opacity: 0;
+  transform: translateY(5px);
+  visibility: hidden;
+}
+
+@-webkit-keyframes slide-in {
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+  }
+}
+
+@keyframes slide-in {
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+  }
+}

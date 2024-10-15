@@ -1,0 +1,45 @@
+body {
+	background: #000;
+	overflow: hidden;
+}
+
+.wrap {
+	height: 5px;
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 5px;
+}
+
+.wrap div {
+	-webkit-animation: spin 6000ms linear infinite;
+	        animation: spin 6000ms linear infinite;
+	border: 0px solid transparent;
+	border-top: 3px solid rgba(255, 0, 0, 1);
+	border-radius: 50%;
+	box-shadow: 0 0 100px rgba(255, 0, 0, 0.25);
+	height: 140%;
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	width: 140%;
+}
+
+@-webkit-keyframes spin {
+	0% {
+		transform: translate(-50%, -50%) rotate(0);	
+	}
+	100% {
+		transform: translate(-50%, -50%) rotate(360deg);	
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: translate(-50%, -50%) rotate(0);	
+	}
+	100% {
+		transform: translate(-50%, -50%) rotate(360deg);	
+	}
+}

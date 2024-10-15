@@ -1,0 +1,53 @@
+body {
+	background: #000;
+}
+
+.container {
+	/*margin: 0 auto;*/
+  margin-top:-4.85em;
+  display: inline-block;
+	position: relative;
+	width: 100%;
+}
+
+.container svg {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+h3 {
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  color: #fefefe;
+  font-weight: 400;
+  margin-top:2em;
+  font-size:.95rem;
+}
+
+h3 a {color:#fff;}
+
+
+@media (min-width: 480px) {
+  .liquid {
+  -webkit-filter: url("#goo");
+	filter: url("#goo");
+}
+}
+
+/* 
+  ##Device = Most of the Smartphones Mobiles (Portrait)
+  ##Screen = B/w 320px to 479px
+*/
+@media (min-width: 320px) and (max-width: 480px) {
+  .container {
+    margin:0 auto;
+    margin-left:0em;
+    margin-top:-5em;
+  }
+  
+  .container svg {
+    max-width:50em;
+  }
+  
+}

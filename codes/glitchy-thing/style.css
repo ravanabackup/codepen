@@ -1,0 +1,37 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #000;
+  overflow: hidden;
+}
+
+.scene {
+  border-radius: 50%;
+  bottom: 0;
+  height: 300px;
+  left: 0;
+  margin: auto;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 300px;
+  z-index: 20;
+}
+.scene:after {
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/836/snow-static2.gif);
+  bottom: 0;
+  content: "";
+  left: 0;
+  opacity: 0.15;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+canvas {
+  display: block;
+}
