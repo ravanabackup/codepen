@@ -1,0 +1,96 @@
+body {
+  background: #1F1F34;
+}
+
+.contain {
+  position: relative;
+  margin: 130px auto;
+  width: 130px;
+}
+
+svg {
+  position: absolute;
+}
+
+svg circle {
+  -webkit-animation: draw 3s infinite;
+          animation: draw 3s infinite;
+}
+
+svg:nth-of-type(1) circle {
+  stroke: #8D518A;
+}
+
+svg:nth-of-type(2) circle {
+  r: 54px;
+  stroke-dashoffset: 171px;
+  stroke-dasharray: 171px;
+  stroke: #29ACEB;
+  -webkit-animation-delay: 100ms;
+          animation-delay: 100ms;
+}
+
+svg:nth-of-type(3) circle {
+  r: 48px;
+  stroke-dashoffset: 152px;
+  stroke-dasharray: 152px;
+  stroke: #72BF44;
+  -webkit-animation-delay: 200ms;
+          animation-delay: 200ms;
+}
+
+svg:nth-of-type(4) circle {
+  r: 43px;
+  stroke-dashoffset: 136px;
+  stroke-dasharray: 136px;
+  stroke: #FDF001;
+  -webkit-animation-delay: 300ms;
+          animation-delay: 300ms;
+}
+
+svg:nth-of-type(5) circle {
+  r: 37px;
+  stroke-dashoffset: 117px;
+  stroke-dasharray: 117px;
+  stroke: #F7941E;
+  -webkit-animation-delay: 400ms;
+          animation-delay: 400ms;
+}
+
+@-webkit-keyframes draw1 {
+  50% {
+    stroke-dashoffset: 80px, 50px, 30px, 20px;
+    stroke-dasharray: 80px, 50px, 10px, 5px;
+  }
+}
+
+@keyframes draw1 {
+  50% {
+    stroke-dashoffset: 80px, 50px, 30px, 20px;
+    stroke-dasharray: 80px, 50px, 10px, 5px;
+  }
+}
+@-webkit-keyframes draw2 {
+  50% {
+    stroke-dashoffset: 60px, 30px, 20px, 10px;
+    stroke-dasharray: 60px, 40px, 15px, 4px;
+  }
+}
+@keyframes draw2 {
+  50% {
+    stroke-dashoffset: 60px, 30px, 20px, 10px;
+    stroke-dasharray: 60px, 40px, 15px, 4px;
+  }
+}
+@-webkit-keyframes draw {
+  50% {
+    stroke-dashoffset: 90px, 30px, 50px, 20px;
+    stroke-dasharray: 60px, 20px, 7px, 3px;
+  }
+}
+@keyframes draw {
+  50% {
+    stroke-dashoffset: 90px, 30px, 50px, 20px;
+    stroke-dasharray: 60px, 20px, 7px, 3px;
+  }
+}

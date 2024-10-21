@@ -1,0 +1,9 @@
+body {
+  background: #360F36;
+}
+
+.contain {
+  margin-top: 75px;
+  display: flex;
+  justify-content: center;
+}
