@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - GLSL: Random Dots</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  precision highp float;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    return uv;
+  }
+
+  void main() {
+    vec2 uv = getScreenSpace();
+    
+    uv *= 30.;
+    vec2 grid = floor(uv);
+    vec2 subuv = fract(uv);
+    
+    vec3 colour = vec3(0);
+    
+    for(int x = -1; x < 2; x++) {
+      
+      for(int y = -1; y < 2; y++) {
+        vec2 os = vec2(x,y);
+        vec2 _grid = grid + os;
+        vec2 _subuv = subuv - os;
+        
+        float r = texture2D(u_noise, _grid/(512. + 256.*sin(u_time))).r*.5;
+        colour += vec3(smoothstep( r+.01, r, length(_subuv-.5) ));
+      }
+      
+    }
+    
+
+    gl_FragColor = vec4(colour,1.0);
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

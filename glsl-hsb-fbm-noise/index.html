@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - GLSL: HSB FBM noise</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+    #define TAU 6.28318530718
+    #define PI 3.14159265359
+    
+    uniform vec2 u_resolution;
+    uniform float u_time;
+  
+    const int octaves = 5;
+    const float seed = 43758.5453123;
+    const float seed2 = 73156.8473192;
+  
+    float random(float val) {
+      return fract(sin(val) * seed);
+    }
+  
+    vec2 random2(vec2 st, float seed){
+        st = vec2( dot(st,vec2(127.1,311.7)),
+                  dot(st,vec2(269.5,183.3)) );
+        return -1.0 + 2.0*fract(sin(st)*seed);
+    }
+  
+    float random2d(vec2 uv) {
+      return fract(
+                sin(
+                  dot( uv.xy, vec2(12.9898, 78.233) )
+                ) * seed);
+    }
+  
+    // Value Noise by Inigo Quilez - iq/2013
+    // https://www.shadertoy.com/view/lsf3WH
+    float noise(vec2 st, float seed) {
+        vec2 i = floor(st);
+        vec2 f = fract(st);
+
+        vec2 u = f*f*(3.0-2.0*f);
+
+        return mix( mix( dot( random2(i + vec2(0.0,0.0), seed ), f - vec2(0.0,0.0) ), 
+                         dot( random2(i + vec2(1.0,0.0), seed ), f - vec2(1.0,0.0) ), u.x),
+                    mix( dot( random2(i + vec2(0.0,1.0), seed ), f - vec2(0.0,1.0) ), 
+                         dot( random2(i + vec2(1.0,1.0), seed ), f - vec2(1.0,1.0) ), u.x), u.y);
+    }
+  
+    float mod289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
+    vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
+    vec4 perm(vec4 x){return mod289(((x * 34.0) + 1.0) * x);}
+
+    float noise(vec3 p){
+        vec3 a = floor(p);
+        vec3 d = p - a;
+        d = d * d * (3.0 - 2.0 * d);
+
+        vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
+        vec4 k1 = perm(b.xyxy);
+        vec4 k2 = perm(k1.xyxy + b.zzww);
+
+        vec4 c = k2 + a.zzzz;
+        vec4 k3 = perm(c);
+        vec4 k4 = perm(c + 1.0);
+
+        vec4 o1 = fract(k3 * (1.0 / 41.0));
+        vec4 o2 = fract(k4 * (1.0 / 41.0));
+
+        vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
+        vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
+
+        return o4.y * d.y + o4.x * (1.0 - d.y);
+    }
+  
+    float fbm0 (in vec2 st, float seed) {
+      // Initial values
+      float value = 0.0;
+      float amplitude = .5;
+      // float _seed = seed - u_time / 100.;
+      //
+      // Loop of octaves
+      for (int i = octaves; i > 0; i--) {
+          value += amplitude * abs(noise(st, seed));
+          st *= 2.;
+          amplitude *= .5;
+      }
+      return value;
+  }
+  
+  float fbm(in vec2 st, float seed) {
+    float value = 0.0;
+    float amp = 0.5;
+    vec2 shift = vec2(100);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(cos(1.5), sin(1.5), -sin(1.5), cos(1.50));
+    for (int i = 0; i < octaves; ++i) {
+      value += amp * abs(noise(st, seed));
+      st = rot * st * 2.0 + shift;
+      amp *= 0.5;
+    }
+    return value;
+  }
+  float fbm(vec3 st, float seed) {
+    float value = 0.0;
+    float amp = 0.5;
+    vec3 shift = vec3(100);
+    // Rotate to reduce axial bias
+    mat3 rot = mat3(cos(0.5), sin(0.5), 0., -sin(0.5), cos(0.50), 0., 0., 0., 1.);
+    for (int i = 0; i < octaves; ++i) {
+      value += amp * abs(noise(st));
+      st = rot * st * 2.0 + shift;
+      amp *= 0.5;
+    }
+    return value;
+  }
+  
+  vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix( vec3(1.0), rgb, c.y);
+  }
+
+    void main() {
+      vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
+      
+      uv *= 2.;
+      uv.x += cos(u_time / 500.) * 100.;
+      uv.y += sin(u_time / 500.) * 100.;
+      vec3 _uv = vec3(uv, u_time / 10.);
+      
+      float angle = fbm(_uv, seed) * PI * .7;
+      
+      // float val = fbm(uv, seed);
+      vec3 colour = hsb2rgb(vec3(angle, 1., 1.));
+      // colour /= 3.;
+      
+      gl_FragColor = vec4(colour, 1.);
+      // gl_FragColor = vec4(vec3(angle), 1.);
+    }
+</script>
+
+
+<div id="container"></div>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - GLSL: Cross SDF Visualisation</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  #extension GL_OES_standard_derivatives : enable
+  precision highp float;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+
+  float smin( float d1, float d2, float k ) {
+    float h = clamp( 0.5 - 0.5*(d2+d1)/k, 0.0, 1.0 );
+    return mix( d2, -d1, h ) + k*h*(1.0-h);
+  }
+  
+  float sinmax( float d1, float d2, float k ) {
+    float h = clamp( 0.5 - 0.5*(d2-d1)/k, 0.0, 1.0 );
+    return mix( d2, d1, h ) + k*h*(1.0-h);
+  }
+  
+  // ----------------------------------------------
+  // 2D SDF functions courtesy Inigo Quilez
+  // https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm
+  // ----------------------------------------------
+  float sdCross( in vec2 p, in vec2 b, float r ) {
+    p = abs(p); p = (p.y>p.x) ? p.yx : p.xy;
+    vec2  q = p - b;
+    float k = max(q.y,q.x);
+    vec2  w = (k>0.0) ? q : vec2(b.y-p.x,-k);
+    return sign(k)*length(max(w,0.0)) + r;
+  }
+  
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    return uv;
+  }
+  
+  const vec3 c_inside = vec3(.3, .5, .6);
+  const vec3 c_outside = vec3(.7, .5, .3);
+  const vec3 c_solid = vec3(.9);
+  
+  float stroke(float field, float point, float width) {
+    float aa = fwidth(field);
+    float shade = smoothstep(point, point + aa, field + width * .5) - smoothstep(point - aa, point, field - width * .5); 
+    return clamp(shade, 0., 1.);
+  }
+
+  void main() {
+    float multiplier = 8.;
+    vec2 uv = getScreenSpace();
+    uv *= multiplier;
+    
+    vec2 mouse = u_mouse * multiplier;
+    
+    float field = sdCross(uv, abs(vec2(mouse.y, mouse.x)), 0.);
+    field = max(field, -(length(uv) - abs(mouse.y*.4)));
+    // field = smin(field, (length(uv) - abs(mouse.y)),5.);
+    field += .4;
+    field = abs(field) - .4;
+    field = abs(field) - .2;
+    
+    vec3 colour = mix(vec3(0.), c_outside, sin(field*70.)*.5+1.);
+    colour = mix(colour, vec3(0.), smoothstep(.3, 0., field)*.8);
+    colour = mix(
+      colour, 
+      mix(
+        (mix(vec3(0.), c_inside, sin(field*70.)*.5+1.)), 
+        vec3(0.), 
+        smoothstep(-.2, 0., field)*.8),
+      step(field, 0.)
+    );
+    colour = mix(colour, c_solid, stroke(field, 0., .05));
+    
+    float t = clamp(sin(u_time*2.) * 10. + 8., 0., 1.);
+    
+    colour = mix(vec3(smoothstep(0., 0.+fwidth(field), field)), colour, t);
+
+    gl_FragColor = vec4(colour,1.0);
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
