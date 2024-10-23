@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Scales</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  precision highp float;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    return uv;
+  }
+  
+  // Helper vector. If you're doing anything that involves regular triangles or hexagons, the
+  // 30-60-90 triangle will be involved in some way, which has sides of 1, sqrt(3) and 2.
+  const vec2 s = vec2(1, 1.7320508);
+
+  vec2 hash2(vec2 p) {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+  
+  float hex(in vec2 p) {
+    p = abs(p);
+    return max(dot(p, s*.5), p.x); // Hexagon.
+  }
+  vec4 getHex(vec2 p){
+    vec4 hC = floor(vec4(p, p - vec2(.5, 1))/s.xyxy) + .5;
+    vec4 h = vec4(p - hC.xy*s, p - (hC.zw + .5)*s);
+    return dot(h.xy, h.xy)<dot(h.zw, h.zw) ? vec4(h.xy, hC.xy) : vec4(h.zw, hC.zw + vec2(.5, 1));
+  }
+
+  void main() {
+    vec2 uv = getScreenSpace()*15.*(min(u_resolution.y, u_resolution.x)/max(u_resolution.y, u_resolution.x));
+    float h = hex(uv);
+    vec4 hexuv = getHex(uv);
+    
+    vec3 colour = vec3(1.-hex(hexuv.xy + vec2(sin(length(uv) + u_time * 5.), cos(length(uv) + u_time * 5.)) * .2));
+
+    gl_FragColor = vec4(colour*colour,1.0);
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

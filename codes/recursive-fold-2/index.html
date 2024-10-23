@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Recursive fold 2</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="container">
+</div>
+<script type="text/fragment" id="fragShader">
+  precision highp float;
+
+  uniform vec2 u_resolution;
+  uniform float u_time;
+  uniform vec4 u_mouse;
+  uniform float u_iMouselength;
+  uniform sampler2D s_noise;
+
+  uniform sampler2D b_noise;
+  uniform sampler2D b_render;
+
+  varying vec2 v_uv;
+  
+  const float layers = 10.;
+  float depth = 20.;
+  float t;
+  
+  #define PI 3.14159265359
+  #define TAU PI * 2.
+
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+
+    return uv;
+  }
+  vec2 rot(vec2 p, float a) {
+    float c = cos(a);
+    float s = sin(a);
+    return p * mat2(c, -s, s, c);
+  }
+  float ngon(vec2 uv, float sides) {
+    float split = TAU / sides;
+    vec2 polar = vec2( length(uv), atan(uv.y, uv.x) / split );
+    
+    return polar.x * cos(fract(polar.y) * split - split * .5);
+  }
+  
+  vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d ) {
+      return a + b*cos( 6.28318*(c*t+d) );
+  }
+  void main() {
+    vec2 uv = getScreenSpace();
+    
+    uv *= 2.;
+    
+    float t = u_time - 171.25;
+    
+    vec2 rotuv = rot(uv, t*10.) * vec2(1.7, 1.);
+    
+    float field = ngon(rotuv, 4.);
+    float field2 = ngon(rotuv + vec2(0., .1), 4.);
+    // field = field2;
+    float m = smoothstep(0.003, 0., field-.13) - smoothstep(0.003, 0., field2-.13); // Outer
+    float i = smoothstep(0.003, 0., field-.06); // Inner
+    float pa = clamp(m + i, 0., 1.);
+
+    vec2 suv = gl_FragCoord.xy / u_resolution - .5;
+    suv *= 1.01;
+    suv.y = abs(suv.y) - sin(t*5.) * .02;
+    suv.x = abs(suv.x) - cos(t*5.) * .05;
+    suv = rot(suv, -t*2.);
+    suv += .5;
+    float offsfield = step(suv.x, 1.) * step(suv.y, 1.) * step(0., suv.x) * step(0., suv.y);
+    vec4 tex = texture2D( b_render, suv );
+    
+    tex.x = tex.x - max(cos((1./tex.a)), 0.);
+    tex.y = tex.y - max(sin(1./tex.a*5.) * .5, 0.);
+    tex.z = tex.z - max(cos(1./tex.a*5.) * .5, 0.);
+    tex *= .98;
+    
+    vec3 c = vec3(smoothstep( 0., .003, abs(field)-.12 ),  i, i + smoothstep( 0., .003, abs(field-.2)-.15 )) * (1. - smoothstep( 0., .003, abs(field-.19)-.15 ));
+    
+    float a = clamp(tex.w + m + i, 0., 1.);
+    
+    gl_FragColor = vec4(mix(tex.rgb, c, pa), a);
+    
+  }
+</script>
+<script type="text/fragment" id="renderShader">
+  precision highp float;
+
+  uniform vec2 u_resolution;
+  uniform float u_time;
+  uniform vec4 u_mouse;
+  uniform float u_iMouselength;
+  uniform sampler2D s_noise;
+
+  uniform sampler2D b_render;
+
+  varying vec2 v_uv;
+  
+  void main() {
+    vec4 tex = texture2D(b_render, gl_FragCoord.xy / u_resolution );
+    vec3 colour = mix(vec3(0), vec3(.2, .5, .8), tex.r);
+    colour = mix(colour, vec3(.4, .2, .2), tex.g);
+    colour = mix(colour, vec3(.2, .5, .3), tex.b);
+    gl_FragColor = vec4(colour, 1.);
+  }
+</script>
+<!-- partial -->
+  <script type="module" src="./script.js"></script>
+
+</body>
+</html>

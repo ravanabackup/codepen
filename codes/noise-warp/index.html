@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Noise warp</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+    uniform vec2 u_resolution;
+    uniform float u_time;
+  
+    const float seed = 43758.5453123;
+  
+    float random(float val) {
+      return fract(sin(val) * seed);
+    }
+  
+    vec2 random2(vec2 st){
+        st = vec2( dot(st,vec2(127.1,311.7)),
+                  dot(st,vec2(269.5,183.3)) );
+        return -1.0 + 2.0*fract(sin(st)*43758.5453123);
+    }
+  
+    float random2d(vec2 uv) {
+      return fract(
+                sin(
+                  dot( uv.xy, vec2(12.9898, 78.233) )
+                ) * seed);
+    }
+  
+    // Value Noise by Inigo Quilez - iq/2013
+    // https://www.shadertoy.com/view/lsf3WH
+    float noise(vec2 st) {
+        vec2 i = floor(st);
+        vec2 f = fract(st);
+
+        vec2 u = f*f*(3.0-2.0*f);
+
+        return mix( mix( dot( random2(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ), 
+                         dot( random2(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
+                    mix( dot( random2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ), 
+                         dot( random2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
+    }
+  
+    vec3 plotCircle(vec2 pos, vec2 uv, float size) {
+      return vec3(smoothstep(size, size + 0.05, length(uv - pos)));
+    }
+
+    void main() {
+      vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
+      
+      float modifier = 1.0;
+      
+      vec3 boss = vec3(noise((uv + vec2(u_time / 100., 0.)) * 5. * modifier)*.5+.5); // octave 1;
+      boss += vec3(noise(uv * 30.)*.5+.5);
+      boss /= 2.;
+      boss += vec3(noise(( uv + vec2(u_time / 110., 0.) ) * 10. * modifier)*.5+.5);
+      // boss /= 2.;
+      boss -= smoothstep(0.4, 0.85, vec3(noise(( uv + vec2(u_time / 60., 0.) ) * 1.2 * modifier)*.5+.5)) / 2.;
+      boss /= 2.;
+      boss += vec3(noise(( uv + vec2(u_time / 40., 0.) ) * 3. * modifier)*.5+.5);
+      boss /= 2.;
+      
+      vec3 colour = vec3(0.);
+      
+      uv *= 20. * modifier;
+      uv.y += boss.r * 6.;
+      
+      vec2 grid = floor(uv);
+      vec2 fractPos = fract(uv);
+      
+      if(mod(grid.y, 2.) == 0.) {
+        colour = vec3(smoothstep(0.0, 0.05, fractPos.y) - smoothstep(0.9, 0.95, fractPos.y));
+      }
+      
+      gl_FragColor = vec4(colour, 1.);
+    }
+</script>
+
+
+<div id="container"></div>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

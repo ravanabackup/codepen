@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Recursion</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="vertexShader_buffer" type="x-shader/x-vertex">attribute vec4 a_position;  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader_buffer" type="x-shader/x-vertex">
+  precision highp float;
+  
+  uniform vec2 u_resolution;
+  uniform float u_time;
+  uniform vec2 u_mouse;
+  uniform sampler2D u_noise;
+  
+  uniform sampler2D b_loop;
+  
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    return uv;
+  }
+  float hash21(vec2 p) {
+    p = fract(p * vec2(233.34, 851.74));
+    p += dot(p, p + 23.45);
+    p = fract(p);
+    return texture2D(u_noise, p).x;
+  }
+  void main() {
+    vec2 uv = abs(getScreenSpace());
+    vec2 ms = (u_mouse.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    float t = -atan(ms.x, ms.y) + u_time * .1;
+    float s = sin(t);
+    float c = cos(t);
+    mat2 m = mat2(c, s, -s, c-s*.1);
+    vec2 u = abs(uv-.5);
+    
+    vec2 samp = gl_FragCoord.xy / u_resolution;
+    float n = hash21(samp+u_time);
+    
+    vec4 a = texture2D(b_loop, (samp*1.05*(m)-.5)) * (.99 - n*.05);
+    float cl = smoothstep(0.0, 0.005, max(uv.x, uv.y) - .485);
+    float al = clamp(cl + (smoothstep(.03, .0, min(u.y, u.x)) * (1.+n*.5)), 0., 1.);
+    vec4 b = vec4(vec3(cl), al);
+    
+    gl_FragColor = mix(a,b,b.w);
+  }
+</script>
+<script id="fragmentShader_under" type="x-shader/x-vertex">
+  precision highp float;
+  
+  uniform vec2 u_resolution;
+  uniform float u_time;
+  uniform vec2 u_mouse;
+  uniform sampler2D u_noise;
+  
+  uniform sampler2D b_loop;
+  
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    return uv;
+  }
+  void main() {
+    vec2 uv = abs(getScreenSpace());
+    
+    gl_FragColor = vec4(
+      mix(
+        texture2D(b_loop, gl_FragCoord.xy / u_resolution.xy).rgb,
+        vec3(abs(sin(u_time*5.))),
+        0. //smoothstep(0.0, 0.002, max(uv.x,uv.y) - .47)
+    ), 1.);
+  }
+</script>
+<!-- partial -->
+  <script type="module" src="./script.js"></script>
+
+</body>
+</html>
