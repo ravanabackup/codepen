@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Stage hills</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  precision highp float;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  uniform sampler2D u_bricks;
+  
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    return uv;
+  }
+  
+  vec3 randcol(float i) {
+    i = fract(i/4.);
+    if(i < .25) {
+      return vec3(1,0,0);
+    } else if(i < .5) {
+      return vec3(0,1,0);
+    } else if(i < .75) {
+      return vec3(0,0,1);
+    } else if(i < 1.) {
+      return vec3(1,1,1);
+    }
+  }
+  
+  vec2 hash12(float i) {
+    return texture2D(u_noise, vec2(i/255.)).xy;
+  }
+  
+  #define PI 3.14159265359
+
+  void main() {
+    vec2 uv = getScreenSpace();
+    
+    uv.y += sin(u_time*.2);
+    
+    uv *= 10.;
+    
+    vec2 guv = vec2(uv.x, mod(uv.y, 2.));
+    float id = floor(uv.y*.5);
+    
+    vec3 col = vec3(0);
+    
+    for(float i = -4.; i < 3.; i+=2.) {
+      vec2 suv = guv + vec2(0., i);
+      vec2 suv1 = guv + vec2(0., i-1.);
+      
+      float sid = id - i * .5;
+      float sid1 = id - i * .5 - 1.;
+      
+      vec2 hash = hash12(sid);
+      vec2 hash1 = hash12(sid1);
+      vec2 hash2 = hash12(hash.x);
+      vec2 hash3 = hash12(hash1.x);
+      
+      suv.x += u_time*10.*(hash.x*hash2.x);
+      suv1.x += u_time*10.*(hash1.x*hash3.x);
+      
+      vec2 p = suv;
+      
+      float wave = sin(suv.x + sid) + cos(suv.x * hash.y) * (hash.y*10.) * (cos(suv.x * hash2.x) * 5. * hash2.y);
+      float wave1 = sin(suv1.x + sid1) + cos(suv1.x * hash1.y) * (hash1.y*10.) * (cos(suv1.x * hash3.x) * 5. * hash3.y);
+      
+      p = vec2(length(p*.02), ((p.y) + wave * .1))*.25;
+      
+      float sfield = (suv.y + wave * .1);
+      float sfield1 = (suv.y + wave1 * .1);
+      
+      float mask = smoothstep(.05, .0, sfield);
+      
+      const vec3 eps = vec3(.001, .001, 0);
+      vec4 tex = texture2D(u_bricks, p);
+      tex += texture2D(u_bricks, p + eps.xy);
+      tex += texture2D(u_bricks, p - eps.xy);
+      tex += texture2D(u_bricks, p + eps.xy * vec2(1, -1));
+      tex += texture2D(u_bricks, p - eps.xy * vec2(1, -1));
+      tex *= .2;
+      
+      col = mix(col, (randcol(sid) * .5 + .5) * tex.rgb * (suv.y * .5 + .3 + smoothstep(-3.5, -1., sfield1)), mask);
+    }
+
+    gl_FragColor = vec4(col,1.0);
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
