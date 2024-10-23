@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - undefined</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script type="x-shader/x-vertex" id="vertex">
+varying vec2 vUv;
+
+void main(){
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+</script>
+
+<script type="x-shader/x-fragment" id="outputFragment">
+uniform sampler2D blurTex;
+uniform sampler2D particleTex;
+uniform sampler2D baseTex;
+uniform float uRate;
+
+varying vec2 vUv;
+
+void main(){
+    vec4 baseCol = texture2D(blurTex, vUv);
+    vec4 particleCol = texture2D(particleTex, vUv);
+    vec2 customUv = vec2(particleCol.g, particleCol.r);
+    vec4 reflectCol = texture2D(baseTex, customUv);
+    gl_FragColor = (1.-uRate) * baseCol + uRate * vec4(reflectCol.rgb, particleCol.a);
+}
+</script>
+
+<script type="x-shader/x-fragment" id="blurFragment">
+vec4 blur9(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
+  vec4 color = vec4(0.0);
+  vec2 off1 = vec2(1.3846153846) * direction;
+  vec2 off2 = vec2(3.2307692308) * direction;
+  color += texture2D(image, uv) * 0.2270270270;
+  color += texture2D(image, uv + (off1 / resolution)) * 0.3162162162;
+  color += texture2D(image, uv - (off1 / resolution)) * 0.3162162162;
+  color += texture2D(image, uv + (off2 / resolution)) * 0.0702702703;
+  color += texture2D(image, uv - (off2 / resolution)) * 0.0702702703;
+  return color;
+}
+
+uniform sampler2D uTex;
+uniform vec2 uResolution;
+uniform vec2 uDirection;
+
+varying vec2 vUv;
+
+void main(){
+    gl_FragColor = blur9(uTex, vUv, uResolution, uDirection);
+}
+</script>
+
+<script type="x-shader/x-fragment" id='particleShader'>
+  uniform sampler2D uBaseTexture;
+uniform sampler2D uUvTexture;
+uniform float uDuration;
+uniform float uTime;
+
+varying vec2 vUv;
+
+void main(){
+    vec4 baseCol = texture2D(uBaseTexture, vUv);
+    vec4 uvCol = texture2D(uUvTexture, vUv);
+    float rate;
+    if(uTime < 0.0){
+        rate = clamp(1. + uTime / 1.0, 0.0, 1.0);
+    }else{
+        rate = 1. - clamp(uTime / uDuration , 0.0, 1.0);
+    }
+
+    gl_FragColor = vec4(uvCol.rgb, baseCol.a * rate );
+}
+
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r81/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
