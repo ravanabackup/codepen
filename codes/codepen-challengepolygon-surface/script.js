@@ -3,19 +3,16 @@ console.clear();
 const twodWebGL = new WTCGL(
 document.querySelector('canvas#webgl'),
 document.querySelector('script#vertexShader').textContent,
-document.querySelector('script#fragmentShader').textContent);
+document.querySelector('script#fragmentShader').textContent,
+window.innerWidth,
+window.innerHeight,
+2);
 
-twodWebGL.startTime = -10000 + Math.random() * 5000;
-
-
-// twodWebGL.addUniform('xscale', WTCGL.TYPE_FLOAT, 0.5);
+twodWebGL.startTime = -100 + Math.random() * 50;
 
 window.addEventListener('resize', () => {
   twodWebGL.resize(window.innerWidth, window.innerHeight);
 });
-twodWebGL.resize(window.innerWidth, window.innerHeight);
-
-// twodWebGL.pxratio = window.devicePixelRatio;
 
 
 
@@ -50,6 +47,12 @@ const textures = [
 {
   name: 'noise',
   url: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/noise.png',
+  type: WTCGL.IMAGETYPE_TILE,
+  img: null },
+
+{
+  name: 'environment',
+  url: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/environment2.jpg',
   type: WTCGL.IMAGETYPE_TILE,
   img: null }];
 

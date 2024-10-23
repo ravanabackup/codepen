@@ -1,24 +1,20 @@
+import * as dat from 'https://cdn.skypack.dev/dat.gui';
 console.clear();
 
 const twodWebGL = new WTCGL(
 document.querySelector('canvas#webgl'),
 document.querySelector('script#vertexShader').textContent,
-document.querySelector('script#fragmentShader').textContent);
+document.querySelector('script#fragmentShader').textContent,
+window.innerWidth,
+window.innerHeight,
+window.devicePixelRatio);
 
-twodWebGL.startTime = -10000 + Math.random() * 5000;
 
-
-// twodWebGL.addUniform('xscale', WTCGL.TYPE_FLOAT, 0.5);
+console.log(twodWebGL);
 
 window.addEventListener('resize', () => {
   twodWebGL.resize(window.innerWidth, window.innerHeight);
 });
-twodWebGL.resize(window.innerWidth, window.innerHeight);
-
-// twodWebGL.pxratio = window.devicePixelRatio;
-
-
-
 
 
 
@@ -36,6 +32,98 @@ window.addEventListener('pointermove', e => {
   }
   twodWebGL.addUniform('mouse', WTCGL.TYPE_V2, mousepos);
 });
+
+const uniforms = {
+  octaves: {
+    v: 3,
+    max: 12,
+    min: 0,
+    type: WTCGL.TYPE_INT },
+  sceneWeight: {
+    v: 1,
+    max: 10,
+    min: .01,
+    type: WTCGL.TYPE_FLOAT },
+  maxIterations: {
+    v: 256,
+    max: 512,
+    min: 2,
+    type: WTCGL.TYPE_INT },
+  internalStep: {
+    v: .003,
+    max: 1,
+    min: 0.0001,
+    type: WTCGL.TYPE_FLOAT },
+  stopThreshold: {
+    v: .01,
+    max: .1,
+    min: .0001,
+    type: WTCGL.TYPE_FLOAT },
+  stepScale: {
+    v: .8,
+    max: 2.,
+    min: .1,
+    type: WTCGL.TYPE_FLOAT },
+  clipBGColour: {
+    v: '#000000',
+    type: 'COLOUR' },
+  blobColour: {
+    v: '#FFFFFF',
+    type: 'COLOUR' },
+  lightColour: {
+    v: '#3F66FF',
+    type: 'COLOUR' },
+  lightStrength: {
+    v: 2,
+    min: .1,
+    max: 5,
+    type: WTCGL.TYPE_FLOAT } };
+
+
+
+const hexToGL = hex => {
+  const components = /^#?([A-F0-9]{2})([A-F0-9]{2})([A-F0-9]{2})/i.exec(hex);
+  if (components && components.length === 4) {
+    const r = Math.round(`0x${components[1]}` / 255 * 1000) / 1000;
+    const g = Math.round(`0x${components[2]}` / 255 * 1000) / 1000;
+    const b = Math.round(`0x${components[3]}` / 255 * 1000) / 1000;
+    return [r, g, b];
+  } else {
+    return [];
+  }
+};
+const updateUniform = (e, n) => {
+  const prop = uniforms[e];
+  if (prop.type === 'COLOUR') {
+    const c = hexToGL(n);
+    twodWebGL.addUniform(e, WTCGL.TYPE_V3, c);
+  } else {
+    twodWebGL.addUniform(e, prop.type, n);
+  }
+};
+
+// const updateUniform(name, value) => {
+
+// }
+
+// const gui = new dat.GUI();
+Object.entries(uniforms).forEach((u, v) => {
+  console.log(u);
+  const prop = uniforms[u[0]];
+  if (prop.type === 'COLOUR') {
+    const c = hexToGL(prop.v);
+    console.log(c);
+    twodWebGL.addUniform(u[0], WTCGL.TYPE_V3, c);
+  } else {
+    twodWebGL.addUniform(u[0], prop.type, prop.v);
+  }
+  if (prop.type === 'COLOUR') {
+    // gui.addColor(prop, 'v').name(u[0]).onChange((v) => { updateUniform(u[0], v) });
+  } else {
+      // gui.add(prop, 'v', prop.min, prop.max).name(u[0]).onChange((v) => { updateUniform(u[0], v) });
+    }
+});
+
 
 
 

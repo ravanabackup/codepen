@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Blackness, darkness, forever</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+
+// Hash function. This particular one probably doesn't disperse things quite 
+// as nicely as some of the others around, but it's compact, and seems to work.
+//
+vec3 hash33(vec3 p){ 
+    float n = sin(dot(p, vec3(7, 157, 113)));    
+    return fract(vec3(2097152, 262144, 32768)*n); 
+}
+
+float pn( in vec3 p ){
+    
+    vec3 i = floor(p); p -= i; p *= p*(3. - 2.*p);
+	p.xy = texture2D(u_noise, (p.xy + i.xy + vec2(37, 17)*i.z + .5)/256., -100.).yx;
+	return mix(p.x, p.y, p.z);
+}
+
+float trigNoise3D(in vec3 p){
+
+    
+    float res = 0., sum = 0.;
+    
+    float n = pn(p*8. + u_time*2.);
+
+    vec3 t = sin(p.yzx*3.14159265 + cos(p.zxy*3.14159265+1.57/2.))*0.5 + 0.5;
+    p = p*1.5 + (t - 1.5); //  + u_time*0.1
+    res += (dot(t, vec3(0.333)));
+
+    t = sin(p.yzx*3.14159265 + cos(p.zxy*3.14159265+1.57/2.))*0.5 + 0.5;
+    res += (dot(t, vec3(0.333)))*0.7071;    
+	 
+	return ((res/1.7071))*0.85 + n*0.15;
+}
+
+// Distance function.
+float map(vec3 p) {
+  float n = trigNoise3D(p*0.2);
+    float t = sin(u_time*.0001)*.5+.5;
+    float c = cos(p.z*.05*t+n);
+    float s = sin(p.z*.05+n*.5);
+    p.xy *= mat2(c, -s, s, c);
+    p -= n*1.5;
+    p.y = mod(p.y, 4.0) - 2.;
+    return abs(p.y) - .1;
+
+    return trigNoise3D(p*0.5);
+    
+}
+
+
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{  
+
+    vec3 rd = normalize(vec3(fragCoord - u_resolution.xy*.5, u_resolution.y*.75)); 
+
+    // Ray origin. Moving along the Z-axis.
+    vec3 ro = vec3(0, 0, u_time*10.);
+
+    vec3 lp = vec3( 0, -.5, 5);
+    lp += ro;
+
+    rd = (rd + (hash33(rd.zyx)*.006 - .003)); 
+    rd *= (1. + fract(sin(dot(vec3(7, 157, 113), rd.zyx))*43758.5453)*0.06-0.03);      
+
+    float lDe = 0., td = 0., w = 0.;
+
+    float d = 1., t = 0.;
+ 
+    const float h = .5;
+
+    vec3 col = vec3(0), sp;
+
+
+
+    vec3 sn = normalize(vec3(-1));
+
+    // Raymarching loop.
+    for (int i=0; i<64; i++) {
+
+        if((td>1.) || d<.001*t || t>80.)break;
+
+
+        sp = ro + rd*t; // Current ray position.
+        d = map(sp); // Closest distance to the surface... particle.
+
+        lDe = (h - d)*step(d, h); 
+        w = (1. - td)*lDe;
+ 
+        td += w*(1.-h)*1./abs(d); //w*w*5. + 1./50.;
+      
+        // Point light calculations.
+        vec3 ld = lp-sp; // Direction vector from the surface to the light position.
+        float lDist = max(length(ld), .001); // Distance from the surface to the light.
+        ld/=lDist; // Normalizing the directional light vector.
+
+        // Using the light distance to perform some falloff.
+        float atten = 1./(lDist);
+
+        float diff = max(dot( sn, ld ), 0.);
+        float spec = pow(max( dot( reflect(-ld, sn), -rd ), 0. ), 4.);
+
+        col += w*(d*5. - .1)*(.5 + diff)*atten;
+
+        t +=  max(d*.5, .02); //
+
+    }
+
+    col = max(col, 0.);
+    fragColor = col.gggg;
+}
+
+
+void main() {
+  mainImage(gl_FragColor, gl_FragCoord.xy);
+}
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

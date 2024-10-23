@@ -3,20 +3,16 @@ console.clear();
 const twodWebGL = new WTCGL(
 document.querySelector('canvas#webgl'),
 document.querySelector('script#vertexShader').textContent,
-document.querySelector('script#fragmentShader').textContent);
+document.querySelector('script#fragmentShader').textContent,
+window.innerWidth,
+window.innerHeight,
+2);
 
-twodWebGL.startTime = -10000 + Math.random() * 5000;
-
-
-// twodWebGL.addUniform('xscale', WTCGL.TYPE_FLOAT, 0.5);
+twodWebGL.startTime = -10000 + Math.random() * 500;
 
 window.addEventListener('resize', () => {
   twodWebGL.resize(window.innerWidth, window.innerHeight);
 });
-twodWebGL.resize(window.innerWidth, window.innerHeight);
-
-// twodWebGL.pxratio = window.devicePixelRatio;
-
 
 
 

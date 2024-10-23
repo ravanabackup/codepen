@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - #codevember - 01 - Uroboros</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform float u_time;
+  uniform vec2 u_mouse;
+  uniform sampler2D u_sand;
+
+  // Epsilon value
+  const float eps = 0.005;
+  
+  // movement variables
+  vec3 movement = vec3(.0);
+  // Which object we've hit
+  float objID;
+  float objBlend;
+  float objStriation;
+
+  // Gloable variables for the raymarching algorithm.
+  const int maxIterations = 256;
+  const int maxIterationsShad = 32;
+  const float stepScale = .7;
+  const float stopThreshold = 0.001;
+  
+  #define TAU 6.28318530718
+
+  // This cheap 3D voronoi is entirely curtesy of Shane and IQ over at Shadertoy.
+  // <3 you Shane, IQ
+  vec3 ha8Tap(float n) {
+      return sin( n*vec3(1.73482891, 87.59924787, 128.23556383))*0.15+0.5;
+  }
+  float cheapVoronoi8Tap(vec3 uv){
+    vec3 g = floor(uv);
+    vec3 f = fract(uv);
+    vec3 r = vec3(0.);
+
+    vec3 lbf = vec3(-0.5) - f;
+    vec3 s1 = vec3(7., 41., 287.);
+    float gf = dot(g-vec3(0.5), s1);
+
+    float d = 1.;
+
+    for(int i = 0; i < 2; i++) {
+
+      r = lbf + ha8Tap(gf); lbf.z+=1.; gf+=s1.z;
+      d = min(d, dot(r,r));
+
+      r = lbf + ha8Tap(gf); 
+      d = min(d, dot(r,r));
+
+      lbf.y+=1.; lbf.z-=1.;
+      gf+=s1.y-s1.z;
+
+      r = lbf + ha8Tap(gf); lbf.z+=1.; gf+=s1.z;
+      d = min(d, dot(r,r));
+
+      r = lbf + ha8Tap(gf); 
+      d = min(d, dot(r,r));
+
+      lbf.x += 1.; lbf.yz-=1.;
+        gf += s1.x-s1.y-s1.z;
+
+    }
+
+    return d;
+
+  }
+
+  float knot(vec3 uv, float turns, float size) {
+    uv = uv.zxy; // just switching around the axis. 
+    vec2 polar = vec2(length(uv.xy), atan(uv.y, uv.x)); // polar coords
+    float oa = turns*polar.y;
+    polar.y = mod(polar.y, 0.001*TAU) - 0.001*TAU/2.0;
+    uv.xy = polar.x*vec2(cos(polar.y), sin(polar.y));
+    uv.x -= 5.0 * size;
+    uv.xz = cos(oa)*uv.xz + sin(oa)*vec2(-uv.z, uv.x);
+    uv.x = abs(uv.x) - 1.35 * size; 
+    
+    objID = 1.;
+    if(uv.x < -.2) {
+      objID = 2.;
+      objBlend = smoothstep(-.2, -.25, uv.x);
+      objStriation = sin(uv.z * 100.);
+    }
+    
+    return length(uv) - size * 1.33;
+  }
+  
+  // The world!
+  float world_sdf(in vec3 p) {
+    
+    float floor = p.y + .38;
+    float uroboros = knot(p - vec3(0, .15, 0), 1.5, .2);
+    if(floor < uroboros) {
+      objID = 0.;
+      return p.y + mix(0., sin(p.x * 2.) * .1 + sin(p.z * 2.) * .1, clamp(length(p.xz*.2)*2., 0., 1.)) + .48;
+    } else {
+      return uroboros;
+    }
+  }
+  
+  // Fuck yeah, normals!
+  vec3 calculate_normal(in vec3 p)
+  {
+    const vec3 small_step = vec3(0.0001, 0.0, 0.0);
+    
+    float gradient_x = world_sdf(vec3(p.x + eps, p.y, p.z)) - world_sdf(vec3(p.x - eps, p.y, p.z));
+    float gradient_y = world_sdf(vec3(p.x, p.y + eps, p.z)) - world_sdf(vec3(p.x, p.y - eps, p.z));
+    float gradient_z = world_sdf(vec3(p.x, p.y, p.z  + eps)) - world_sdf(vec3(p.x, p.y, p.z - eps));
+    
+    vec3 normal = vec3(gradient_x, gradient_y, gradient_z);
+
+    return normalize(normal);
+  }
+
+  // Raymarching.
+  float rayMarching( vec3 origin, vec3 dir, float start, float end, inout float field ) {
+    
+    float sceneDist = 1e4;
+    float rayDepth = start;
+    for ( int i = 0; i < maxIterations; i++ ) {
+      sceneDist = world_sdf( origin + dir * rayDepth ); // Distance from the point along the ray to the nearest surface point in the scene.
+
+      if (( sceneDist < stopThreshold ) || (rayDepth >= end)) {        
+        break;
+      }
+      // We haven't hit anything, so increase the depth by a scaled factor of the minimum scene distance.
+      rayDepth += sceneDist * stepScale;
+    }
+  
+    if ( sceneDist >= stopThreshold ) rayDepth = end;
+    else rayDepth += sceneDist;
+      
+    // We've used up our maximum iterations. Return the maximum distance.
+    return rayDepth;
+  }
+  
+
+  // Shadows
+  // Reference at: http://www.iquilezles.org/www/articles/rmshadows/rmshadows.htm
+  float softShadow(vec3 ro, vec3 lp, float k){
+
+      vec3 rd = (lp-ro); // Unnormalized direction ray.
+
+      float shade = 1.0;
+      float dist = 0.05;    
+      float end = max(length(rd), 0.001);
+
+      rd /= end;
+
+      for (int i=0; i<maxIterationsShad; i++){
+
+          float h = world_sdf(ro + rd*dist);
+          shade = min(shade, k*h/dist);
+          dist += clamp(h, 0.01, 0.5);
+
+          if (h<0.001 || dist > end) break; 
+      }
+
+      return shade;
+  }
+  
+  // Just bumping over a voronoi pattern here for the scaley texture, but this could really contain anthing,
+  float bumpFunction(in vec3 p){
+
+    return cheapVoronoi8Tap(p * 1.2);
+
+  }
+
+  vec3 doBumpMap( in vec3 p, in vec3 nor, float bumpfactor, inout float vor ){
+
+    float thisPoint = bumpFunction( p );
+    vor = thisPoint; // This just spits back the voronoi for use in texturing
+    
+    vec3 gradient = vec3( bumpFunction(vec3(p.x+eps, p.y, p.z))-thisPoint,
+                      bumpFunction(vec3(p.x, p.y+eps, p.z))-thisPoint,
+                      bumpFunction(vec3(p.x, p.y, p.z+eps))-thisPoint )/eps;
+                 
+      return normalize( nor + bumpfactor*gradient );
+
+  }
+  
+  /**
+   * Lighting
+   * This stuff is way way better than the model I was using.
+   * Courtesy Shane Warne
+   * Reference: http://raymarching.com/
+   * -------------------------------------
+   * */
+  
+  // Lighting.
+  vec3 lighting( vec3 sp, vec3 camPos, int reflectionPass, float dist, float field, vec3 rd) {
+    
+    // Start with black.
+    vec3 sceneColor = vec3(0.0);
+    
+    vec3 sandtex = texture2D(u_sand, sp.xz*.3).rgb;
+
+    // Obtain the surface normal at the scene position "sp."
+    vec3 surfNormal = calculate_normal(sp);
+
+    vec3 objColor = vec3(.2) + sandtex * .3;
+    float vor = 1.;
+    float shade = 1.;
+    if(objID == 1. || objID == 2.) {
+      
+      surfNormal = doBumpMap(sp * 7., surfNormal, .2, vor);
+      
+      // vor = cheapVoronoi8Tap(sp * 7.);
+      objColor = mix(
+        mix(
+          vec3(.7, .8, .5),
+          vec3(.6, .7, .4),
+          sin(sp.x * 6.) + cos(sp.y * 4.) * sin(sp.z * 8.)), 
+        vec3(.4, .5, .1), 
+        vor) * .7;
+      if(objID == 2.) {
+        vec3 botcolour = mix(
+          mix(
+            vec3(.65, .6, .5),
+            vec3(.55, .5, .4),
+            sin(sp.x * 6.) + cos(sp.y * 4.) * sin(sp.z * 8.)), 
+          vec3(.45, .4, 0.3), 
+          smoothstep(-.5, .8, objStriation * .6) + vor) * .7;
+        objColor = mix(objColor, botcolour, objBlend);
+        
+      }
+      objColor = mix(objColor, vec3(.0), vor*vor*vor * .8);
+    
+      // Some fresnel falloff
+      float bias = .2;
+      float scale = 2.2 * 1. + vor;
+      float power = 20.1 * vor;
+      shade = bias + (scale * pow(1.0 + dot(normalize(sp-camPos), surfNormal), power));
+    } else {
+      surfNormal += (.5 - sandtex) * .2;
+    }
+
+    // Lighting.
+
+    // lp - Light position. Keeping it in the vacinity of the camera, but away from the objects in the scene.
+    vec3 lp = camPos + vec3(0, .5, 0) + movement;
+    // ld - Light direction.
+    vec3 ld = lp-sp;
+    // lcolor - Light color.
+    vec3 lcolor = vec3(1.,0.97,0.92) * .8;
+    
+     // Light falloff (attenuation).
+    float len = length( ld ); // Distance from the light to the surface point.
+    ld /= len; // Normalizing the light-to-surface, aka light-direction, vector.
+    // float lightAtten = min( 1.0 / ( 0.15*len*len ), 1.0 ); // Removed light attenuation for this because I want the fade to white
+    
+    float sceneLen = length(camPos - sp); // Distance of the camera to the surface point
+    float sceneAtten = min( 1.0 / ( 0.015*sceneLen*sceneLen ), 1.0 ); // Keeps things between 0 and 1.   
+
+    // Obtain the reflected vector at the scene position "sp."
+    vec3 ref = reflect(-ld, surfNormal);
+    
+    float ao = 1.0; // Ambient occlusion.
+    // ao = calculateAO(sp, surfNormal); // Ambient occlusion.
+
+    float ambient = .5; //The object's ambient property.
+    float specularPower = 100. * shade; // The power of the specularity. Higher numbers can give the object a harder, shinier look.
+    float diffuse = max( 0.0, dot(surfNormal, ld) ); //The object's diffuse value.
+    float specular = max( 0.0, dot( ref, normalize(camPos-sp)) ); //The object's specular value.
+    specular = pow(specular, specularPower); // Ramping up the specular value to the specular power for a bit of shininess.
+    	
+    // Bringing all the lighting components togethr to color the screen pixel.
+    // sceneColor += (objColor*(diffuse*0.8+ambient)+specular*0.5)*lcolor*1.3;
+    sceneColor = objColor * (diffuse*0.8+ambient) + specular*0.5 * shade;
+    sceneColor = mix(sceneColor, vec3(0.), 1.-sceneAtten*sceneAtten); // fog
+    
+    float shadow = softShadow(sp, lp, 4.);
+    sceneColor *= clamp(shadow + .4, 0., 1.);
+    // return vec3(shade);
+    
+    return sceneColor;
+
+  }
+
+  void main() {
+
+    // Setting up our screen coordinates.
+    vec2 aspect = vec2(u_resolution.x/u_resolution.y, 1.0); //
+    vec2 uv = (2.0*gl_FragCoord.xy/u_resolution.xy - 1.0)*aspect;
+
+    // This just gives us a touch of fisheye
+    // uv *= 1. + dot(uv, uv) * 0.4;
+
+    // movement
+    movement = vec3(0);
+
+    // The sin in here is to make it look like a walk.
+    vec3 lookAt = vec3(-0., 0.2, 0.);  // This is the point you look towards, or at, if you prefer.
+    vec3 camera_position = vec3(sin(u_time * .5) * 4., 1.8 + sin(u_time) * .8, cos(u_time * .5) * 4.); // This is the point you look from, or camera you look at the scene through. Whichever way you wish to look at it.
+
+    lookAt += movement;
+    // lookAt.z += sin(u_time / 10.) * .5;
+    // lookAt.x += cos(u_time / 10.) * .5;
+    camera_position += movement;
+
+    vec3 forward = normalize(lookAt-camera_position); // Forward vector.
+    vec3 right = normalize(vec3(forward.z, 0., -forward.x )); // Right vector... or is it left? Either way, so long as the correct-facing up-vector is produced.
+    vec3 up = normalize(cross(forward,right)); // Cross product the two vectors above to get the up vector.
+
+    // FOV - Field of view.
+    float FOV = 0.4;
+
+    // ro - Ray origin.
+    vec3 ro = camera_position; 
+    // rd - Ray direction.
+    vec3 rd = normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
+
+    // Ray marching.
+    const float clipNear = 0.0;
+    const float clipFar = 16.0;
+    float field = 0.;
+    float dist = rayMarching(ro, rd, clipNear, clipFar, field );
+    if ( dist >= clipFar ) {
+      gl_FragColor = vec4(vec3(0.), 1.0);
+      return;
+    }
+
+    // sp - Surface position. If we've made it this far, we've hit something.
+    vec3 sp = ro + rd*dist;
+
+    // Light the pixel that corresponds to the surface position. The last entry indicates that it's not a reflection pass
+    // which we're not up to yet.
+    vec3 sceneColor = lighting( sp, camera_position, 0, dist, field, rd);
+
+    // Clamping the lit pixel, then put it on the screen.
+    gl_FragColor = vec4(clamp(sceneColor, 0.0, 1.0), 1.0);
+
+
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

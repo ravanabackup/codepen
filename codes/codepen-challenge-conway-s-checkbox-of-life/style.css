@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+.checkbox_gameoflife {
+  
+}
+
+.checkbox_gameoflife__game {
+  left: 50%;
+  position: fixed;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.checkbox_gameoflife__controls {
+  background: RGBA(255, 255, 255, .8);
+  left: 0%;
+  position: fixed;
+  text-align: center;
+  top: 0%;
+  width: 100%;
+  z-index: 2;
+}
+
+.checkbox_gameoflife__controls button {
+  background: #EEE;
+  border: 1px solid #DDD;
+  box-sizing: border-box;
+  color: #333;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.1em;
+  margin: 10px 5px;
+  outline: none;
+  padding: 10px 15px;
+}
+
+.checkbox_gameoflife__controls button:hover {
+  
+}
+
+.checkbox_gameoflife__row {
+  height: 20px;
+  white-space: nowrap;
+}
+.checkbox_gameoflife__row__cell {
+  height: 20px;
+  margin: 0px;
+  padding: 0;
+  width: 20px;
+}

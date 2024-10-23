@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Coalesce 4</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="vertexShaderParticle" type="x-shader/x-vertex">
+    uniform vec2 u_resolution;
+    uniform vec2 u_mouse;
+    uniform float u_time;
+    uniform sampler2D u_noise;
+    attribute vec2 reference;
+    uniform sampler2D texturePosition;
+    uniform bool u_clicked;
+  
+  
+    void main() {
+      vec3 position = texture2D(texturePosition, reference).xyz;
+
+      vec3 transformed = vec3( position );
+      
+      vec4 mvpos = modelViewMatrix * vec4( transformed, 1.0 );
+
+      gl_PointSize = 30.0 * (1.0 / (mvpos.z * mvpos.z));
+      if(u_clicked) {
+        gl_PointSize = 30.0 * (1.0 / (mvpos.z * mvpos.z));
+      }
+      gl_Position = projectionMatrix * mvpos;
+    }
+</script>
+<script id="fragmentShaderParticle" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  uniform bool u_clicked;
+
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+
+  void main() {
+    // vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.x, u_resolution.y);
+    vec2 uv = gl_PointCoord.xy - .5;
+    
+    vec3 particlecolour = vec3(.5, .53, .53) * 1.8;
+    vec3 outercolour = vec3(1.);
+    
+    if(u_clicked) {
+      particlecolour = vec3(.05, .15, .2) * .5;
+      outercolour = vec3(0.);
+    }
+    
+    float l = length(uv);
+    vec3 colour = mix(outercolour, particlecolour, smoothstep(.9, -.1, l));
+
+    gl_FragColor = vec4(colour, 1. - l);
+  }
+</script>
+<script id="fragmentShaderVelocity" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform float u_mousex;
+  
+  const int octaves = 3;
+  
+  float sinnoise(vec3 loc){
+
+      float t = u_time * 10.;
+      vec3 p = loc + u_time;
+
+      for (int i=0; i<octaves; i++){
+          p += cos( p.zyx * 3. + vec3(0., t, 1.6)) / 3.;
+          p += sin( p.zyx + t + vec3(t, 1.6, 0.)) / 2.;
+          // p += sin( p.zyx + t * 2. + vec3(0,1.6,t)) / 6.;
+          p *= 1.2;
+      }
+
+      p += fract(sin(p+vec3(13, 7, 3))*5e5)*.03-.015;
+
+      // return dot(p, p);
+      return length(p);
+
+  }
+
+  void main() {
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
+    vec3 position = texture2D(v_samplerPosition, uv).xyz;
+    vec3 velocity = texture2D(v_samplerVelocity, uv).xyz;
+    vec3 acceleration = vec3(0.);
+    
+    vec3 _pos = position * .6 + u_time;
+    acceleration = vec3(
+      sinnoise(_pos),
+      sinnoise(_pos + 10.),
+      sinnoise(_pos - 10.)
+    );
+    
+    // acceleration *= acceleration * .5;
+    acceleration = sin(acceleration) * .5 + .5;
+    
+    gl_FragColor = vec4(acceleration, 1.0);
+  }
+</script>
+<script id="fragmentShaderPosition" type="x-shader/x-fragment">
+  uniform float delta;
+  uniform float u_time;
+  uniform sampler2D v_samplerPosition_orig;
+  uniform sampler2D u_noise;
+
+  vec3 hash3(vec2 p)
+  {
+    vec3 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xyz;
+    return o;
+  }
+
+  void main() {
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
+    vec3 position_original = texture2D(v_samplerPosition_orig, uv).xyz;
+    vec3 position = texture2D(v_samplerPosition, uv).xyz;
+    vec3 velocity = texture2D(v_samplerVelocity, uv).xyz;
+    // velocity -= .5;
+    velocity *= 3.;
+    
+    vec3 pos = position + velocity * delta;
+    
+    // This just adds a little touch more randomness to the motion.
+    // This is incredibly subtle but has the effect of making the particles
+    // look more "separate" in motion
+    vec3 hash = hash3(position_original.xy * position_original.zx * 20.);
+    pos += (hash * .5 - .5) * .0005;
+    
+//     vec2 p = vec2(atan(pos.y, pos.x), length(pos.xy));
+//     p.x -= velocity.x * .001 + .0001;
+    
+//     pos.x = cos(p.x) * p.y;
+//     pos.y = sin(p.x) * p.y;
+    
+//     pos.z += .005;
+    
+    if(length(pos) > 20.) {
+      pos = position_original;
+    }
+
+    gl_FragColor = vec4(pos, 1.0);
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js'></script>
+<script src='https://codepen.io/shubniggurath/pen/BgwPgy/2294630344abf93923fbffbeb7916689.js'></script>
+<script src='https://codepen.io/shubniggurath/pen/dybGKpP/61f7965c363fe2b4f112d0aa48494e31.js'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

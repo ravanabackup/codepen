@@ -1,5 +1,7 @@
 body {
   margin:0;
+  touch-action:none;
+  
 }
 
 canvas {

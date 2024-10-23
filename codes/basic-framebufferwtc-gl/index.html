@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Basic framebuffer - WTC GL</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script type="text/fragment" id="fragShader">
+  precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec2 u_mouse;
+uniform sampler2D s_noise;
+
+uniform sampler2D b_noise;
+
+  uniform sampler2D b_render;
+
+varying vec2 v_uv;
+
+
+vec2 getScreenSpace() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+
+  return uv;
+}
+void main() {
+  vec2 uv = getScreenSpace();
+  
+  uv *= 2.;
+  
+  float t = u_time * 2. - 1001.;
+  
+  const float _a = 1.5708 * .5; 
+  
+  float d = sin(t * 10.) * 2.;
+  float a = clamp(sin(t * 10.) * 2., -_a, _a) + _a;
+  
+  float _s = sin(a);
+  float _c = cos(a);
+  uv *= mat2(_c, -_s, _s, _c);
+  
+  vec2 _uv = uv + t + .01;
+  uv.x += t;
+  uv.x = mod(uv.x, 1.) - .5;
+  _uv.x = mod(_uv.x, 1.) - .5;
+  
+  vec4 c = texture2D(b_render, gl_FragCoord.xy / u_resolution );
+  vec4 n = (texture2D(s_noise, uv)-.5) * .2;
+
+  gl_FragColor = vec4(
+    vec3(
+      step(_uv.x, 0.) + n.x, 
+      step(uv.x, 0.) + n.y, 
+      step(uv.x-.01, 0.) + n.z) * .01 - .003 + c.rgb * .995,1);
+}
+</script>
+<script type="text/fragment" id="renderShader">
+  precision highp float;
+
+  uniform vec2 u_resolution;
+  uniform vec2 u_screenresolution;
+  uniform float u_time;
+  uniform vec4 u_mouse;
+  uniform float u_iMouselength;
+  uniform sampler2D s_noise;
+
+  uniform sampler2D b_render;
+
+  varying vec2 v_uv;
+  
+  void main() {
+    gl_FragColor = texture2D(b_render, gl_FragCoord.xy / u_resolution );
+  }
+</script>
+<!-- partial -->
+  <script type="module" src="./script.js"></script>
+
+</body>
+</html>
