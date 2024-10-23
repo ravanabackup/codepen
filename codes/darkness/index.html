@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Darkness</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  #extension GL_OES_standard_derivatives : enable
+  precision highp float;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform vec2 u_oldmouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+  uniform int u_frame;
+  
+  uniform sampler2D u_b_buffer;
+  uniform bool u_buffer_pass;
+  
+  #define PI 3.141592653589793
+  
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    return uv;
+  }
+  
+  float sdSegment( in vec2 p, in vec2 a, in vec2 b ) {
+    vec2 pa = p-a, ba = b-a;
+    float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
+    return length( pa - ba*h );
+  }
+  
+  vec4 render_effect() {
+    vec2 uv = getScreenSpace();
+    vec2 oldmouse = u_oldmouse.xy;
+    vec2 mouse = u_mouse.xy;
+    
+    return vec4(vec3(smoothstep(.02,.0,sdSegment(uv, oldmouse, mouse))), 1.);
+  }
+  
+  vec4 blurBuffer(vec2 uv) {
+    vec3 pixs = vec3(1./u_resolution.xy, 0.);
+    
+    vec4 sample = texture2D(u_b_buffer, uv + pixs.zy);
+    sample += texture2D(u_b_buffer, uv - pixs.zy);
+    sample += texture2D(u_b_buffer, uv + pixs.xz);
+    sample += texture2D(u_b_buffer, uv - pixs.xz);
+    
+    sample *= .25;
+    
+    return sample;
+  }
+
+  vec2 diagonalhash2(vec2 p) {
+    return fract(vec2(sin((p.x + p.y) * 15.543) * 73964.686, sin((p.x + p.y) * 55.8543)*28560.986));
+  }
+  
+  vec3 getColour(float d) {
+    vec3 c = vec3(0.15);
+    if( d <= .25 ) {
+      c = vec3(.7);
+    } else if( d <= .5 ) {
+      c = vec3(0.5);
+    } else if( d <= .75 ) {
+      c = vec3(0.3);
+    }
+    
+    return c;
+  }
+  
+  vec3 pattern(vec2 uv, vec2 m) {
+    
+    vec2 grid = floor(uv);
+    vec2 subuv = fract(uv);
+    
+    vec2 rand = diagonalhash2(grid);
+    vec2 rand2 = diagonalhash2(grid + 100.);
+    float shade = 0.;
+    float df;
+    
+    // float s = sin(u_time);
+    // float c = cos(u_time);
+    // subuv *= mat2(c, -s, s, c);
+    
+    if( rand.x <= .25 ) {
+      df = subuv.x - subuv.y - (u_time) * step(.5, rand.y); // tl
+    } else if( rand.x <= .5 ) {
+      df = 1. - subuv.y - subuv.x;
+    } else if( rand.x <= .75 ) {
+      df = subuv.y - subuv.x - (u_time) * step(.5, rand.y);
+    } else if( rand.x <= 1. ) {
+      // subuv += .1;
+      df = subuv.y - 1. + subuv.x;
+    }
+    
+    shade = sin(df * floor(20. * rand.x * rand.y));
+    shade += sin(df * rand.x * rand.y);
+    float aa = rand.x * rand.y * .001;
+    shade = smoothstep(.0, aa, shade);
+    
+    float mouseMask = smoothstep(.1, .6, length(m));
+    vec3 c1 = mix(getColour(rand.x), getColour(rand2.x), mouseMask);
+    vec3 c2 = mix(getColour(rand.y), getColour(rand2.y), mouseMask);
+    
+    return mix(c1, c2, shade );
+  }
+
+  vec3 mainb() {
+    
+    vec2 uv = gl_FragCoord.xy+gl_FragCoord.xy-floor(u_resolution.xy);
+
+    uv = vec2(log(length(uv)/u_resolution.y)-2.3*u_time*-.2, atan(uv.y,uv.x)+u_time*.1 );
+    //uv *= 4.;
+    // float s = sin(1.);
+    // float c = cos(1.);
+    // uv = 1.911*uv*mat2(c,-1,1,1);
+    uv = 1.911*uv*mat2(1.,-1,.9,1);
+    // uv += vec2(u_time, 0.).yx;
+    
+    // gl_FragColor = texture2D(u_noise, uv + diagonalhash2(uv + u_time)) * .2;
+    
+    vec2 m = u_mouse - (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    
+    return pattern(uv, m);
+  }
+  
+  float d;
+  float lookup(vec2 p, float dx, float dy) {
+      vec2 uv = (p.xy + vec2(dx * d, dy * d)) / u_resolution.xy;
+      vec4 c = texture2D(u_b_buffer, uv.xy);
+
+    // return as luma
+      return 0.2126*c.r + 0.7152*c.g + 0.0722*c.b;
+  }
+  
+  void main() {
+    vec4 tex = texture2D(u_b_buffer, gl_FragCoord.xy/u_resolution.xy);
+    tex = blurBuffer(gl_FragCoord.xy/u_resolution.xy);
+    if(u_buffer_pass) {
+      float tex1 = texture2D(u_b_buffer, gl_FragCoord.xy/u_resolution.xy).r;
+      vec2 f = gl_FragCoord.xy/u_resolution.xy - .5;
+      float field = smoothstep(.1, .4, length(f)); 
+      // gl_FragColor = tex1*.99 + vec4(mainb(), 1.)*.02;
+      gl_FragColor = vec4(tex.rgb*.9*field + mainb()*(.5+(1.-field)), 1.);
+    } else {
+      d = 1.; // kernel offset
+      float tex1 = texture2D(u_b_buffer, gl_FragCoord.xy/u_resolution.xy).r;
+      
+      vec2 p = gl_FragCoord.xy;
+    // simple sobel edge detection
+      float gx = 0.0;
+      gx += -1.0 * lookup(p, -1.0, -1.0);
+      gx += -2.0 * lookup(p, -1.0,  0.0);
+      gx += -1.0 * lookup(p, -1.0,  1.0);
+      gx +=  1.0 * lookup(p,  1.0, -1.0);
+      gx +=  2.0 * lookup(p,  1.0,  0.0);
+      gx +=  1.0 * lookup(p,  1.0,  1.0);
+
+      float gy = 0.0;
+      gy += -1.0 * lookup(p, -1.0, -1.0);
+      gy += -2.0 * lookup(p,  0.0, -1.0);
+      gy += -1.0 * lookup(p,  1.0, -1.0);
+      gy +=  1.0 * lookup(p, -1.0,  1.0);
+      gy +=  2.0 * lookup(p,  0.0,  1.0);
+      gy +=  1.0 * lookup(p,  1.0,  1.0);
+
+    // hack: use g^2 to conceal noise in the video
+      float g = gx*gx + gy*gy;
+      float g2 = g * (sin(u_time) / 2.0 + 0.5);
+
+      vec2 uv = getScreenSpace();
+      gl_FragColor = vec4(vec3(min(max(g, g2), 1.)*.5), 1.);
+      gl_FragColor.rgb += texture2D(u_noise, uv + diagonalhash2(uv + u_time)).rgb * .2 - .1;
+    }
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

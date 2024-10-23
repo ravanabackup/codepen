@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Genuary 6 - Ge1doot</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="vertexShader_buffer" type="x-shader/x-vertex">attribute vec4 a_position;  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader_AA" type="x-shader/x-vertex">
+ precision highp float;
+  #extension GL_EXT_shader_texture_lod : enable
+  #extension GL_OES_standard_derivatives : enable
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  
+  uniform sampler2D b_render;
+
+  #define FXAA_REDUCE_MIN   (1.0/ 128.0)
+  #define FXAA_REDUCE_MUL   (1.0 / 8.0)
+  #define FXAA_SPAN_MAX     8.0
+
+  void texcoords(vec2 fragCoord, vec2 resolution,
+        out vec2 v_rgbNW, out vec2 v_rgbNE,
+        out vec2 v_rgbSW, out vec2 v_rgbSE,
+        out vec2 v_rgbM) {
+    vec2 inverseVP = 1.0 / resolution.xy;
+    v_rgbNW = (fragCoord + vec2(-1.0, -1.0)) * inverseVP;
+    v_rgbNE = (fragCoord + vec2(1.0, -1.0)) * inverseVP;
+    v_rgbSW = (fragCoord + vec2(-1.0, 1.0)) * inverseVP;
+    v_rgbSE = (fragCoord + vec2(1.0, 1.0)) * inverseVP;
+    v_rgbM = vec2(fragCoord * inverseVP);
+  }
+
+  //optimized version for mobile, where dependent 
+  //texture reads can be a bottleneck
+  vec4 fxaa(sampler2D tex, vec2 fragCoord, vec2 resolution,
+              vec2 v_rgbNW, vec2 v_rgbNE, 
+              vec2 v_rgbSW, vec2 v_rgbSE, 
+              vec2 v_rgbM) {
+      vec4 color;
+      mediump vec2 inverseVP = vec2(1.0 / resolution.x, 1.0 / resolution.y);
+      vec3 rgbNW = texture2D(tex, v_rgbNW).xyz;
+      vec3 rgbNE = texture2D(tex, v_rgbNE).xyz;
+      vec3 rgbSW = texture2D(tex, v_rgbSW).xyz;
+      vec3 rgbSE = texture2D(tex, v_rgbSE).xyz;
+      vec4 texColor = texture2D(tex, v_rgbM);
+      vec3 rgbM  = texColor.xyz;
+      vec3 luma = vec3(0.299, 0.587, 0.114);
+      float lumaNW = dot(rgbNW, luma);
+      float lumaNE = dot(rgbNE, luma);
+      float lumaSW = dot(rgbSW, luma);
+      float lumaSE = dot(rgbSE, luma);
+      float lumaM  = dot(rgbM,  luma);
+      float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));
+      float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));
+
+      mediump vec2 dir;
+      dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));
+      dir.y =  ((lumaNW + lumaSW) - (lumaNE + lumaSE));
+
+      float dirReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) *
+                            (0.25 * FXAA_REDUCE_MUL), FXAA_REDUCE_MIN);
+
+      float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);
+      dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX),
+                max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),
+                dir * rcpDirMin)) * inverseVP;
+
+      vec3 rgbA = 0.5 * (
+          texture2D(tex, fragCoord * inverseVP + dir * (1.0 / 3.0 - 0.5)).xyz +
+          texture2D(tex, fragCoord * inverseVP + dir * (2.0 / 3.0 - 0.5)).xyz);
+      vec3 rgbB = rgbA * 0.5 + 0.25 * (
+          texture2D(tex, fragCoord * inverseVP + dir * -0.5).xyz +
+          texture2D(tex, fragCoord * inverseVP + dir * 0.5).xyz);
+
+      float lumaB = dot(rgbB, luma);
+      if ((lumaB < lumaMin) || (lumaB > lumaMax))
+          color = vec4(rgbA, texColor.a);
+      else
+          color = vec4(rgbB, texColor.a);
+      return color;
+  }
+
+void main() {
+  vec2 rcpFrame = 1./u_resolution.xy;
+  vec2 uv2 = gl_FragCoord.xy / u_resolution.xy;
+    
+    vec3 col;
+    mediump vec2 v_rgbNW;
+	mediump vec2 v_rgbNE;
+	mediump vec2 v_rgbSW;
+	mediump vec2 v_rgbSE;
+	mediump vec2 v_rgbM;
+	texcoords(gl_FragCoord.xy, u_resolution.xy, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
+    col = fxaa( b_render, gl_FragCoord.xy, u_resolution.xy, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM).rgb;  
+    
+    
+    gl_FragColor = vec4( col, 1. );
+  
+  
+  // vec3 colour = FxaaPixelShader( uv, b_render, rcpFrame);
+  // gl_FragColor = vec4(colour, 1.);
+}
+                                             </script>
+<script id="fragmentShader_under" type="x-shader/x-vertex">
+  precision highp float;
+  precision highp int;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  uniform float u_fov;
+  
+  uniform sampler2D b_render;
+  
+  const float vSize = .4; // this is the voxel size
+  
+  const int maxIterations = 256;
+  const int maxIterationsShad = 16;
+  const float stopThreshold = 0.001;
+  const float stepScale = .7;
+  const float eps = 0.005;
+  const vec3 clipColour = vec3(1.);
+  const vec3 fogColour = vec3(.0,.1,.3);
+  
+  const vec3 light1_position = vec3(0, 1., 1.);
+  const vec3 light1_colour = vec3(.8, .8, .85)*1.5;
+  const float light1_strength = .9;
+  const float light1_attenuation = 0.15;
+  
+  const float fogStrength = 0.03;
+  
+  struct Surface {
+    int object_id;
+    float distance;
+    vec3 position;
+    vec3 colour;
+    float ambient;
+    float spec;
+    vec3 norm;
+    vec3 vPos;
+    vec3 mask;
+    vec3 rd;
+  };
+  
+  vec3 path(float z) {
+    // return vec3(
+      // cos(z*.1 + sin(z*-1.)*.05)*10.+sin(z * .35)*2.,sin(cos(z*.4)*1.5)*2.+cos(z*.143) * 3.,z);
+    return vec3(0,0,z);
+  }
+  
+  float opExtrusion( in vec3 p, in float d, in float h ) {
+      vec2 w = vec2( d, abs(p.z) - h );
+      return min(max(w.x,w.y),0.0) + length(max(w,0.0));
+  }
+  float sdBox( in vec2 p, in vec2 b ) {
+      vec2 d = abs(p)-b;
+      return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+  }
+  vec3 hash33(vec3 p3) {
+    p3 = fract(p3 * vec3(.1031, .1030, .0973));
+    p3 += dot(p3, p3.yxz+33.33);
+    return fract((p3.xxy + p3.yxx)*p3.zyx);
+  }
+  
+  mat2 rot(float a) {
+    float s = sin(a);
+    float c = cos(a);
+    return mat2(c, -s, s, c);
+  }
+  
+  float world(in vec3 p, inout int object_id) {
+    
+    p.xy -= path(p.z+.2).xy;
+    p.y -= 2.;
+    // p.xy *= rot(p.z * .005);
+    
+    float f = mix(max(p.y, -step(abs(p.x) - 1., 0.)), 100., step(1., float(object_id)));
+    float l = abs(p.x);
+    
+    vec3 id = floor(p/2.);
+    vec3 r = hash33(id);
+    p = mod(p, 4.) - 2.;
+    
+    return max(length(p.xz)-r.x*1.*length(p.yz)-r.y*1., -l+.5);
+  }
+  float world(in vec3 position) {
+    int dummy = 0;
+    return world(position, dummy);
+  }
+  float world(in vec3 position, in float voxelSize) {
+    int dummy = 1;
+    return world(position*voxelSize, dummy);
+  }
+  
+  Surface getSurface(int object_id, float rayDepth, vec3 sp, vec3 norm, vec3 vPos, vec3 mask, vec3 rd) {
+    return Surface(
+      object_id, 
+      rayDepth, 
+      sp, 
+      vec3(.5, 0.3, 0.), 
+      .3, 
+      2.,
+      norm,
+      vPos,
+      mask,
+      rd);
+  }
+  
+  vec3 voxelTrace(
+    vec3 ro, 
+    vec3 rd, 
+    out bool hit, 
+    inout vec3 norm, 
+    out float rayDepth, 
+    out float steps, 
+    out vec2 center,
+    out vec3 mask,
+    out vec3 vPos) {
+    
+    ro /= vSize;
+    rd /= vSize;
+
+    vec3 vRay = floor(ro) + .5;
+    vec3 inRay = 1./abs(rd);
+    vec3 signRay = sign(rd);
+    rd = signRay;
+    vec3 side = (inRay*(rd * (vRay - ro) + 0.5));
+    // vec3 mask = vec3(0);
+
+    for (int i = 0; i < maxIterations; i++) {
+      if (world(vRay*vSize)<0.) {
+        hit = true;
+        break;
+      }
+      mask = (step(side, side.yzx)*(1.-step(side.zxy, side)));
+      side += (mask*inRay);
+      vRay = (vRay + mask * rd);
+    }
+    
+    norm = normalize((-mask * signRay));
+    
+    rayDepth = length(ro - vRay);
+
+    return vRay;
+  }
+  
+  float voxelToDistance(vec3 ro, vec3 rd, vec3 voxelPos) {
+    ro /= vSize;
+    rd /= vSize;
+    vec3 c = (voxelPos-ro - .5*sign(rd))/rd;
+    return max(max(c.x, c.y), c.z);
+  }
+  float voxShadow(vec3 ro, vec3 rd, float end){
+    
+    ro /= vSize;
+    rd /= vSize;
+
+    float shade = 1.0;
+    vec3 p = floor(ro) + .5;
+
+	vec3 dRd = 1./abs(rd);//1./max(abs(rd), vec3(.0001));
+	rd = sign(rd);
+    vec3 side = dRd*(rd * (p - ro) + 0.5);
+    
+    vec3 mask = vec3(0);
+    
+    float d = 1.;
+	
+    for (int i = 0; i < maxIterationsShad; i++) {
+      d = world(p*vSize);
+
+      if (d<0. || length(p-ro)>end) break;
+
+      mask = step(side, side.yzx)*(1.-step(side.zxy, side));
+      side += mask*dRd;
+      p += mask * rd;
+    }
+
+    // Shadow value. If in shadow, return a dark value.
+    return shade = step(0., d)*.7 + .3;
+    
+  }
+  vec4 voxelAO(vec3 p, vec3 d1, vec3 d2) {
+
+      // Take the four side and corner readings... at the correct positions...
+      // That's the annoying bit that I'm glad others have worked out. :)
+    vec4 side = vec4(world(p + d1, vSize), world(p + d2, vSize), world(p - d1, vSize), world(p - d2, vSize));
+    vec4 corner = vec4(world(p + d1 + d2, vSize), world(p - d1 + d2, vSize), world(p - d1 - d2, vSize), world(p + d1 - d2, vSize));
+
+      // Quantize them. It's either occluded, or it's not, so to speak.
+      side = step(side, vec4(0));
+      corner = step(corner, vec4(0));
+
+      // Use the side and corner values to produce a more honed in value... kind of.
+      return 1. - (side + side.yzwx + max(corner, side*side.yzwx))/3.;    
+
+  }
+
+  float calcVoxAO(vec3 ro, vec3 rd, Surface surfaceObject) {
+
+    ro /= vSize;
+    // rd /= vSize;
+
+    vec3 vp = surfaceObject.vPos;
+    vec3 sp = ro + rd * surfaceObject.distance;
+    sp = surfaceObject.position/vSize;
+    vec3 mask = surfaceObject.mask;
+
+      // Obtain four AO values at the appropriate quantized positions.
+    vec4 vAO = voxelAO(vp - sign(rd)*mask, mask.zxy, mask.yzx);
+
+      // Use the fractional voxel postion and and the proximate AO values
+      // to return the interpolated AO value for the surface position.
+      sp = fract(sp);
+      vec2 uv = sp.yz*mask.x + sp.zx*mask.y + sp.xy*mask.z;
+      return mix(mix(vAO.z, vAO.w, uv.x), mix(vAO.y, vAO.x, uv.x), uv.y);
+
+  }
+  
+  vec3 lighting(Surface surface_object, vec3 cam, vec3 lp) {
+    
+    // start with black
+    vec3 sceneColour = vec3(0);
+    
+    // Surface normal
+    vec3 normal = surface_object.norm;
+    
+    // Light position
+    // vec3 lp = cam + vec3(0., -1., 0.);
+    // lp.xy = path(lp.z).xy + light1_position.xy;
+    // Light direction
+    vec3 ld = lp - surface_object.position;
+    vec3 ldo = (lp - surface_object.position);
+    
+    // light attenuation
+    // For brightly lit scenes or global illumination (like sunlit), this can be limited to just normalizing the ld
+    float len = length( ld );
+    ld = normalize(ld);
+    float lightAtten = min( 1.0 / ( light1_attenuation*len ), 1.0 );
+    // float lightAtten = 1.;
+    
+    // Scene values, mainly for fog
+    float sceneLength = length(cam - surface_object.position);
+    float sceneAttenuation = min( 1. / ( fogStrength * sceneLength * sceneLength ), 1. );
+    // sceneAttenuation = 1.;
+    
+    // The surface's light reflection normal
+    vec3 reflection_normal = reflect(-ld, normal);
+    
+    // Ambient Occlusion
+    float ao = 1.;
+    ao = calcVoxAO(cam, surface_object.rd, surface_object);
+    
+    // Object surface properties
+    float diffuse = clamp(dot(normal, ld), 0., 1.);
+    float specular = clamp(dot( reflection_normal, normalize(cam - surface_object.position) ), 0., 1.);
+    // specular = .5;
+    
+    // shadows
+    float shadows = 1.;
+    shadows = voxShadow((surface_object.position + surface_object.norm*.001), ld, len);
+    
+    // Bringing all of the lighting components together
+    sceneColour += ( surface_object.colour * mix(surface_object.ambient, shadows, diffuse) + specular ) * light1_colour * lightAtten * light1_strength;
+    // adding fog
+    sceneColour = clamp(mix( sceneColour, mix(fogColour, vec3(0.), clamp(1.-sceneAttenuation*16., 0., 1.)), 1. - sceneAttenuation ), 0., 1.);
+    
+    return sceneColour*min(ao+.3, 1.);
+  }
+  
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    vec2 m = (u_mouse.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    float ptime = u_time * 5.;
+    
+    // movement
+    vec3 movement = path(ptime);
+    
+    // Camera and look-at
+    vec3 cam = vec3(0,-1.5,-1);
+    vec3 lookAt = vec3(.2,-1.,0);
+    
+    // add movement
+    lookAt += path(ptime+5.);
+    cam += movement;
+    vec3 light = lookAt;
+    lookAt += vec3(m*vec2(20., -20.), 0.);
+    
+    // Unit vectors
+    vec3 forward = normalize(lookAt - cam);
+    vec3 right = normalize(vec3(forward.z, 0., -forward.x));
+    vec3 up = normalize(cross(forward, right));
+    
+    // FOV
+    float FOV = u_fov;
+    
+    // Ray origin and ray direction
+    vec3 ro = cam;
+    vec3 rd = normalize(forward + FOV * uv.x * right + FOV * uv.y * up);
+    
+    vec3 pt = path(lookAt.z);
+    float t = pt.x*.02;
+    float s = sin(t);
+    float c = cos(t);
+    rd.xy *= mat2(c, -s, s, c);
+    // t = pt.y*.2;
+    // s = sin(t);
+    // c = cos(t);
+    // rd.yz *= mat2(c, -s, s, c);
+    
+    bool hit = false;
+    vec3 norm = vec3(0.);
+    float rayDepth = 0.;
+    float steps = 0.;
+    vec2 center = vec2(0);
+    
+    const float clipNear = 0.;
+    const float clipFar = 32.;
+    
+    vec3 mask;
+    vec3 vPos;
+    vec3 surfacePos = voxelTrace(ro, rd, hit, norm, rayDepth, steps, center, mask, vPos);
+    Surface objectSurface = getSurface(1, rayDepth, cam + rd * voxelToDistance(ro, rd, surfacePos), norm, surfacePos, mask, rd);
+    
+    // gl_FragColor = vec4(vec3(hp/20.), 1.);
+    // return;
+    
+    
+    // if(length(center) > 0.) {
+    //   objectSurface.colour = vec3(smoothstep(.9,.92,length(center)));
+    //   objectSurface.colour = vec3(length((center)));
+    // }
+    
+    vec3 sceneColour = vec3(0);
+    if(hit) {
+      sceneColour = lighting(objectSurface, cam, light);
+    }
+    
+    float bright = smoothstep(2.9, 4.,sceneColour.r + sceneColour.g + sceneColour.b);
+    
+    // sceneColour = vec3(bright);
+    
+    float additive = smoothstep(12., 1., u_fov);
+    
+    gl_FragColor = vec4(sceneColour*(additive*.8+.2) + texture2D(b_render, gl_FragCoord.xy/u_resolution.xy).rgb*((1.-additive)*.8+.2), 1.);
+    // gl_FragColor *= gl_FragColor;
+    // gl_FragColor *= vec4(vec3(rayDepth*.02), 1.);
+  }
+</script>
+<!-- partial -->
+  <script type="module" src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+body {
+  background: #555555;
+  margin:0;
+}
+
+canvas {
+  position: fixed;
+}

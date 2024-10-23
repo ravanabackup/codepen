@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Exploring Reaction Diffusion</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec4 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  uniform sampler2D u_buffer;
+  uniform bool u_renderpass;
+  uniform int u_frame;
+  
+  // vec2 Diffusion = vec2(0.082, 0.041);
+  // float k = 0.055;
+  // float f = 0.023;
+  // float timeStep = 1.3;
+  
+  vec2 Diffusion = vec2(0.1405, 0.06131);
+  float k = 0.063;
+  float f = 0.039;
+  float timeStep = 1.2;
+  
+  // vec2 Diffusion = vec2(0.115, 0.0531);
+  // float k = 0.061;
+  // float f = 0.030;
+  // float timeStep = 1.2;
+  
+  // vec2 Diffusion = vec2(0.0805, 0.02031);
+  // float k = 0.065;
+  // float f = 0.030;
+  // float timeStep = .8;
+  
+  #define PI 3.141592653589793
+  #define TAU 6.283185307179586
+
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+  
+  vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix( vec3(1.0), rgb, c.y);
+  }
+  
+  vec3 domain(vec2 z){
+    return vec3(hsb2rgb(vec3(atan(z.y,z.x)/TAU,1.,1.)));
+  }
+  vec3 colour(vec2 z) {
+      return domain(z);
+  }
+  
+  float rand(vec2 co){
+	// implementation found at: lumina.sourceforge.net/Tutorials/Noise.html
+	return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
+  // Five point stencil Laplacian
+  vec4 laplacian5(vec2 position, vec3 offset) {
+    return 
+    +  texture2D( u_buffer, position - offset.zy)
+    +  texture2D( u_buffer, position - offset.xz) 
+    -  4.0 * texture2D( u_buffer,  position )
+    + texture2D( u_buffer,  position + offset.xz )
+    + texture2D( u_buffer,  position + offset.zy );
+  }
+  // nine point stencil
+  vec4 laplacian9(vec2 position, vec4 offset) {
+    return  
+    0.5* texture2D( u_buffer,  position - offset.xy ) // first row
+    + texture2D( u_buffer,  position - offset.zy )
+    +  0.5* texture2D( u_buffer,  position - offset.wy )
+    +  texture2D( u_buffer,  position - offset.xz) // seond row
+    - 6.0* texture2D( u_buffer,  position )
+    +   texture2D( u_buffer,  position + offset.xz )
+    +  0.5*texture2D( u_buffer,  position +offset.wy)  // third row
+    + texture2D( u_buffer,  position +offset.zy )
+    +   0.5*texture2D( u_buffer,  position + offset.xy   );	
+  }
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    // uv *= .8;
+    vec2 sample = gl_FragCoord.xy / u_resolution;
+    
+    vec2 movement = vec2(u_time * .05, sin(u_time*.1)*.2);
+    
+    vec3 offset = vec3(1. / u_resolution, 0.0);
+    
+    vec2 mouse = mod(u_mouse.xy - sample + movement + .1, 1.)-.1;
+    
+    float shade = smoothstep(.024, .003, length(mouse));
+    
+    vec4 fragcolour = vec4(shade);
+    
+    // vec3 fragcolour = colour(uv);
+    vec4 v = texture2D(u_buffer, sample);
+    
+    if(u_renderpass == true) {
+      if(u_frame > 3) {
+        // time step for Gray-Scott system:
+        // vec2 lv = laplacian5(sample, offset).xy; // laplacian
+        vec2 lv = laplacian9(sample, vec4(offset, -offset.x)).xy; // laplacian
+        float xyy = v.x*v.y*v.y;   // utility term
+        vec2 dV = vec2( Diffusion.x * lv.x - xyy + f*(1.-v.x), Diffusion.y * lv.y + xyy - (f+k)*v.y);
+        v.xy += timeStep*dV;
+
+      } else {
+        v = vec4(texture2D(u_noise, uv * .2).xy, 0., 0.);
+        v *= v*v*v*v*10.;
+      }
+      gl_FragColor = vec4(v);
+      
+      if(u_mouse.z == 1.) {
+        gl_FragColor.x += shade;
+        gl_FragColor.y += shade * 2.;
+      }
+    } else {
+      if(u_frame > 20) {
+        // uv *= .5;
+        vec4 vbg = texture2D(u_buffer, uv + movement + vec2(.001));
+        
+        vec4 v = texture2D(u_buffer, uv + movement);
+        vec4 v2 = texture2D(u_buffer, (uv + movement * .9) * 2.);
+        // vec4 v3 = texture2D(u_buffer, (uv + movement * .8) * 3.);
+        float c = smoothstep(.4, .7, v.x);
+        // c = v.x;
+        gl_FragColor = mix(vec4(0.), vec4(v2.x * .2 + .8), c);
+        gl_FragColor -= vec4(1. - vbg.x);
+        float y = smoothstep(.3, .4, v.y) * 2.;
+        y += v.y*v.y*v.y*v.y*2.;
+        gl_FragColor += y;
+      }
+    }
+
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

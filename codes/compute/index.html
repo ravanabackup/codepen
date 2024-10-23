@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Compute</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec4 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  uniform sampler2D u_environment;
+  uniform sampler2D u_buffer;
+  uniform bool u_renderpass;
+  uniform int u_frame;
+  
+  #define PI 3.141592653589793
+  #define TAU 6.283185307179586
+  
+  // Holy fuck balls, fresnel!
+  const float bias = .2;
+  const float scale = 100.;
+  const float power = 10.1;
+
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+  
+  vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix( vec3(1.0), rgb, c.y);
+  }
+  
+  vec3 domain(vec2 z){
+    return vec3(hsb2rgb(vec3(atan(z.y,z.x)/TAU,1.,1.)));
+  }
+  vec3 colour(vec2 z) {
+      return domain(z);
+  }
+
+  // Shorthand, so that the texture lines read a little better.
+  // Borrowed from Shane
+  vec4 tx(vec2 p){ return texture2D(u_buffer, p); }
+  
+  // 25 (or 9) tap Laplacian -- Gaussian Laplacian, to be more precise. I think of it as taking
+  // the sum of the partial second derivatives of a blurry 2D height map... in each channel...
+  // I think I'm making things more confusing, but it works anyway. :D Seriously, just look
+  // up the Laplacian operator of a 2D function.
+  // Borrowed from Shane
+  vec4 Laplacian(vec2 p) {
+
+    // Kernel matrix dimension, and a half dimension calculation.
+    const int mDim = 5, halfDim = (mDim - 1)/2;
+
+//     float scale = .25;
+//     float kernel[25];
+//     kernel[0] = 1. * scale;
+//     kernel[1] = 1. * scale;
+//     kernel[2] = 1. * scale;
+//     kernel[3] = 1. * scale;
+//     kernel[4] = 1. * scale;
+
+//     kernel[5] = 1. * scale;
+//     kernel[6] = 1. * scale;
+//     kernel[7] = 1. * scale;
+//     kernel[8] = 1. * scale;
+//     kernel[9] = 1. * scale;
+
+//     kernel[10] = 1. * scale;
+//     kernel[11] = 1. * scale;
+//     kernel[12] = -24. * scale;
+//     kernel[13] = 1. * scale;
+//     kernel[14] = 1. * scale;
+
+//     kernel[15] = 1. * scale;
+//     kernel[16] = 1. * scale;
+//     kernel[17] = 1. * scale;
+//     kernel[18] = 1. * scale;
+//     kernel[19] = 1. * scale;
+
+//     kernel[20] = 1. * scale;
+//     kernel[21] = 1. * scale;
+//     kernel[22] = 1. * scale;
+//     kernel[23] = 1. * scale;
+//     kernel[24] = 1. * scale;
+    
+    
+    
+    float kernel[25];
+    kernel[0] = 0.;
+    kernel[1] = 0.;
+    kernel[2] = 0.25;
+    kernel[3] = 0.;
+    kernel[4] = 0.;
+
+    kernel[5] = 0.;
+    kernel[6] = 0.25;
+    kernel[7] = 0.50;
+    kernel[8] = 0.25;
+    kernel[9] = 0.;
+
+    kernel[10] = 0.25;
+    kernel[11] = 0.50;
+    kernel[12] = -4.0;
+    kernel[13] = 0.50;
+    kernel[14] = 0.25;
+
+    kernel[15] = 0.;
+    kernel[16] = 0.25;
+    kernel[17] = 0.50;
+    kernel[18] = 0.25;
+    kernel[19] = 0.;
+
+    kernel[20] = 0.;
+    kernel[21] = 0.;
+    kernel[22] = 0.25;
+    kernel[23] = 0.;
+    kernel[24] = 0.;
+    
+    vec4 col = vec4(0);
+
+    float px = 1./u_resolution.y; 
+
+    for (int j=0; j<mDim; j++){
+      for (int i=0; i<mDim; i++){ 
+        col += kernel[j*mDim + i]*tx(p + vec2(i - halfDim, j - halfDim)*px);
+      }
+    }
+
+    return col;
+  }
+  
+  float bumpMap(vec2 uv, float height, inout vec3 colourmap) {
+    
+    uv += vec2(u_time*.2, sin(u_time*.2)*.5);
+    
+    vec4 map = texture2D(u_buffer, uv * .15 - .1);
+    
+    colourmap = vec3(map.xy, sin(map.y * 2.));
+    
+    return (clamp(sin(map.x * 4.), 0.7, 1.) * .5 + map.x * .3) * height;
+    
+    return sin(map.x * 3.) * .2 + (map.x * .2 * height);
+  }
+  float bumpMap(vec2 uv, float height) {
+    vec3 colourmap;
+    return bumpMap(uv, height, colourmap);
+  }
+  
+  //   Naive environment mapping. Pass the reflected vector and pull back the texture position for that ray.
+  vec3 envMap(vec3 rd, vec3 sn, float scale){
+
+      // rd.xy -= u_time*.2; // This just sort of compensates for the camera movement
+      // rd.xy -= movement;
+      rd /= scale; // scale the whole thing down a but from the scaled UVs
+    
+      vec3 col = texture2D(u_environment, rd.xy - .5).rgb;
+      col *= normalize(col);
+      // col *= vec3(1., 1., 1.2);
+      // col *= vec3(hash2(rd.xy).y * .5 + .5);
+
+      return col;
+
+  }
+
+  vec4 renderPass(vec2 uv, vec2 uvoffset, vec2 movement, float scale) {
+    vec3 surfacePos = vec3(uv, 0.0);
+    vec3 ray = normalize(vec3(uv - movement, 1.));
+    // vec3 lightPos = vec3(cos(u_time / 2.) * 2., sin(u_time / 2.) * 2., -3.);
+    vec3 lightPos = vec3(cos(u_time * .5 + 2.) * 2., 1. + sin(u_time * .5 + 2.) * 2., -3.) - vec3(movement, 0.) * scale;
+    vec3 normal = vec3(0., 0., -1);
+
+    vec2 sampleDistance = vec2(.008, 0.);
+    
+    vec3 colourmap;
+
+    // float fx = bumpMap(surfacePos.xy-sampleDistance.xy + uvoffset + 100. + u_time * .1, 1.);
+    // float fy = bumpMap(surfacePos.xy-sampleDistance.yx + uvoffset + 100. + u_time * .1, 1.);
+    // float f = bumpMap(surfacePos.xy + uvoffset + 100. + u_time * .1, 1., colourmap);
+    // float freq = (f + fx + fy);
+    // freq *= .1;
+    // freq += 1.;
+    
+    float bumpamt = -0.1;
+    
+    float fx = bumpMap(surfacePos.xy-sampleDistance.xy + uvoffset, bumpamt);
+    float fy = bumpMap(surfacePos.xy-sampleDistance.yx + uvoffset, bumpamt);
+    float f = bumpMap(surfacePos.xy + uvoffset, bumpamt, colourmap);
+    float freq = (f + fx + fy);
+    
+    freq = freq * freq;
+    // return vec4( 1. - smoothstep(80., 110., freq) );
+    // return vec4( freq / 155. );
+    fx = (fx-f)/sampleDistance.x;
+    fy = (fy-f)/sampleDistance.x;
+    normal = normalize( normal + vec3(fx, fy, 0) * 0.2 );
+    
+    // Holy fuck balls, fresnel!
+    // specular = max(0.0, min(1.0, bias + scale * (1.0 + length(camPos-sp * surfNormal)) * power));
+    float shade = bias + (scale * pow(1.0 + dot(normalize(surfacePos-vec3(uv, -3.0)), normal), power));
+
+    vec3 lightV = lightPos - surfacePos;
+    float lightDist = max(length(lightV), 0.001);
+    lightV /= lightDist;
+
+    vec3 lightColour = vec3(.8, .8, 1.);
+
+    float shininess = 4.01 * (colourmap.x * .5 + 1.);
+    float brightness = 1. * (colourmap.z + .3 * .8);
+
+    float falloff = 0.1;
+    float attenuation = 1./(1.0 + lightDist*lightDist*falloff);
+
+    float diffuse = max(dot(normal, lightV), 0.);
+    float specular = pow(max(dot( reflect(-lightV, normal), -ray), 0.), 52.) * shininess;
+    
+    // vec3 tex = texture2D(u_environment, (reflect(vec3(uv, -1.), normal)).xy ).rgb;
+    vec3 reflect_ray = reflect(vec3(uv - movement, 1.), normal * 1.);
+    // The reflect ray is the ray wwe use to determine the reflection.
+    // We use the UV less the movement (to account for "environment") to the surface normal
+    vec2 hash = hash2(uv*2048.); // Some simple reflection diffusion
+    vec3 tex = envMap(reflect_ray+vec3(hash, 0.)*.1, normal, 2.); // Fake environment mapping.
+
+    // vec3 texCol = (mix(vec3(.2, 0., .1), vec3(.6, .5, .5), 1. - clamp(colourmap.y*colourmap.y*10., 0., 1.))) * .5;
+    vec3 texCol = (mix(vec3(.2, 0., .1), vec3(.1), 1. - clamp(colourmap.y*colourmap.y*10., 0., 1.))) * .5;
+    texCol = (mix(vec3(.1, 0., 0.), texCol, 1. - clamp(sin(colourmap.z*colourmap.z*10.), 0., 1.)));
+    texCol += tex * brightness * .5;
+    // texCol = tex;
+    // texCol = vec3(shade);
+    
+    float metalness = (1. - colourmap.x);
+    metalness *= metalness;
+
+    vec3 colour = (texCol * (diffuse*vec3(1, .97, .92)*2. + 0.5) + lightColour*specular * f * 2. * metalness)*attenuation*1.5;
+    colour *= 1.5;
+
+    // return vec4(shade);
+    return vec4(colour, 1.);
+  }
+
+
+  void drawMap( out vec4 fragColor, in vec2 fragCoord ){
+
+    vec2 p = fragCoord.xy/u_resolution.xy;
+
+    vec4 rdVal = texture2D(u_buffer, p);
+
+    vec2 lap = Laplacian(p).xy;
+
+    float mixamt = clamp(length(p-.5) * 2., 0., 1.);
+
+    // float feed = mix(.056, .03, mixamt);
+    // float kill = mix(.063, .068, mixamt);
+    float feed = mix(.056, .03 + cos(u_time * .5) * .005, mixamt);
+    float kill = mix(.063 + sin(u_time * .5) * .01, .068 + cos(u_time * .5) * .008, mixamt);
+
+    vec2 dAB = mix(vec2(.15, .051), vec2(.4, .18) * .5, mixamt);
+
+    const float t = 1.5; 
+
+    vec2 diffusion = dAB*lap;
+
+    vec2 reaction = vec2(rdVal.x*rdVal.y*rdVal.y)*vec2(-1, 1);
+
+    vec2 feedKill = vec2(feed*(1. - rdVal.x), (kill + feed)*rdVal.y)*vec2(1, -1);
+    vec2 delta = diffusion + reaction + feedKill;
+
+    fragColor.xy = clamp(rdVal.xy + delta*t, 0., 1.);
+
+    fragColor.zw = u_resolution.xy; 
+
+    if( u_frame<3 ) {
+      vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+      float shade = step(p.y, .7) * step(p.x, .7) * step(.3, p.y) * step(.3, p.x);
+      shade = smoothstep(1., .6, p.y) * smoothstep(1., .6, p.x) * smoothstep(-0., .4, p.y) * smoothstep(-0., .4, p.x);
+      shade = clamp(shade, 0., 1.);
+      shade = 1. - shade;
+      fragColor.xy = vec2(shade);
+      fragColor.xy += texture2D(u_noise, uv * .1).rg;
+      fragColor.xy *= fragColor.xy*fragColor.xy*fragColor.xy*fragColor.xy*fragColor.xy*10.;
+    }
+  }
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    vec2 mouse = u_mouse.xy - uv;
+    
+    float shade = smoothstep(.1, .15, length(mouse));
+    
+    vec4 fragcolour = vec4(shade);
+    
+    if(u_mouse.z == 1.) {
+      fragcolour = vec4(shade, 0., 0., 0.);
+    } else if(u_mouse.a == 1.) {
+      fragcolour = vec4(0., shade, 0., 0.);
+    }
+    
+    // vec3 fragcolour = colour(uv);
+    
+    if(u_renderpass == true) {
+      drawMap( gl_FragColor, gl_FragCoord.xy );
+    } else {
+      uv *= 1. + dot(uv, uv) * .25;
+    
+      float s = sin(u_time*.2);
+      float c = cos(u_time*.2);
+      // movement = vec2(u_time, 0.);
+      uv *= mat2(c, -s, s, c);
+      
+      vec2 movement;
+      vec4 render = renderPass(uv, vec2(10.), movement, scale);
+
+      render += render * render * .5;
+
+      gl_FragColor = render;
+      
+      // gl_FragColor = vec4(smoothstep(0.25, 0.05, texture2D(u_buffer, uv + vec2(u_time*.2, sin(u_time*.2)*.5)).y));
+      // gl_FragColor = vec4(texture2D(u_buffer, uv).y);
+    }
+
+    // gl_FragColor = fragcolour;
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

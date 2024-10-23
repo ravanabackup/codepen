@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Fizz Buzz</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  precision highp float;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform float u_zoom;
+  uniform sampler2D u_noise;
+  uniform sampler2D u_font;
+  uniform vec2 u_position;
+  
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    return uv;
+  }
+  
+  float digit(vec2 uv, vec2 pos) {
+    uv = uv * 16.;
+    if(abs(uv.x - .5) > .5 ) return 0.;
+    if(abs(uv.y - .5) > .5 ) return 0.;
+    return texture2D(u_font, fract(uv)/16. + vec2(pos.x, 12.) / 16.).r;
+  }
+  float digits(vec2 uv, float num) {
+    float dig = 0.;
+    float i = 6.;
+    
+    const float max = 6.;
+    for(float j = 0.; j < max; j++) {
+      float d = mod(num, 10.);
+      num = floor(num / 10.);
+      i-=1.;
+      dig = mix(dig, 1., digit(uv - vec2(1./16.* i * .5, 0.), vec2(d, 3.)));
+    }
+    return dig;
+  }
+  
+  float hash(vec2 p) {
+    float o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).x;
+    return o;
+  }
+  vec2 hash2(vec2 p) {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+  
+  const int octaves = 2;
+  
+  float noise(vec2 uv) {
+    vec2 id = floor(uv);
+    vec2 subuv = fract(uv);
+    vec2 u = subuv * subuv * (3. - 2. * subuv);
+    float a = hash(id);
+    float b = hash(id + vec2(1., 0.));
+    float c = hash(id + vec2(0., 1.));
+    float d = hash(id + vec2(1., 1.));
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+  }
+  float fbm(in vec2 uv) {
+    float s = .0;
+    float m = .0;
+    float a = .5;
+    for(int i = 0; i < octaves; i++) {
+      s += a * noise(uv);
+      m += a;
+      a *= .5;
+      uv *= 2.;
+    }
+    return s / m;
+  }
+  
+  mat2 rotate2d(float _angle) {
+      return mat2(cos(_angle),sin(_angle),
+                  -sin(_angle),cos(_angle));
+  }
+  
+  const vec3 fizz_bg1 = vec3(.1, .2, .4);
+  const vec3 fizz_bg2 = vec3(.3, .2, .8);
+  
+  const float multiplier = 15.5;
+
+  const float zoomSpeed = .5;
+  const int layers = 5;
+  
+  // The render function is where we render the pattern to be added to the layer
+  vec3 render(vec2 uv, float scale, vec3 colour) {
+    vec2 id = floor(uv);
+    vec2 subuv = fract(uv);
+    vec2 rand = hash2(id);
+    float bokeh = abs(scale) * 1.;
+    
+    float particle = 0.;
+    
+    if(length(rand) > 1.3) {
+      vec2 pos = subuv-.5;
+      float field = length(pos) * .5;
+      particle = smoothstep(.3, 0., field);
+      particle += smoothstep(.4 * bokeh, 0.34 * bokeh, field);
+    }
+    return vec3(particle*2.);
+  }
+  
+  vec3 renderLayer(int layer, int layers, vec2 uv, inout float opacity, vec3 colour) {
+    vec2 _uv = uv;
+    float l = float(layer);
+    // Scale
+    // Generating a scale value between zero and 1 based on a mod of u_time
+    // A frequency of 10 dixided by the layer index (10 / layers * layer)
+    float scale = mod((u_time + zoomSpeed / float(layers) * float(layer)) / zoomSpeed, -1.);
+    uv *= 5.; // The initial scale. Increasing this makes the cells smaller and the "speed" apepar faster
+    uv *= scale*scale; // then modifying the overall scale by the generated amount
+    uv *= rotate2d(sin(u_time*2. + l));
+    uv += vec2(25. * l); // ofsetting the UV by an arbitrary amount to make the layer appear different
+
+    // render
+    vec3 pass = render(uv * multiplier, scale, colour) * .2; // render the pass
+
+     // this is the opacity of the layer fading in from the "bottom"
+    opacity = 1. + scale;
+    float _opacity = opacity;
+    
+    // This is the opacity of the layer fading out at the top (we want this minimal, hence the smoothstep)
+    float endOpacity = smoothstep(0., 0.4, scale * -1.) * 2.;
+
+    return pass * _opacity * endOpacity;
+  }
+  
+  vec3 fizz(vec2 uv, float phase) {
+    float n = fbm(uv*10.+u_time);
+    vec3 colour = fizz_bg1;
+    float t = u_time + phase;
+    float wave = clamp(sin(length(uv*10. + (n))-t*20.) * cos(t * 8.) * .5 + .5, 0., 1.);
+    colour = mix(colour, fizz_bg2, wave);
+    wave = pow(wave*wave, 5.);
+    // colour += (1. - length(uv)) * .05 + wave * .1;
+    colour *= 1. + wave * .5;
+    colour = mix(colour, fizz_bg1, clamp(length(uv), 0., 1.));
+    
+    float opacity = 1.;
+    float opacity_sum = 1.;
+    
+    vec3 bubbles = vec3(0.);
+
+    for(int i = 1; i <= layers; i++) {
+      bubbles += renderLayer(i, layers, uv, opacity, colour);
+      opacity_sum += opacity;
+    }
+    
+    return colour * (bubbles+1.) + bubbles * (.5 + wave);
+  }
+  
+  const vec3 buzz_bg1 = vec3(.4, .0, .1);
+  const vec3 buzz_bg2 = vec3(.8, .2, .3);
+  
+  vec3 buzz(vec2 uv, float phase_d, inout float field) {
+    vec3 colour = buzz_bg1;
+    
+    float t = u_time * 10. + phase_d;
+    
+    float phase = smoothstep(-.2, 1., sin(t)) * .2;
+    float lightphase = smoothstep(.2, -1., sin(t));
+    
+    uv.y += sin((uv.x + t) * 20. * phase) * phase;
+    field = abs(uv.y) * lightphase;
+    
+    colour = mix(colour, buzz_bg2, (1. / (abs(uv.y) * 10.)) * (phase*10.+1.));
+    colour = mix(colour, buzz_bg1 * .5, lightphase);
+    
+    return colour;
+  }
+  
+  vec3 fizzbuzz_layer(vec2 uv, float phase) {
+    float buzzfield = 0.;
+    vec3 buzz_layer = buzz(uv, phase, buzzfield);
+    uv *= 1. - clamp(buzz_layer.rb, 0., 1.);
+    vec3 fizz_layer = fizz(uv, phase);
+    
+    return fizz_layer + buzz_layer * buzz_layer;
+  }
+  
+  vec3 fizzbuzz(vec2 uv, float multiplier) {
+    vec3 colour = vec3(0.);
+    
+    uv *= multiplier;
+    
+    vec2 grid = floor(uv);
+    vec2 grid_uv = fract(uv);
+    float id = grid.x * grid.y;
+    
+    if(id == 0.) {
+      
+    } else if(id / 3. == floor(id / 3.) && id / 5. == floor(id / 5.)) {
+      colour = fizzbuzz_layer(grid_uv-.5, id);
+    } else if(id / 3. == floor(id / 3.)) {
+      colour = fizz(grid_uv-.5, id);
+    } else if(id / 5. == floor(id / 5.)) {
+      float buzzfield = 0.;
+      colour = buzz(grid_uv-.5, id, buzzfield);
+    }
+    
+    colour = mix(colour, vec3(1.), digits(grid_uv * .5, id));
+    
+    return colour;
+  }
+
+  void main() {
+    vec2 uv = getScreenSpace();
+    uv += u_position;
+    
+    vec3 colour = fizzbuzz(uv, u_zoom);
+
+    gl_FragColor = vec4(colour,1.0);
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

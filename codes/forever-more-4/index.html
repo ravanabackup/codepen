@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Forever more 4</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+ precision highp float;
+  precision highp int;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+  // movement variables
+  vec3 movement = vec3(.0);
+  
+  const float vSize = 1.;
+  
+  const int maxIterations = 256;
+  const int maxIterationsShad = 16;
+  const float stopThreshold = 0.001;
+  const float stepScale = .7;
+  const float eps = 0.005;
+  const vec3 clipColour = vec3(0.);
+  const vec3 fogColour = vec3(0.);
+  
+  const vec3 light1_position = vec3(0, 5, 10);
+  const vec3 light1_colour = vec3(.9, .8, .8)*1.5;
+  const float light1_strength = .9;
+  const float light1_attenuation = 0.15;
+  
+  const float fogStrength = 0.0025;
+  
+  struct Surface {
+    int object_id;
+    float distance;
+    vec3 position;
+    vec3 colour;
+    float ambient;
+    float spec;
+    vec3 norm;
+  };
+  
+  vec3 path(float z) {
+    return vec3(0.);
+  }
+  
+  // This function describes the world in distances from any given 3 dimensional point in space
+  float world(in vec3 position, inout int object_id) {
+    
+    return position.y + 1. + sin(position.x * .3) + sin(position.z * .5);
+  }
+  float world(in vec3 position) {
+    int dummy = 0;
+    return world(position, dummy);
+  }
+  
+  Surface getSurface(int object_id, float rayDepth, vec3 sp, vec3 norm) {
+    return Surface(
+      object_id, 
+      rayDepth, 
+      sp, 
+      vec3(.5, 0.3, 0.), 
+      .5, 
+      2.,
+      norm);
+  }
+  
+  // The raymarch loop
+  Surface rayMarch(vec3 ro, vec3 rd, float start, float end) {
+    float sceneDist = 1e4;
+    float rayDepth = start;
+    int object_id = 0;
+    for(int i = 0; i < maxIterations; i++) {
+      sceneDist = world(ro + rd * rayDepth, object_id);
+      
+      if(sceneDist < stopThreshold || rayDepth > end) {
+        break;
+      }
+      
+      rayDepth += sceneDist * stepScale;
+    }
+    
+    return getSurface(object_id, rayDepth, ro + rd * rayDepth, vec3(0.));
+  }
+
+  vec3 voxelTrace(vec3 ro, vec3 rd, out bool hit, inout vec3 norm, out float rayDepth, out float steps, out vec2 center) {
+    // ro /= vSize;
+    // rd /= vSize;
+    
+    vec3 vRay = floor(ro) + .5;
+    vec3 inRay = 1./abs(rd);
+    vec3 signRay = sign(rd);
+    rd = signRay;
+    vec3 side = (inRay*(rd * (vRay - ro) + 0.5));
+    vec3 mask = vec3(0);
+
+    for (int i = 0; i < maxIterations; i++) {
+      if (world((vRay*vSize))<0.) {
+        hit = true;
+        break;
+      }
+      mask = (step(side, side.yzx)*(1.-step(side.zxy, side)));
+      side += (mask*inRay);
+      vRay = (vRay + mask * rd);
+    }
+    
+    norm = normalize(-(mask * signRay));
+    
+    rayDepth = length(ro - vRay);
+
+    return vRay;
+  }
+  
+  float voxShadow(vec3 ro, vec3 rd, float end){
+
+    // ro /= vSize;
+    // rd /= vSize;
+    
+    float shade = 1.;
+    
+    vec3 vRay = floor(ro) + .5;
+    vec3 inRay = 1./abs(rd);
+    vec3 signRay = sign(rd);
+    rd = signRay;
+    vec3 side = (inRay*(rd * (vRay - ro) + .5));
+    vec3 mask = vec3(0);
+
+    for (int i = 0; i < maxIterationsShad; i++) {
+      shade = world(vRay);
+
+      if (shade<0. || length(vRay-ro)>end) break;
+      
+      mask = (step(side, side.yzx)*(1.-step(side.zxy, side)));
+      side += (mask*inRay);
+      vRay = (vRay + (mask * rd));
+    }
+
+    return step(0., shade)*.7 + .3;
+
+  }
+  
+  // ambient occlusion approximation
+  float ambientOcclusion(vec3 p, vec3 n)
+  {
+    const int steps = 8;
+    const float delta = 0.01;
+
+    float a = 0.0;
+    float weight = 1.0;
+    for(int i=1; i<=steps; i++) {
+        float d = (float(i) / float(steps)) * delta; 
+        a += weight*(d - world(p + n*d));
+        weight *= 0.5;
+    }
+    return clamp(a + .5, 0.0, 1.0);
+  }
+  
+  // Calculated the normal of any given point in space. Intended to be cast from the point of a surface
+  vec3 calculate_normal(in vec3 position) {
+    vec3 grad = vec3(
+      world(vec3(position.x + eps, position.y, position.z)) - world(vec3(position.x - eps, position.y, position.z)),
+      world(vec3(position.x, position.y + eps, position.z)) - world(vec3(position.x, position.y - eps, position.z)),
+      world(vec3(position.x, position.y, position.z + eps)) - world(vec3(position.x, position.y, position.z - eps))
+    );
+    
+    return normalize(grad);
+  }
+  
+  vec3 lighting(Surface surface_object, vec3 cam) {
+    
+    // start with black
+    vec3 sceneColour = vec3(0);
+    
+    // Surface normal
+    vec3 normal = surface_object.norm;
+    
+    // Light position
+    vec3 lp = cam + vec3(0., -1., 0.);
+    // lp.xy = path(lp.z).xy + light1_position.xy;
+    // Light direction
+    vec3 ld = lp - surface_object.position;
+    vec3 ldo = (lp - surface_object.position);
+    
+    // light attenuation
+    // For brightly lit scenes or global illumination (like sunlit), this can be limited to just normalizing the ld
+    float len = length( ld );
+    ld = normalize(ld);
+    float lightAtten = min( 1.0 / ( light1_attenuation*len ), 1.0 );
+    // lightAtten = 1.;
+    
+    // Scene values, mainly for fog
+    float sceneLength = length(cam - surface_object.position);
+    float sceneAttenuation = min( 1. / ( fogStrength * sceneLength * sceneLength ), 1. );
+    
+    // The surface's light reflection normal
+    vec3 reflection_normal = reflect(-ld, normal);
+    
+    // Ambient Occlusion
+    float ao = 1.;
+    // ao = ambientOcclusion(surface_object.position, surface_object.norm);
+    
+    // shadows
+    float shadows = voxShadow((surface_object.position + surface_object.norm*.01), ld, len);
+    
+    // Object surface properties
+    float diffuse = max(0., dot(normal, ld));
+    float specular = max(0., dot( reflection_normal, normalize(cam - surface_object.position) ));
+    
+    // Bringing all of the lighting components together
+    sceneColour += ( surface_object.colour * (diffuse + surface_object.ambient) + specular ) * light1_colour * lightAtten * light1_strength;
+    // adding fog
+    sceneColour = mix( sceneColour, fogColour, 1. - sceneAttenuation );
+    
+    // return vec3(shadows);
+    return sceneColour*shadows;
+  }
+  
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    // movement
+    movement = path(u_time);
+    
+    // Camera and look-at
+    vec3 cam = vec3(0,2,u_time*10.);
+    vec3 lookAt = cam + vec3(sin(u_time)*2.,-1,1.);
+    
+    // Unit vectors
+    vec3 forward = normalize(lookAt - cam);
+    vec3 right = normalize(vec3(forward.z, 0., -forward.x));
+    vec3 up = normalize(cross(forward, right));
+    
+    // FOV
+    float FOV = 1.5;
+    
+    // Ray origin and ray direction
+    vec3 ro = cam;
+    vec3 rd = normalize(forward + FOV * uv.x * right + FOV * uv.y * up);
+    
+    float t = path(lookAt.z).x;
+    float s = sin(t);
+    float c = cos(t);
+    rd.xy *= mat2(c, -s, s, c);
+    
+    bool hit = false;
+    vec3 norm = vec3(0.);
+    float rayDepth = 0.;
+    float steps = 0.;
+    vec2 center = vec2(0);
+    
+    const float clipNear = 0.;
+    const float clipFar = 32.;
+    
+    // ro /= vSize;
+    // rd /= vSize;
+    
+    vec3 surfacePos = voxelTrace(ro, rd, hit, norm, rayDepth, steps, center);
+    
+    // Using the voxel position to determine the distance from the camera to the hit point.
+    // I'm assuming IQ is responsible for this clean piece of logic.
+    vec3 tCube = (surfacePos-cam - .5*sign(rd))/rd;
+    float hp = max(max(tCube.x, tCube.y), tCube.z);
+    
+    Surface objectSurface = getSurface(1, rayDepth, cam + rd * hp, norm);
+    
+    // gl_FragColor = vec4(vec3(rayDepth/50.), 1.);
+    // return;
+    
+    
+    if(length(center) > 0.) {
+      objectSurface.colour = vec3(smoothstep(.9,.92,length(center)));
+      objectSurface.colour = vec3(length((center)));
+    }
+    
+    // Ray marching
+    // Surface objectSurface = rayMarch(ro, rd, clipNear, clipFar);
+    // if(objectSurface.distance > clipFar) {
+    //   gl_FragColor = vec4(clipColour, 1.);
+    //   return;
+    // }
+    vec3 sceneColour = vec3(0);
+    if(hit) {
+      sceneColour = lighting(objectSurface, cam);
+    }
+    // sceneColour = vec3(rayDepth*.03);
+    // sceneColour *= vec3(1./(steps*.1));
+    // vec3 sceneColour = norm;
+    
+    gl_FragColor = vec4(sceneColour, 1.);
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

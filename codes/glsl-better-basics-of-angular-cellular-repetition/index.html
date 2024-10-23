@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - GLSL: Better Basics of Angular Cellular Repetition.</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+  #define PI 3.141592653589793
+  #define TAU 6.283185307179586
+
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+  
+  vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix( vec3(1.0), rgb, c.y);
+  }
+  
+  vec3 domain(vec2 z){
+    return vec3(hsb2rgb(vec3(atan(z.y,z.x)/TAU,1.,1.)));
+  }
+  vec3 colour(vec2 z) {
+      return domain(z);
+  }
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    const float k = 10.0;
+    const float w = 4.0;
+    const float t = 1.;
+    
+    float i = floor(length(uv)*k);
+    
+    float c = cos(u_time * (1./i));
+    float s = sin(u_time * (1./i));
+    uv *= mat2(c, -s, s, c);
+    
+    vec2 radial = vec2(i, atan(uv.y, uv.x));
+    
+    radial = vec2(
+      (i + .5)*(1.0/k), 
+      (floor(radial.y*(1.0/PI)*(i*w+t)) + 0.5 ) * PI/(i*w+t));
+  
+    vec2 cart = vec2(cos(radial.y), sin(radial.y)) * radial.x;
+    
+    float shade = length(uv-cart) * k * 1.5;
+    
+    vec3 fragcolour = vec3(smoothstep(0.5, 0.5 - fwidth(shade), shade - 0.02));
+    
+    // if(length(cart) <= 0.1) {
+      // fragcolour = vec3(0.);
+    // }
+
+    gl_FragColor = vec4(vec3(fragcolour),1.0);
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
