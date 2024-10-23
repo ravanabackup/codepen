@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Winding number</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script type="text/fragment" id="fragShader">
+  precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec2 u_mouse;
+uniform sampler2D s_noise;
+
+uniform sampler2D b_noise;
+
+varying vec2 v_uv;
+
+#define PI 3.141592653589
+  
+  // These awesome complex Math functions curtesy of 
+  // https://github.com/mkovacs/reim/blob/master/reim.glsl
+  vec2 cCis(float r);
+  vec2 cLog(vec2 c); // principal value
+  vec2 cInv(vec2 c);
+  float cArg(vec2 c);
+  float cAbs(vec2 c);
+  
+  vec2 cMul(vec2 a, vec2 b);
+  vec2 cDiv(vec2 a, vec2 b);
+
+  vec2 cCis(float r)
+  {
+    return vec2( cos(r), sin(r) );
+  }
+  vec2 cExp(vec2 c)
+  {
+    return exp(c.x) * cCis(c.y);
+  }
+  vec2 cConj(vec2 c)
+  {
+    return vec2(c.x, -c.y);
+  }
+  vec2 cInv(vec2 c)
+  {
+    return cConj(c) / dot(c, c);
+  }
+  vec2 cLog(vec2 c)
+  {
+    return vec2( log( cAbs(c) ), cArg(c) );
+  }
+  float cArg(vec2 c)
+  {
+    return atan(c.y, c.x);
+  }
+  float cAbs(vec2 c)
+  {
+    return length(c);
+  }
+  vec2 cMul(vec2 a, vec2 b)
+  {
+    return vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x);
+  }
+  vec2 cDiv(vec2 a, vec2 b)
+  {
+    return cMul(a, cInv(b));
+  }
+  vec2 cPow(vec2 v, float p){
+    vec2 z = vec2(length(v), atan(v.y,v.x));
+    return pow(z.x, p) * vec2(cos(z.y * p), sin(z.y * p));
+  }
+  
+  float im( vec2 z ) {
+    return (( atan(z.y, z.x) / PI ) + 1. ) * .5;
+  }
+  
+  float distanceToLine( vec2 z, vec2 p, vec2 q, inout vec2 log_pz_over_qz ) {
+    vec2 pz = z - p;
+    vec2 qz = z - q;
+
+    vec2 pz_over_qz = cDiv( pz, qz );
+    log_pz_over_qz = cPow( pz_over_qz, 1.0 );
+    float im_z = im( log_pz_over_qz );
+    return im_z;
+  }
+
+vec2 getScreenSpace() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+
+  return uv;
+}
+void main() {
+  vec2 uv = getScreenSpace();
+  // uv = vec2(length(uv), atan(uv.y, uv.x));
+  
+  uv *= 1.;
+  
+  float _a = u_time*10.;
+  float c = cos(_a);
+  float s = sin(_a);
+  
+  vec2 a = vec2( s*.2, c*.2 );
+  vec2 b = vec2( s*-.2, c*-.2 );
+  
+  vec2 _c = vec2(0);
+  float d = distanceToLine(uv, a, b, _c);
+  
+  // d = smoothstep(0., .01, sin(_c.y*10.));
+  
+  vec3 col = vec3(d);
+
+  // gl_FragColor = vec4(vec3(step(uv.x, 0.)),1);
+  gl_FragColor = vec4(col, 1.);
+}
+</script>
+<!-- partial -->
+  <script type="module" src="./script.js"></script>
+
+</body>
+</html>

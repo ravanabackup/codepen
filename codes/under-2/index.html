@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Under 2</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+ precision highp float;
+  precision highp int;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+  // movement variables
+  vec3 movement = vec3(.0);
+  
+  const int maxIterations = 256;
+  const float stopThreshold = 0.001;
+  const float stepScale = .5;
+  const float eps = 0.005;
+  const vec3 clipColour = vec3(0.);
+  const vec3 fogColour = vec3(0.);
+  
+  const vec3 light1_position = vec3(0, 1., -1.);
+  const vec3 light1_colour = vec3(.8, .8, .85);
+  
+  struct Surface {
+    int object_id;
+    float distance;
+    vec3 position;
+    vec3 colour;
+    float ambient;
+    float spec;
+  };
+  
+  vec3 camPath(float z) {
+    return vec3(cos(z * .2) * sin(z * .2), sin(z * .3) * .6, z*5.);
+  }
+  vec3 path(float z) {
+    return vec3(sin(z*5.*.15)*1.5,cos(z*5.*.15),z*5.);
+  }
+  // polynomial smooth min (k = 0.1);
+  float sminCubic( float a, float b, float k )
+  {
+      float h = max( k-abs(a-b), 0.0 )/k;
+      return min( a, b ) - h*h*h*k*(1.0/6.0);
+  }
+  
+  // This function describes the world in distances from any given 3 dimensional point in space
+  float world(in vec3 position, inout int object_id) {
+    
+    float world;
+    
+    vec3 pathpos = position;
+    vec3 p = camPath(position.z);
+    
+    // position.xy += p.xy;
+    
+    float s = sin(position.z*.15)*2.5;
+    float c = cos(position.z*.15);
+    mat2 rot = mat2(s, c, -c, s);
+    position.xy *= rot;
+    
+    vec3 pos = floor(position * .5 * length(position*.0005));
+    object_id = int(mod(floor(pos.x + pos.y + pos.z), 2.));
+    
+    vec3 pillarpos = position;
+    pillarpos.x -= 1.;
+    pillarpos.xz = mod(pillarpos.xz, 2.) - 1.;
+    
+    float sz = sin(position.z) * cos(length(position));
+    
+    world = sminCubic(min(position.y + .5 - sz, 2. - position.y + sz), length(pillarpos.xz) - .1, 1.5);
+    
+    pillarpos = position;
+    pillarpos.xy += vec2(.8, .2);
+    pillarpos.xy = mod(pillarpos.xy, 3.) - 1.5;
+    world = sminCubic(world, length(pillarpos.xy) - .4, 1.5);
+    
+    pathpos.xy += p.xy;
+    world = max(world, -(length(pathpos.xy) - 1.));
+    
+    return world;
+  }
+  float world(in vec3 position) {
+    int dummy = 0;
+    return world(position, dummy);
+  }
+  
+  vec3 getObjectColour(int object_id) {
+    float modid = mod(float(object_id), 5.);
+    if(modid == 0.) {
+      return vec3(0.8);
+    }
+    return vec3(0.2);
+  }
+  
+  Surface getSurface(int object_id, float rayDepth, vec3 sp) {
+    return Surface(
+      object_id, 
+      rayDepth, 
+      sp, 
+      getObjectColour(object_id), 
+      .5, 
+      200.);
+  }
+  
+  // The raymarch loop
+  Surface rayMarch(vec3 ro, vec3 rd, float start, float end, inout float field) {
+    float sceneDist = 1e4;
+    float rayDepth = start;
+    int object_id = 0;
+    for(int i = 0; i < maxIterations; i++) {
+      vec3 point = ro + rd * rayDepth;
+      sceneDist = world(point, object_id);
+      
+      // float rays = texture2D(u_noise, ((point.xy + vec2(cos(u_time), sin(u_time))) * point.z) * .000005).r + texture2D(u_noise, ((point.xy + vec2(cos(u_time), sin(u_time))) * point.z) * .00001).r;
+      
+      float rays = texture2D(u_noise, ((point.xy + vec2(cos(u_time), sin(u_time))) * (mod(point.z+1000., 10000.))) * .000005).r;
+      
+      // rays *= rays*rays*rays*10.;
+      rays += .5;
+      
+      float w = sceneDist*2. + .2;
+      
+      field += (w) * rays * texture2D(u_noise, point.xy * point.z * .01).r;
+      
+      if(sceneDist < stopThreshold || rayDepth > end) {
+        break;
+      }
+      
+      rayDepth += min(.1, sceneDist*stepScale);
+    }
+    
+    return getSurface(object_id, rayDepth, ro + rd * rayDepth);
+  }
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    // movement
+    movement = camPath(u_time);
+    vec3 movement2 = path(u_time-1.5);
+    
+    // Camera and look-at
+    vec3 cam = vec3(-0.3, 0, 0);
+    vec3 lookAt = vec3(-.5, .1, 1);
+    lookAt.xy += u_mouse;
+    
+    // add movement
+    lookAt += camPath(u_time + .5);
+    cam += movement;
+    
+    // Unit vectors
+    vec3 forward = normalize(lookAt - cam);
+    vec3 right = normalize(vec3(forward.z, 0., -forward.x));
+    vec3 up = normalize(cross(forward, right));
+    
+    // FOVs
+    float FOV = .4;
+    
+    // Ray origin and ray direction
+    vec3 ro = cam;
+    vec3 rd = normalize(forward + FOV * uv.x * right + FOV * uv.y * up);
+    rd.xy *= mat2(movement2.y, movement2.x, -movement2.x, movement2.y);
+    
+    // Ray marching
+    const float clipNear = 0.;
+    const float clipFar = 32.;
+    float field = 0.;
+    Surface objectSurface = rayMarch(ro, rd, clipNear, clipFar, field);
+    gl_FragColor = vec4(vec3(field*.005), 1.);
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
