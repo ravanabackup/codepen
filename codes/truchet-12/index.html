@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Truchet 12</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  uniform sampler2D u_environment;
+  
+  // #define GRID
+  // #define ANIMATING
+  
+  #define PI 3.141592653589793
+  #define TAU 6.283185307179586
+  
+  // Holy fuck balls, fresnel!
+  const float bias = .2;
+  const float scale = 100.;
+  const float power = 10.1;
+  
+  const vec2 s = vec2(1, 1.7320508);
+
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+  
+	float ease(float t, float b, float c, float d) {
+		if (t==0.) return b;
+		if (t==d) return b+c;
+		if ((t/=d/2.) < 1.) return c*.5 * pow(2., 10. * (t - 1.)) + b;
+		return c*.5 * (-pow(2., -10. * --t) + 2.) + b;
+	}
+  
+  
+  // hex(uv)
+  // getHex(uv)
+  // -------------
+  // These very very helpful functions are by Gary Warne.
+  // -------------
+  float hex(in vec2 p){
+
+      p = abs(p);
+
+      return max(dot(p, s*.5), p.x); // Hexagon.
+
+  }
+  
+  vec4 getHex(vec2 p){
+
+      vec4 hC = floor(vec4(p, p - vec2(.5, 1))/s.xyxy) + .5;
+
+      // Centering the coordinates with the hexagon centers above.
+      vec4 h = vec4(p - hC.xy*s, p - (hC.zw + .5)*s);
+
+      return dot(h.xy, h.xy)<dot(h.zw, h.zw) ? vec4(h.xy, hC.xy) : vec4(h.zw, hC.zw + vec2(.5, 1));
+
+  }
+  
+  
+  
+  const float lineWidth = .23;
+  const float ringsize = .285;
+  const float distance = .57;
+  const float angle_increment = TAU/3.;
+  const float largeringsize = .798;
+  const float largedistance = .92;
+  const float aaw = .2;
+  
+  float shade(float df, float width, float aa, float ringsize) {
+    return smoothstep(ringsize-width, ringsize+aa-width, df) - smoothstep(ringsize-aa+width, ringsize+width, df); 
+  }
+  
+  float shade(float df, float width, float aa) {
+    return shade(df, width, aa, ringsize);
+    // return smoothstep(ringsize-width, ringsize+aa-width, df) - smoothstep(ringsize-aa+width, ringsize+width, df);
+  }
+  
+  float shade(float df, float width) {
+    return shade(df, width, 0.005);
+  }
+  
+  vec3 truchet(vec4 tile, inout vec3 colourmap) {
+    vec2 hash = hash2(tile.zw);
+    float id = floor(hash.x*6.);
+    vec4 _tile = mod(tile, 1.);
+    float initial_rotation = 0.;
+    
+    float iso = hex(tile.xy);
+    vec3 colour = vec3(1. - iso * 2.);
+    colour = vec3(0.);
+    
+    float t = u_time * .0001 + 1.;
+    
+    float animation_offset = hash.y * 1. + u_time;
+    float animation_time = t + animation_offset;
+    float prev_rotation = floor(animation_time / 6.);
+    float next_rotation = floor(animation_time / 6.) - 1.;
+    
+    const float sides = 3.;
+    
+    float _shade;
+    
+    float easeVal = clamp(mod(animation_time, 6.) - 3., 0., 3.);
+    easeVal = ease(easeVal, prev_rotation, prev_rotation-next_rotation, 3.);
+    
+    if(hash.y <= .3) {
+      initial_rotation = TAU / 6. * 3.;
+    } else if(hash.y <= .6) {
+      initial_rotation = TAU / 6. * 2.;
+    } else {
+      initial_rotation = TAU / 6.;
+    }
+    
+    #ifdef ANIMATING
+      initial_rotation += TAU / 6. * easeVal;
+    #endif
+    
+    // id = 3.;
+    
+    
+    if(id <= 1.) {
+      float _i = .25;
+      float increment;
+      float mask;
+      
+      increment = initial_rotation + angle_increment * 1.5;
+      mask = shade(length(tile.xy + vec2(cos(increment), sin(increment)) * largedistance), lineWidth, aaw, largeringsize);
+      colour = clamp(colour, 0., 1.);
+      colour += mask;
+      
+      
+      increment = initial_rotation + angle_increment * 2.;
+      mask = shade(length(tile.xy + vec2(cos(increment), sin(increment)) * largedistance), lineWidth, aaw, largeringsize);
+      
+      float _shade = shade(length(tile.xy + vec2(cos(increment), sin(increment)) * largedistance), lineWidth+.01, .001, largeringsize);
+      
+      colour = clamp(colour, 0., 1.);
+      // colour -= _shade + shade(length(tile.xy + vec2(cos(increment), sin(increment)) * largedistance), lineWidth+aaw*.3, aaw, largeringsize);
+      colour = clamp(colour, 0., 1.);
+      colour += mask * (1.-colour);
+      
+      increment = initial_rotation + angle_increment * _i;
+      mask = shade(length(tile.xy + vec2(cos(increment), sin(increment)) * distance), lineWidth, aaw, ringsize);
+      colour = clamp(colour, 0., 1.);
+      colour += mask;
+    } else {
+      for(float i = 1.; i <= sides; i++) {
+        float _i = i - .25;
+        float increment = initial_rotation + angle_increment * _i;
+        float mask = shade(length(tile.xy + vec2(cos(increment), sin(increment)) * distance), lineWidth, aaw, ringsize);
+        colour = clamp(colour, 0., 1.);
+        colour += mask;
+      }
+    }
+    
+    colourmap = clamp(colour, 0., 1.);
+    
+    vec3 colour_opt = vec3(pow(.2, colour.x)*pow(.2, colour.x));
+    // colour *= .5;
+    colour *= colour_opt*5.5;
+    colour -= colour_opt*.2;
+    
+    
+    
+    // return colour;
+    return clamp(sqrt(colour), 0., 1.);
+    
+  }
+  
+//   Naive environment mapping. Pass the reflected vector and pull back the texture position for that ray.
+  vec3 envMap(vec3 rd, vec3 sn, float scale){
+
+      // rd.xy -= u_time*.2; // This just sort of compensates for the camera movement
+      // rd.xy -= movement;
+      rd /= scale; // scale the whole thing down a but from the scaled UVs
+    
+      vec3 col = texture2D(u_environment, rd.xy - .5).rgb;
+      col *= normalize(col);
+      // col *= vec3(1., 1., 1.2);
+      // col *= vec3(hash2(rd.xy).y * .5 + .5);
+
+      return col;
+
+  }
+
+  
+  float bumpMap(vec2 uv, float height, inout vec3 colourmap) {
+    
+    uv.x += u_time;
+    
+    vec4 hex_uv = getHex(uv);
+    
+    vec3 shade = truchet(hex_uv, colourmap);
+    
+    return shade.x * height;
+  }
+  float bumpMap(vec2 uv, float height) {
+    vec3 colourmap;
+    return bumpMap(uv, height, colourmap);
+  }
+
+  vec4 renderPass(vec2 uv, vec2 uvoffset, vec2 movement, float scale) {
+    vec3 surfacePos = vec3(uv, 0.0);
+    vec3 ray = normalize(vec3(uv - movement, 1.));
+    // vec3 lightPos = vec3(cos(u_time / 2.) * 2., sin(u_time / 2.) * 2., -3.);
+    vec3 lightPos = vec3(cos(u_time * .5 + 2.) * 2., 1. + sin(u_time * .5 + 2.) * 2., -3.) - vec3(movement, 0.) * scale;
+    vec3 normal = vec3(0., 0., -1);
+
+    vec2 sampleDistance = vec2(.01, 0.);
+    
+    vec3 colourmap;
+
+    // float fx = bumpMap(surfacePos.xy-sampleDistance.xy + uvoffset + 100. + u_time * .1, 1.);
+    // float fy = bumpMap(surfacePos.xy-sampleDistance.yx + uvoffset + 100. + u_time * .1, 1.);
+    // float f = bumpMap(surfacePos.xy + uvoffset + 100. + u_time * .1, 1., colourmap);
+    // float freq = (f + fx + fy);
+    // freq *= .1;
+    // freq += 1.;
+    
+    float fx = bumpMap(surfacePos.xy-sampleDistance.xy + uvoffset, 1.);
+    float fy = bumpMap(surfacePos.xy-sampleDistance.yx + uvoffset, 1.);
+    float f = bumpMap(surfacePos.xy + uvoffset, 1., colourmap);
+    float freq = (f + fx + fy);
+    
+    freq = freq * freq;
+    // return vec4( 1. - smoothstep(80., 110., freq) );
+    // return vec4( freq / 155. );
+    fx = (fx-f)/sampleDistance.x;
+    fy = (fy-f)/sampleDistance.x;
+    normal = normalize( normal + vec3(fx, fy, 0) * 0.2 );
+    
+    // Holy fuck balls, fresnel!
+    // specular = max(0.0, min(1.0, bias + scale * (1.0 + length(camPos-sp * surfNormal)) * power));
+    float shade = bias + (scale * pow(1.0 + dot(normalize(surfacePos-vec3(uv, -3.0)), normal), power));
+
+    vec3 lightV = lightPos - surfacePos;
+    float lightDist = max(length(lightV), 0.001);
+    lightV /= lightDist;
+
+    vec3 lightColour = vec3(.8, .8, 1.);
+
+    float shininess = 4.01 * (colourmap.x * .5 + 1.);
+    float brightness = 1. * (colourmap.x * 1.8 + .2);
+
+    float falloff = 0.1;
+    float attenuation = 1./(1.0 + lightDist*lightDist*falloff);
+
+    float diffuse = max(dot(normal, lightV), 0.);
+    float specular = pow(max(dot( reflect(-lightV, normal), -ray), 0.), 52.) * shininess;
+    
+    // vec3 tex = texture2D(u_environment, (reflect(vec3(uv, -1.), normal)).xy ).rgb;
+    vec3 reflect_ray = reflect(vec3(uv - movement, 1.), normal * 1.);
+    // The reflect ray is the ray wwe use to determine the reflection.
+    // We use the UV less the movement (to account for "environment") to the surface normal
+    vec2 hash = hash2(uv*2048.); // Some simple reflection diffusion
+    vec3 tex = envMap(reflect_ray+vec3(hash, 0.)*.1, normal, scale) * (shade + .5); // Fake environment mapping.
+
+    vec3 texCol = (mix(vec3(.0, .0, .15), vec3(.5, .4, .2), colourmap) + tex * brightness) * .5;
+    
+    float metalness = (1. - colourmap.x);
+    metalness *= metalness;
+
+    vec3 colour = (texCol * (diffuse*vec3(1, .97, .92)*2. + 0.5) + lightColour*specular * f * 2. * metalness)*attenuation*1.5;
+    colour *= 1.5;
+    
+    #ifdef GRID
+      surfacePos.x += u_time;
+      vec4 hex_uv = getHex(surfacePos.xy + uvoffset);
+      float iso = hex(hex_uv.xy);
+      colour +=smoothstep(.49, .51, iso);
+    #endif
+
+    // return vec4(shade);
+    return vec4(colour, 1.);
+  }
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+  
+    vec2 movement;
+    float scale = 7. + sin(4.5 + u_time * .2) * 6.;
+    // float scale = 4. + sin(4.5 + u_time * .2) * 3.7;
+    
+    uv *= 1. + dot(uv, uv) * .05;
+    uv *= scale;
+    
+    float s = sin(u_time*.2);
+    float c = cos(u_time*.2);
+    // movement = vec2(u_time, 0.);
+    uv *= mat2(c, -s, s, c);
+    
+    // vec4 render = renderPass(uv, vec2(cos(u_time), sin(u_time)));
+    vec4 render = renderPass(uv, vec2(10.), movement, scale);
+    
+    render += render * render * .5;
+    
+    gl_FragColor = render;
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

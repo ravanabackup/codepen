@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Truchet 13</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+  // #define GRID
+  // #define ANIMATING
+  
+  const float lineWidth = .3;
+  const float shadeWidth = .35;
+  
+  #define PI 3.141592653589793
+  #define TAU 6.283185307179586
+  
+  // Helper vector. If you're doing anything that involves regular triangles or hexagons, the
+  // 30-60-90 triangle will be involved in some way, which has sides of 1, sqrt(3) and 2.
+  const vec2 s = vec2(1, 1.7320508);
+
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+  vec3 hash32(vec2 p)
+  {
+    vec3 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xyz;
+    return o;
+  }
+  
+	float ease(float t, float b, float c, float d) {
+    
+		float s=1.70158;
+    float p=0.;
+    float a=c;
+		if (t==0.) return b;
+    if ((t/=d)==1.) return b+c;
+    if (p <= 0.) p=d*.3;
+		if (a < abs(c)) { 
+      a=c;
+      s=p/6.;
+    } else {
+      s = p/TAU * asin(c/a);
+    }
+		return a*pow(2.,-12.*t) * sin( (t*d-s)*TAU/p ) + c + b;
+	}
+  
+  
+  // hex(uv)
+  // getHex(uv)
+  // -------------
+  // These very very helpful functions are by Gary Warne.
+  // -------------
+  float hex(in vec2 p){
+
+      p = abs(p);
+
+      return max(dot(p, s*.5), p.x); // Hexagon.
+
+  }
+  
+  vec4 getHex(vec2 p){
+
+      vec4 hC = floor(vec4(p, p - vec2(.5, 1))/s.xyxy) + .5;
+
+      // Centering the coordinates with the hexagon centers above.
+      vec4 h = vec4(p - hC.xy*s, p - (hC.zw + .5)*s);
+
+      return dot(h.xy, h.xy)<dot(h.zw, h.zw) ? vec4(h.xy, hC.xy) : vec4(h.zw, hC.zw + vec2(.5, 1));
+
+  }
+  
+  // const float ringsize = .285;
+  // const float angle_increment = TAU/3.;
+  // float distance = .57;
+  const float ringsize = .285;
+  const float angle_increment = TAU/3.;
+  float distance = .57;
+  
+  float shade(float df, float width, float aa, float ringsize) {
+    return smoothstep(ringsize-width, ringsize+aa-width, df) - smoothstep(ringsize-aa+width, ringsize+width, df);
+  }
+  
+  float shade(float df, float width, float aa) {
+    return shade(df, width, aa, ringsize);
+    // return smoothstep(ringsize-width, ringsize+aa-width, df) - smoothstep(ringsize-aa+width, ringsize+width, df);
+  }
+  
+  float shade(float df, float width) {
+    return shade(df, width, 0.005);
+  }
+  
+  vec3 dots(vec2 uv, float initial_rotation) {
+    
+//     float c;
+//     float s;
+//     if(initial_rotation == TAU / 6.) {
+//       c = cos(u_time * -3. + 2.);
+//       s = sin(u_time * -3. + 2.);
+//     } else {
+//       c = cos(u_time * 3.);
+//       s = sin(u_time * 3.);
+//     }
+//     uv *= mat2(c, -s, s, c);
+    
+//     vec2 r = vec2(length(uv), atan(uv.y, uv.x));
+    
+//     r.y *= PI;
+    
+//     if(initial_rotation == TAU / 6.) {
+//       r.y *= -1.;
+//     }
+    
+//     r = mod(r, 2.) / 2.;
+    
+//     return vec3(length(r));
+    
+    const float k = 5.25;
+    const float w = 3.5;
+    const float t = 1.;
+    
+    float i = floor(length(uv)*k);
+    
+    float c;
+    float s;
+    if(initial_rotation == TAU / 6.) {
+      c = cos(u_time * 1. / i * -3.);
+      s = sin(u_time * 1. / i * -3.);
+    } else {
+      c = cos(u_time * 1. / i * 3.);
+      s = sin(u_time * 1. / i * 3.);
+    }
+    uv *= mat2(c, -s, s, c);
+    uv *= 1.;
+    
+    vec2 radial = vec2(i, atan(uv.y, uv.x));
+    
+    radial = vec2((i + .5)*(1.0/k), 
+             (floor(radial.y*(1.0/PI)*(i*w+t)) + 0.5 ) * PI/(i*w+t));
+  
+    vec2 cart = vec2(cos(radial.y), sin(radial.y)) * radial.x;
+    
+    float shade = length(uv-cart) * 7.;
+    
+    if(i > 1.) {
+      return vec3(0.);
+    }
+    
+    return vec3(smoothstep(0.5, 0.5 - .1, shade - 0.02));
+  }
+  
+  vec3 truchet(vec4 tile) {
+    vec3 hash = hash32(tile.zw);
+    float id = floor(hash.x*6.);
+    vec4 _tile = mod(tile, 1.);
+    float initial_rotation = TAU / 6. * mod(floor(tile.w), 2.);
+    
+    float iso = hex(tile.xy);
+    vec3 colour = vec3(1. - iso * 2.);
+    colour = vec3(0.);
+    
+    float t = u_time * .1;
+    
+    float animation_offset = hash.y * 2. + u_time;
+    float animation_time = t + animation_offset;
+    float prev_rotation = floor(animation_time / 6.);
+    float next_rotation = floor(animation_time / 6.) - 1.;
+    
+    vec2 coord_offset = vec2(0.);
+    
+    const float sides = 3.;
+    
+    float _shade;
+    
+    
+    if(id >= 3.) {
+      initial_rotation += TAU / 6.;
+      // coord_offset = vec2(-.01);
+    }
+    #ifdef ANIMATING
+      float easeVal = clamp(mod(animation_time, 6.) - 4.5, 0., 1.5);
+      easeVal = ease(easeVal, prev_rotation, prev_rotation-next_rotation, 1.5);
+      initial_rotation += TAU / 6. * easeVal;
+    #endif
+    
+    
+    for(float i = 1.; i <= sides; i++) {
+      float _i = i - .25;
+      float increment = initial_rotation + angle_increment * _i;
+      vec2 c_coord = tile.xy + vec2(cos(increment), sin(increment)) * distance;
+      float mask = shade(length(c_coord), .1, 0.01, ringsize);
+      colour = clamp(colour, 0., 1.);
+      colour += mask;
+      colour -= dots(c_coord, initial_rotation) * mask;
+      // dots(tile.xy);
+    }
+    
+    // return dots(tile.xy);
+    
+    
+    return colour;
+    
+  }
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    float y = u_time*.2;
+    float x = sin(u_time*.2);
+    float c = cos(u_time * .3);
+    float s = sin(u_time * .3);
+    
+    uv *= mat2(c, -s, s, c);
+    
+    uv.y += y;
+    uv.x += x;
+    
+    uv *= 5.;
+    
+    
+    vec4 hex_uv = getHex(uv);
+    
+    vec3 colour = truchet(hex_uv);
+    
+    #ifdef GRID
+      float iso = hex(hex_uv.xy);
+      colour = mix(colour, vec3(1., 1., 0.), smoothstep(.49, .5, iso));
+    #endif
+
+    gl_FragColor = vec4(colour,1.0);
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
