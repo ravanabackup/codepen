@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Liminal space 2</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script type="text/fragment" id="fragShader">
+  precision highp float;
+
+  uniform vec2 u_resolution;
+  uniform float u_time;
+  uniform vec4 u_mouse;
+  uniform float u_iMouselength;
+  uniform sampler2D s_noise;
+
+  uniform sampler2D b_noise;
+  uniform sampler2D b_render;
+
+  varying vec2 v_uv;
+  
+  const float layers = 10.;
+  float depth = 20.;
+  float t;
+  
+  #define PI 3.14159
+
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+
+    return uv;
+  }
+  vec2 rot(vec2 p, float a) {
+    float c = cos(a);
+    float s = sin(a);
+    return p * mat2(c, -s, s, c);
+  }
+  vec4 renderP(vec2 uv, float l) {
+    uv *= 5.;
+    uv += (t+l);
+    vec2 id = floor(uv);
+    vec2 suv = fract(uv);
+    vec4 r = texture2D(s_noise, id/16.);
+    vec4 rtn = vec4(0);
+    if(r.r > .7) {
+      float m = length(suv-.5)*(2.+r.g);
+      rtn = vec4(vec3(0), 1.-m);
+    }
+    return rtn;
+  }
+  vec4 renderLayer(vec2 uv, float i, float z) {
+    uv = rot(uv, (i/(PI*2.)));
+    // vec4 cells = renderP(uv, i);
+    float w = .5 - smoothstep(0., 1000., u_mouse.x) * .3;
+    float field = min( abs( abs(uv.x) - w ) - .1, abs(abs(uv.y) - w ) - .1 );
+    float c = smoothstep(0., .005, field);
+    // float _c = smoothstep(0.01, .15, field);
+    // vec3 colour = mix(cells.rgb, vec3(_c), c);
+    return vec4(
+      mix(
+        vec3(.05, .05, .2), 
+        vec3(1), 
+        smoothstep(depth, depth - 30., z)
+      ), smoothstep(depth, depth - 2., z) * 1.-c);
+    // return vec4( colour, smoothstep(depth, depth - 5., z) * smoothstep(0., 4., z) * mix(1., cells.a, c) );
+  }
+  vec3 render(vec2 uv) {
+    vec4 colour = vec4(0);
+    vec4 render1, render2, render3, render4, render5, render6, render7, render8, render9, render10;
+    
+    for(float i = layers; i >= 1.; i--) {
+      float d = i / layers * depth;
+      float z = mod(t + d, depth);
+      int j = int(floor(z / depth * layers));
+      
+      vec2 luv = uv * z;
+      
+      vec4 layer = renderLayer(luv, i, z);
+      
+      if(j == 0) render1 = layer;
+      else if(j == 1) render2 = layer;
+      else if(j == 2) render3 = layer;
+      else if(j == 3) render4 = layer;
+      else if(j == 4) render5 = layer;
+      else if(j == 5) render6 = layer;
+      else if(j == 6) render7 = layer;
+      else if(j == 7) render8 = layer;
+      else if(j == 8) render9 = layer;
+      else if(j == 9) render10 = layer;
+    }
+    float ca = 10.;
+    for (float i = layers-1.; i >= 0.; i--) {
+      vec4 colour1;
+      if(i == 0.) colour1 = render1;
+      else if(i == 1.) colour1 = render2;
+      else if(i == 2.) colour1 = render3;
+      else if(i == 3.) colour1 = render4;
+      else if(i == 4.) colour1 = render5;
+      else if(i == 5.) colour1 = render6;
+      else if(i == 6.) colour1 = render7;
+      else if(i == 7.) colour1 = render8;
+      else if(i == 8.) colour1 = render9;
+      else if(i == 9.) colour1 = render10;
+      ca = min(ca, colour1.a);
+      // colour1 += (hash13(vec3(uv*1024., float(i)*1024.))-.5)*.05;
+      colour = mix(
+        colour, 
+        colour1,
+        smoothstep(0., 1., colour1.a)
+      );
+    }
+    
+    return colour.rgb;
+  }
+  void main() {
+    vec2 uv = getScreenSpace();
+    
+    t = (u_time - 1000.) * 20. - u_mouse.y * .1;
+    
+    vec3 colour = render(uv);
+    
+    float m = smoothstep(3000., 0., u_iMouselength);
+    float a = m * .99;
+    float b = 1.02 - a;
+
+    vec4 tex = texture2D(b_render, gl_FragCoord.xy / u_resolution );
+    
+    // m = smoothstep(5., 0., length(tex.xyz));
+    // a = m * .99;
+    // b = 1.02 - a;
+    
+    gl_FragColor = vec4(tex.rgb*a + colour * b,1);
+    // gl_FragColor = vec4(tex.r * .99 + step(uv.x,0.) * .01, uv, 1.);
+    
+  }
+</script>
+<script type="text/fragment" id="renderShader">
+  precision highp float;
+
+  uniform vec2 u_resolution;
+  uniform float u_time;
+  uniform vec4 u_mouse;
+  uniform float u_iMouselength;
+  uniform sampler2D s_noise;
+
+  uniform sampler2D b_render;
+
+  varying vec2 v_uv;
+  
+  void main() {
+    gl_FragColor = cos(texture2D(b_render, gl_FragCoord.xy / u_resolution ))*.5+.5;
+    gl_FragColor.xy += gl_FragCoord.xy / u_resolution - .5;
+    // gl_FragColor = vec4(gl_FragCoord.xy / u_resolution, 1., 1.);
+  }
+</script>
+<!-- partial -->
+  <script type="module" src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - GLSL: Sinnoise 1</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec4 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  uniform sampler2D u_buffer;
+  uniform bool u_renderpass;
+  uniform int u_frame;
+  
+  #define PI 3.141592653589793
+  #define TAU 6.283185307179586
+  
+  const int octaves = 6;
+
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+  
+  float sinnoise(vec3 loc){
+    float s = (sin(u_time) * .5 + .5);
+    float c = (sin(u_time * 2.5) * .5 + .5);
+    
+    vec3 p = loc;
+    
+    float _c = cos(float(p.x * .1));
+    float _s = sin(float(p.x) * .1);
+    mat2 mat = mat2(_c, -_s, _s, _c);
+    
+    for (int i=0; i<octaves; i++){
+      p += cos( p.yxz * 3. + vec3(0., u_time * 5., 10.6)) * (.1 + s * .2);
+      p += sin( p.yxz + vec3(cos(u_time * .5), .1, 0.)) * (.5 - c * .1) ;
+      p *= 1. + s * .1;
+      
+      p.xy *= mat;
+    }
+
+    // return dot(p, p);
+    return length(sin(p * .5) * 2.);
+  }
+  
+  vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix( vec3(1.0), rgb, c.y);
+  }
+  
+  vec3 domain(vec2 z){
+    return vec3(hsb2rgb(vec3(atan(z.y,z.x)/TAU,1.,1.)));
+  }
+  vec3 colour(vec2 z) {
+      return domain(z);
+  }
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    vec2 sample = gl_FragCoord.xy / u_resolution.xy;
+    
+    vec4 fragcolour = vec4(sinnoise(vec3(uv.xy, 1.) * 10.) * .2);
+    // vec3 fragcolour = colour(uv);
+    
+    if(u_renderpass == true) {
+      vec2 mouse = u_mouse.xy - uv;
+
+      float shade = 1.;
+
+      if(u_frame < 5) {
+        shade = smoothstep(.1, .55, length(mouse * (1. + fragcolour.x * 2.)));
+        // fragcolour = length(uv)
+      } else {
+        shade = smoothstep(.1, .55, length(mouse * (1. + fragcolour.x * 2.)));
+      }
+      fragcolour = vec4(clamp(shade*1.5, 0., 1.));
+      gl_FragColor = fragcolour;
+    } else {
+      fragcolour *= 1. - texture2D(u_buffer, sample);
+      fragcolour = 1. - fragcolour;
+      gl_FragColor = 1. - fragcolour * fragcolour;
+      // gl_FragColor = vec4(smoothstep(.3, .6,gl_FragColor));
+    }
+
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

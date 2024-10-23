@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Languor 3</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+ precision highp float;
+  precision highp int;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+  // movement variables
+  vec3 movement = vec3(.0);
+  
+  const int maxIterations = 256;
+  const float stopThreshold = 0.001;
+  const float stepScale = .1;
+  const float eps = 0.005;
+  const vec3 clipColour = vec3(0.);
+  const vec3 fogColour = vec3(0.);
+  
+  const vec3 light1_position = vec3(0, 1., -1.);
+  const vec3 light1_colour = vec3(.8, .8, .85);
+  
+  #define PI 3.1415926535897
+  #define TAU 3.1415926535897*2.
+  
+  struct Surface {
+    int object_id;
+    float distance;
+    vec3 position;
+    vec3 colour;
+    float ambient;
+    float spec;
+  };
+  
+vec3 hash3( vec2 p ){
+    vec3 q = vec3( dot(p,vec2(127.1,311.7)), 
+				   dot(p,vec2(269.5,183.3)), 
+				   dot(p,vec2(419.2,371.9)) );
+	return fract(sin(q)*43758.5453);
+}
+  
+  vec3 path(float z) {
+    float flatten = sin(z * .1) * .5 + .5;
+    vec3 p = vec3(
+      (cos(sin(z*.2)*2.)*2.) * flatten,
+      (cos(z*.1)*10. + sin(z*2.) * .02) * flatten,
+      z);
+    
+    return p;
+  }
+  
+  float pizza( vec2 p, vec2 c, float rad1, float rad2) {
+      p.x = abs(p.x);
+
+      vec2 c2 = vec2(c.y,-c.x);
+
+      float l = -dot(c,p.xy);
+      float q = p.x+c.x*l;
+      float l2;
+
+      // if (max(q,-sign(p.y*c.y)) < 0.0) {
+      //     l = -length(p.xy);
+      // }
+
+      if (l < 0.0) {
+          l2 = length(p.xy);
+      } else {
+          l2 = dot(c2,p.xy)*sign(c.y);
+      }
+
+      vec2 a = vec2(max(l2-rad2,rad1-l2),l);
+
+      return length(max(a,0.0))+min(0.0,max(a.x,a.y));
+  }
+  
+  // This function describes the world in distances from any given 3 dimensional point in space
+  float world(in vec3 position, inout int object_id) {
+    
+    vec3 path = path(position.z);
+    vec3 _position = position - path * .5;
+    position -= vec3(path.xy, 0);
+    
+    vec2 polar = vec2(length(position.xy), atan(position.y, position.x));
+    vec2 _polar = polar;
+    float t = floor(polar.x/.2)*.3;
+    polar.y += t;
+    polar.x = mod(polar.x, .2);
+    position.x = cos(polar.y) * polar.x;
+    position.y = sin(polar.y) * polar.x;
+    float time = u_time*clamp((1./t), 0., 3.);
+    position.xy *= mat2(cos(time), sin(time), -sin(time), cos(time));
+    
+    float w = 100.;
+    
+    const float third = TAU/3.;
+    const float third2 = third * 2.;
+    float a = 2.9 + t;
+    const float r1 = .05;
+    const float r2 = .1;
+    const mat2 rot = mat2(cos(third), -sin(third), sin(third), cos(third));
+    const mat2 rot2 = mat2(cos(third2), -sin(third2), sin(third2), cos(third2));
+    
+    // w = sdBox(vec3(p + vec2(.0, 0.2), position.z), vec3(.8, .5, 1.));
+    w = pizza(position.xy, vec2(cos(a), sin(a)), r1, r2);
+    w = min(w, pizza(position.xy * rot, vec2(cos(a), sin(a)), r1, r2));
+    w = min(w, pizza(position.xy * rot2, vec2(cos(a), sin(a)), r1, r2));
+    
+    w *= 2.;
+    
+    // spheres
+    // _position.x = cos(_polar.y) * _polar.x;
+    // _position.y = sin(_polar.y) * _polar.x;
+    _position = mod(_position, .25) - .125;
+    w = min(w, length(_position) - .005);
+    
+    
+    return w;
+    
+    vec3 pos = floor(position * .5);
+    object_id = int(floor(pos.x + pos.y + pos.z));
+    // position = mod(position, 1.) - .5;
+    return length(position) - .3;
+  }
+  float world(in vec3 position) {
+    int dummy = 0;
+    return world(position, dummy);
+  }
+  
+  vec3 getObjectColour(int object_id) {
+    float modid = mod(float(object_id), 5.);
+    if(modid == 0.) {
+      return vec3(.0, 0., 0.5);
+    } else if(modid == 1.) {
+      return vec3(.5, 0.5, 0.);
+    } else if(modid == 2.) {
+      return vec3(.5, 0.5, 0.5);
+    } else if(modid == 3.) {
+      return vec3(.0, 0.5, 0.5);
+    } else if(modid == 4.) {
+      return vec3(.0, 0.5, 0.);
+    }
+    return vec3(.5, 0., 0.);
+  }
+  
+  Surface getSurface(int object_id, float rayDepth, vec3 sp) {
+    return Surface(
+      object_id, 
+      rayDepth, 
+      sp, 
+      getObjectColour(object_id), 
+      .5, 
+      200.);
+  }
+  
+  // The raymarch loop
+  Surface rayMarch(vec3 ro, vec3 rd, float start, float end, inout float accum) {
+    float sceneDist = 1e4;
+    float rayDepth = start;
+    int object_id = 0;
+    for(int i = 0; i < maxIterations; i++) {
+      vec3 raypos = ro + rd * rayDepth;
+      sceneDist = abs(world(raypos, object_id));
+      
+      vec3 path = path(raypos.z);
+      raypos -= vec3(path.xy, 0);
+      
+      float falloff = (smoothstep(1.9, 0., length(raypos.xy)));
+      
+      accum += (1. / sceneDist) * .1 * falloff;
+      
+      // accum += sceneDist*sceneDist*100.;
+      accum -= (sin(raypos.z*2.) + cos(length(raypos.xy)*1.))*.05;
+      
+      if(rayDepth > end) {
+        break;
+      }
+      if(sceneDist < stopThreshold) {
+        // accum += 100. * falloff;
+        rayDepth += .0005;
+      } else {
+        rayDepth += sceneDist * stepScale;  
+      }
+      
+      
+    }
+    
+    return getSurface(object_id, rayDepth, ro + rd * rayDepth);
+  }
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    float t = u_time * 5.;
+    // movement
+    movement = path(t);
+    vec3 p2 = path(t+2.);
+    
+    // Camera and look-at
+    vec3 cam = vec3(0,0,0) + movement;
+    vec3 lookAt = vec3(0,0,0) + p2;
+    
+    // Unit vectors
+    vec3 forward = normalize(lookAt - cam);
+    vec3 right = normalize(vec3(forward.z, 0., -forward.x));
+    vec3 up = normalize(cross(forward, right));
+    
+    // FOV
+    float FOV = 2.;
+    
+    vec3 n = hash3(uv+u_time*.01);
+    
+    // Ray origin and ray direction
+    vec3 ro = cam;
+    vec3 rd = normalize(forward + FOV * uv.x * right + FOV * uv.y * up);
+    ro.xy += n.xy*.002;
+    // rd.xy += p2.xy * .02;
+    
+    // Ray marching
+    const float clipNear = 0.;
+    const float clipFar = 32.;
+    float accum = 0.;
+    Surface objectSurface = rayMarch(ro, rd, clipNear, clipFar, accum);
+    
+    // vec3 sceneColour = lighting(objectSurface, cam);
+    vec3 sceneColour = vec3(accum*.0001);
+    
+    gl_FragColor = vec4(sceneColour, 1.);
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

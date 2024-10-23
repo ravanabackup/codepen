@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Line Drawing 2</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="webgl" width="500" height="1758"></canvas>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec4 a_position;
+  
+  uniform mat4 u_modelViewMatrix;
+  uniform mat4 u_projectionMatrix;
+  
+  void main() {
+    gl_Position = a_position;
+  }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  #extension GL_OES_standard_derivatives : enable
+  precision highp float;
+  
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  
+  vec2 getScreenSpace() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    
+    return uv;
+  }
+  
+  float sdLine( in vec2 p, in vec2 a, in vec2 b ) {
+      vec2 pa = p-a, ba = b-a;
+      float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
+      return length( pa - ba*h );
+  }
+  
+  const vec2 lw = vec2(.02, 1.);
+  const float multiplier = 2.;
+  const float inter = .8;
+  
+  vec3 pattern(vec2 uv) {
+    vec3 colour = vec3(0.);
+    
+    uv *= multiplier;
+    vec2 mouse = u_mouse * multiplier;
+    
+    
+    float line = sdLine(uv, vec2(0.), mouse);
+    
+    float aa = fwidth(line)*lw.y;
+    float aa1 = fwidth(line*50.)*2.;
+    
+    float sl = sin(line*50. - u_time*10.);
+    line = smoothstep(lw.x - aa, lw.x + aa, line);
+    
+    colour = vec3(smoothstep(inter, inter-aa1, sl) * smoothstep(-inter, -inter+aa1, sl));
+    colour = mix(vec3(0.), colour, line);
+    
+    float sx = sin((uv.y + u_mouse.x + sin(uv.x*10.) * .05) * 50.);
+    colour = min(colour, vec3(smoothstep(inter, inter-aa1, sx) * smoothstep(-inter, -inter+aa1, sx)));
+    
+    
+    return colour;
+    
+  }
+
+  void main() {
+    vec2 uv = getScreenSpace();
+    
+    vec3 colour = pattern(uv);
+
+    gl_FragColor = vec4(colour,1.0);
+  }
+  
+</script>
+<!-- partial -->
+  <script src='https://codepen.io/shubniggurath/pen/aPxLMx.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

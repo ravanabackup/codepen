@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Healing Membrane</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/94/three.min.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec3 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+  uniform sampler2D u_buffer;
+  uniform bool u_renderpass;
+  uniform int u_frame;
+  
+  #define PI 3.141592653589793
+  #define TAU 6.283185307179586
+  
+  const float contrast = 10.;
+  
+  #define pow2(x) (x * x)
+
+  const int samples = 8;
+  const float sigma = float(samples) * 0.25;
+
+  float gaussian(vec2 i) {
+      return 1.0 / (2.0 * PI * pow2(sigma)) * exp(-((pow2(i.x) + pow2(i.y)) / (2.0 * pow2(sigma))));
+  }
+
+  vec3 hash33(vec3 p){ 
+
+      float n = sin(dot(p, vec3(7, 157, 113)));    
+      return fract(vec3(2097152, 262144, 32768)*n); 
+  }
+
+  vec3 blur(sampler2D sp, vec2 uv, vec2 scale) {
+      vec3 col = vec3(0.0);
+      float accum = 0.0;
+      float weight;
+      vec2 offset;
+
+      for (int x = -samples / 2; x < samples / 2; ++x) {
+          for (int y = -samples / 2; y < samples / 2; ++y) {
+              offset = vec2(x, y);
+              weight = gaussian(offset);
+              col += texture2D(sp, uv + scale * offset).rgb * weight;
+              accum += weight;
+          }
+      }
+
+      return col / accum;
+  }
+
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+  float rand(vec2 n) { 
+    return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+  }
+  
+  vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix( vec3(1.0), rgb, c.y);
+  }
+  
+  vec3 domain(vec2 z){
+    return vec3(hsb2rgb(vec3(atan(z.y,z.x)/TAU,1.,1.)));
+  }
+  vec3 colour(vec2 z) {
+      return domain(z);
+  }
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+    vec2 sample = gl_FragCoord.xy / u_resolution.xy;
+    
+    vec2 texStep = 1. / u_resolution.xy;
+    
+    vec2 mouse = u_mouse.xy - uv;
+    
+    vec4 fragcolour;
+    float size = 1.;
+    
+    float shade = smoothstep(.1555, .001, length(mouse));
+    
+    if(u_renderpass == true) {
+      fragcolour = texture2D(u_buffer, sample);
+      if(u_frame < 2) {
+        float _rand = rand(uv*256.);
+        gl_FragColor = vec4(1.) * clamp(floor(_rand * _rand * _rand * contrast), 0., 1.);
+      } else {
+        float neighbours = 0.;
+        for(float i = -2.; i < 3.; i+=1.) {
+          for(float j = -2.; j < 3.; j+=1.) {
+            if(i != 0. || j != 0.) {
+              float alive = texture2D(u_buffer, sample + (texStep * vec2(i, j))).x;
+              if(alive > .5) {
+                neighbours += 1. * (2. / max(abs(i), abs(j)));
+              }
+            }
+          }
+        }
+        float lifestatus = floor(fragcolour.x+.000005);
+        gl_FragColor = vec4(lifestatus);
+        if(lifestatus == 1.) {
+          if(neighbours < 3. || neighbours > 7.) {
+            gl_FragColor = vec4(0.);
+          } 
+        } else {
+          if(neighbours == 4.) {
+            gl_FragColor = vec4(1.);
+          }
+        }
+        
+        if(u_mouse.z == 1.) {
+          gl_FragColor -= shade;
+        }
+        
+        if(u_frame > 2) {
+          gl_FragColor.y = fragcolour.y * .98 + gl_FragColor.x; // this introduces a motion fade
+          if(gl_FragColor.y < .15) {
+            
+            gl_FragColor.y  *= .99;
+          }
+        }
+      }
+    } else {
+      fragcolour = texture2D(u_buffer, sample);
+      if(u_mouse.z == 1.) {
+        fragcolour -= shade;
+      }
+      gl_FragColor = vec4(fragcolour.y);
+    }
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+<!-- partial -->
+  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/982762/ccapture.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
