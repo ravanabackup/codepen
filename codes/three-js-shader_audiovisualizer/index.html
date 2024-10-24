@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [Three.js]shader_AudioVIsualizer</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>    
+  <div id="overlay">
+    <p>Play</p>
+  </div>
+  <div class="link">
+    <a href="https://soundcloud.com/ma-suwa/chorus_a-vy1" target="_blank">music by masuwa</a>
+  </div>
+  
+  <div id="myCanvas"></div>
+
+
+
+  <script id="fragmentShader" type="x-shader/x-fragment">
+    varying vec2 vUv;
+    uniform vec2 u_resolution;
+    uniform float u_time;
+    uniform vec2 u_mouse;
+    uniform float u_radius;
+    uniform float u_scrollY;
+
+    uniform float u_volume;//光の強さ
+
+    uniform sampler2D uTex;
+
+    float random (in float x) {
+      return fract(sin(x)*1e4);
+    }
+    float random (vec2 st) {
+      return fract(sin(dot(st.xy,
+                            vec2(12.9898,78.233)))*
+          43758.5453123);
+    }
+    
+
+    void main() {
+      /************************/
+      //画像解像度 (縦横が2の累乗サイズ推奨)
+      //https://qiita.com/watabo_shi/items/2fc671f2147e799787f9
+      /************************/
+      vec2 imageResolution = vec2(1024.0, 1024.0);
+
+      /************************/
+      //windowサイズいっぱいに広げたPlaneのテクスチャにbackground-size:coverのような挙動をさせる。
+      //https://qiita.com/ykob/items/4ede3cb11684c8a403f8 
+      /************************/
+      vec2 ratio = vec2(
+        min((u_resolution.x / u_resolution.y) / (imageResolution.x / imageResolution.y), 1.0),
+        min((u_resolution.y / u_resolution.x) / (imageResolution.y / imageResolution.x), 1.0)
+      );
+      vec2 uv = vec2(
+          vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
+          vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
+      );
+
+      float d = dot(uv,uv);
+      float a = atan(uv.y,uv.x);
+
+      float aspect = u_resolution.x / u_resolution.y;
+
+      vec2 center = vec2( u_mouse.x, u_mouse.y );// アスペクト補正したマウス座標
+      float radius = u_volume+(center.x+center.y)*0.001;
+      float r =  u_volume+(center.x+center.y)*(0.5+u_volume);
+      float lightness = radius / length( uv - center );
+      vec3 light = vec3(0.0);
+      for(int j = 0; j < 3; j++){
+        for(int i=0; i < 5; i++){
+          light[j] += radius / abs(fract(float(r) - float(j*j)*0.01) - length(uv - center) + random(uv+u_time)*u_volume*2.0);
+        }
+      }
+      vec3 color = vec3(random(uv*u_time*d)*0.2, -uv.x*uv.y*d, uv.x*uv.y);      
+      //vec3 color = texture2D( uTex, uv).rgb;       
+      gl_FragColor = vec4( color+light, 1.0 );
+    }
+  </script>
+  
+  <script id="vertexShader" type="x-shader/x-vertex">  
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;// uv: ShaderMaterialで補完される vec2 型(xy)の変数。テクスチャ座標のこと。
+      gl_Position = vec4( position, 1.0 );
+    }
+  </script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

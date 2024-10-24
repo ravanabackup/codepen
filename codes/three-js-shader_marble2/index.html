@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [Three.js]shader_marble2</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body>
+      <div id="container"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+
+      <script id="vertexShader" type="x-shader/x-vertex">
+          void main() {
+              gl_Position = vec4( position, 1.0 );
+          }
+      </script>
+
+      <script id="fragmentShader" type="x-shader/x-fragment">
+    #ifdef GL_ES
+      precision mediump float;
+      #endif
+
+      #extension GL_OES_standard_derivatives : enable
+
+      uniform float time;
+      uniform vec2 mouse;
+      uniform vec2 resolution;
+      void main(){
+        
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+        uv.x *= 1.5;
+
+        uv.x = dot(uv,uv)+length(sin(uv+time*0.01))*length(cos(uv+time*0.02))*cos(time*0.04)*5.0+100.0;
+        
+        uv.y += cos(uv.x*0.4+time*0.1)*0.3;
+        uv.x += tan(uv.x-uv.y*4.0+time*0.3);
+        float R = abs(tan(uv.x+uv.y)*0.2+time);
+        float G = sin(uv.x*uv.y+time*0.2);
+        float B = sin(tan(uv.x)+time*0.1);
+        vec3 color = vec3(
+          abs(tan(uv.x+uv.y+time*0.01+vec3(R,B,G))
+          )
+        );
+
+        vec3 col = color;
+          
+        
+        gl_FragColor = vec4(col,1.);
+      }
+
+      </script>
+  </body>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [Three.js]shader_marble3</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body>
+      <div id="container"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+
+      <script id="vertexShader" type="x-shader/x-vertex">
+          void main() {
+              gl_Position = vec4( position, 1.0 );
+          }
+      </script>
+
+      <script id="fragmentShader" type="x-shader/x-fragment">
+    #ifdef GL_ES
+      precision mediump float;
+      #endif
+
+      #extension GL_OES_standard_derivatives : enable
+
+      uniform float time;
+      uniform vec2 mouse;
+      uniform vec2 resolution;
+        
+      float random (in float x) {
+          return fract(sin(x)*1e4);
+      }
+      float random (vec2 st) {
+          return fract(sin(dot(st.xy,
+                               vec2(12.9898,78.233)))*
+              43758.5453123);
+      }
+        
+        
+        
+      void main(){
+        
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+        //uv += 1.;
+        uv *= 0.8;
+
+        uv.x = dot(uv,uv)+random(uv.x*uv.y)*0.04+length(sin(uv+time*0.01))*length(cos(uv+time*0.02))*cos(time*0.04)*5.0+50.0;
+        uv.y += uv.x*0.25;
+        
+        uv.y += cos(uv.x*0.1-uv.y+time*0.1)+tan(uv.x*uv.y)*0.1;
+        uv.x += sin(uv.x-uv.y*1.0+time*0.1)*2.1;
+        float R = abs(cos(uv.x+uv.y)*0.5)*10.0;
+        float G = abs(sin(uv.x+uv.y)*0.5-tan(uv.x+uv.y))*0.5;
+        float B = abs(sin(uv.x+uv.y)*0.2+tan(uv.x*uv.y))*0.5;
+        vec3 color = vec3(
+          abs(tan(uv.x+uv.y+time*0.01+vec3(R,G,B))
+          )
+        );
+
+        vec3 col = color;
+          
+        
+        gl_FragColor = vec4(col,1.);
+      }
+
+      </script>
+  </body>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [Three.js]shader_color_sprial</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+
+      <div id="container"></div>
+
+      <script id="vertexShader" type="x-shader/x-vertex">
+          void main() {
+              gl_Position = vec4( position, 1.0 );
+          }
+      </script>
+
+      <script id="fragmentShader" type="x-shader/x-fragment">
+
+    	precision highp float;
+    	uniform vec2 resolution;
+    	uniform float time;
+      
+      vec2 posterize(vec2 uv, vec2 resolution) {
+        vec2 fMosaicScal = vec2(8.0);
+        return vec2(
+          floor(uv.x * resolution.x / fMosaicScal.x) / (resolution.x / fMosaicScal.x), 
+          floor(uv.y * resolution.y / fMosaicScal.y) / (resolution.y / fMosaicScal.y)
+        );
+      }
+
+      // 2D Random
+      float random (in vec2 st) {
+          return fract(sin(dot(st.xy,
+                               vec2(12.9898,78.233)))
+                       * 43758.5453123);
+      }
+      
+      // 2D Noise based on Morgan McGuire @morgan3d
+      // https://www.shadertoy.com/view/4dS3Wd
+      float noise (in vec2 st) {
+          vec2 i = floor(st);
+          vec2 f = fract(st);
+      
+          // Four corners in 2D of a tile
+          float a = random(i);
+          float b = random(i + vec2(1.0, 0.0));
+          float c = random(i + vec2(0.0, 1.0));
+          float d = random(i + vec2(1.0, 1.0));
+      
+          // Smooth Interpolation
+      
+          // Cubic Hermine Curve.  Same as SmoothStep()
+          vec2 u = f*f*(3.0-2.0*f);
+          // u = smoothstep(0.,1.,f);
+      
+          // Mix 4 coorners percentages
+          return mix(a, b, u.x) +
+                  (c - a)* u.y * (1.0 - u.x) +
+                  (d - b) * u.x * u.y;
+      }
+
+    	void main(void) {
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+        
+        float col_r = step( fract(length(uv)*6.0 + time*0.1), float(noise(uv+time*0.2)));
+        float col_g = step( fract(length(uv)*(6.0+0.01) + time*0.1), float(noise(uv+time*0.15)));
+        float col_b = step( fract(length(uv)*(6.0+0.02) + time*0.1), float(noise(uv+time*0.1)));
+        
+        vec3 red = vec3(1.0,0.0,0.0);
+        vec3 green = vec3(0.0,1.0,0.0);
+        vec3 blue = vec3(0.0,0.0,1.0);
+        
+        gl_FragColor = vec4( col_r *1.2 ,col_g *0.9 ,col_b * 0.8 , 1.0);
+    	}
+</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [threejs]image_pixelnoise</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>background-image fit to the window size made with three.js</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- 参考: https://qiita.com/ykob/items/4ede3cb11684c8a403f8 -->
+<canvas class="container" id="container"></canvas>
+<script id="vertexShader" type="x-shader/x-vertex">
+  attribute vec3 position;
+  attribute vec2 uv;
+
+  varying vec2 vUv;
+
+  void main(void) {
+    vUv = uv;
+    gl_Position = vec4(position, 1.0);
+  }
+
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+  precision highp float;
+  uniform vec2 resolution;
+  uniform vec2 imageResolution;
+  uniform sampler2D texture;
+  uniform float time;
+
+
+  varying vec2 vUv;
+
+  float random (in float x) {
+      return fract(sin(x)*1e4);
+  }
+  float random (vec2 st) {
+      return fract(sin(dot(st.xy,
+                           vec2(12.9898,78.233)))*
+          43758.5453123);
+  }
+
+  void main(void) {
+    vec2 ratio = vec2(
+        min((resolution.x / resolution.y) / (imageResolution.x / imageResolution.y), 1.0),
+        min((resolution.y / resolution.x) / (imageResolution.y / imageResolution.x), 1.0)
+      );
+
+    vec2 uv = vec2(
+        vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
+        vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
+    );
+
+    vec2 fMosaicScal = vec2(8.0,8.0);
+    vec2 vScreenSize = vec2(1280.0,926.0);
+
+    uv.x = floor(uv.x * vScreenSize.x / fMosaicScal.x) / (vScreenSize.x / fMosaicScal.x);
+    uv.y = floor(uv.y * vScreenSize.y / fMosaicScal.y) / (vScreenSize.y / fMosaicScal.y);
+
+
+    uv.x += time*0.04;
+    uv.x += cos(random(uv+time)*0.2);
+
+
+    gl_FragColor = texture2D(texture, uv);
+  }
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

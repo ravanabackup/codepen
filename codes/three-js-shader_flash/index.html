@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [Three.js]shader_flash</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body>
+      <div id="container"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+
+      <script id="vertexShader" type="x-shader/x-vertex">
+          void main() {
+              gl_Position = vec4( position, 1.0 );
+          }
+      </script>
+    
+<!--  参考 http://glslsandbox.com/e#58290.6 -->
+      <script id="fragmentShader" type="x-shader/x-fragment">
+          #ifdef GL_ES
+          precision mediump float;
+          #endif
+
+          #extension GL_OES_standard_derivatives : enable
+
+          uniform float time;
+          uniform vec2 mouse;
+          uniform vec2 resolution;
+
+
+          
+          vec3 yLine(vec2 uv,float y, float thickness){
+            float colwave = thickness /  abs(uv.y+y);
+            return vec3(1.0 * colwave);
+          }
+
+          void main( void ) {
+
+            vec2 uv, p = gl_FragCoord.xy / resolution.xy;
+            float d = dot(uv,uv);
+            float a = atan(uv.y,uv.x);
+            vec3 color = vec3(0.0);
+
+            p -= .5;
+            p.x *= resolution.x / resolution.y;
+
+            float z = time; 
+            float l = length(p);
+        
+
+
+            for (int i = 0; i < 3; i++) {
+              uv = p;
+              z -= 0.2;
+              uv += p / l * (tan(z*0.1) + log(z)) * abs(sin(l * 5. - z*0.1));      
+              color[i] =  0.01 /  abs(uv.y*uv.x+cos(z*0.05))*2.0 +  0.001 /  abs(uv.y*uv.x)*2.0;
+            }
+
+            gl_FragColor = vec4(color / l, 1.0);
+
+          }
+      </script>
+  </body>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

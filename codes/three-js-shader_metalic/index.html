@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [Three.js]shader_metalic</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [Three.js]shader_flash</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body>
+      <div id="container"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+
+      <script id="vertexShader" type="x-shader/x-vertex">
+          void main() {
+              gl_Position = vec4( position, 1.0 );
+          }
+      </script>
+
+
+      <script id="fragmentShader" type="x-shader/x-fragment">
+          #ifdef GL_ES
+          precision mediump float;
+          #endif
+
+          #extension GL_OES_standard_derivatives : enable
+
+          uniform float time;
+          uniform vec2 mouse;
+          uniform vec2 resolution;
+
+
+
+          float xLine(vec2 uv,float x, float thickness){
+            float colwave = thickness /  abs(uv.x+x);
+            return float(1.0 * colwave);
+          }
+
+          float yLine(vec2 uv,float y, float thickness){
+            float colwave = thickness /  abs(uv.y+y);
+            return float(1.0 * colwave);
+          }
+
+          void main( void ) {
+
+            vec2 uv =  (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+
+            float d = dot(uv*2.0,uv*2.0);
+            float a = atan(uv.y,uv.x);
+            vec3 color = vec3(0.0);
+
+            float z = time*0.2;
+            float l = length(uv);
+
+
+            for (int i = 0; i < 3; i++) {
+
+              z -= 0.02;
+              uv.x +=  mod(uv.y,0.1) / l * d * sin(z*0.1);
+              uv.x +=  mod(uv.x,0.1) / l * d * sin(z*0.1);
+              uv.y +=  mod(uv.y,0.1) / l * d * cos(z*0.1);
+              uv.y -=  mod(uv.x,0.1) / l * d * cos(z*0.1);
+              color[i] = abs(uv.y*uv.x+cos(z*0.05))*0.5 +  xLine(uv,sin(z*0.5)*5.0, 0.1) + yLine(uv,cos(z*0.5)*5.0, 0.1);
+            }
+
+            gl_FragColor = vec4(color , 1.0);
+
+          }
+      </script>
+  </body>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

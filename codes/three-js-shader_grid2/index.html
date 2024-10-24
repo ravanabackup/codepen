@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [Three.js]shader_GRID2</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body>
+      <div id="container"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+
+      <script id="vertexShader" type="x-shader/x-vertex">
+          void main() {
+              gl_Position = vec4( position, 1.0 );
+          }
+      </script>
+    
+<!--  参考 http://glslsandbox.com/e#58290.6 -->
+      <script id="fragmentShader" type="x-shader/x-fragment">
+      precision mediump float;
+      uniform float time;
+      uniform vec2 mouse;
+      uniform vec2 resolution;
+        
+        
+      float random (in vec2 st) {
+          return fract(sin(dot(st.xy,
+                               vec2(12.9898,78.233)))
+                       * 43758.5453123);
+      }
+
+       vec3 xLine(vec2 uv,float x, float thickness){
+        float colwave = thickness /  abs(uv.x+x);
+        return vec3(1.0 * colwave);
+      }        
+       vec3 yLine(vec2 uv,float y, float thickness){
+        float colwave = thickness /  abs(uv.y+y);
+        return vec3(1.0 * colwave);
+      }
+      vec3 xyLine(vec2 uv,float y, float thickness){
+        float colwave = thickness /  abs(uv.x+uv.y+y);
+        return vec3(1.0 * colwave);
+      }
+        
+     vec3 yxLine(vec2 uv,float x, float thickness){
+        float colwave = thickness /  abs(uv.x+uv.y);
+        return vec3(1.0 * colwave);
+      }
+
+
+      void main(void) {
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+        float d = dot(uv,uv);
+        float p = length(uv);
+        float a = atan(uv.y,uv.x);
+        
+        vec3 col;
+        uv *= pow(p,0.1);
+        col +=  xLine(uv*d, -200.0 + fract(time*0.1)*400.0,1.0);
+        col +=  yLine(uv*d, -200.0 + fract(time*0.1)*400.0,1.0);
+        col +=  yxLine(uv*d, -75.0 + fract(time*0.01)*150.0,0.2);
+
+
+        
+        
+        // col +=  xLine(uv,0.0,0.01);
+
+
+        gl_FragColor = vec4(vec3(col.x*p/2.0,col.y*p,col.z*p*d), 1.0);
+      }
+      
+
+      </script>
+  </body>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
