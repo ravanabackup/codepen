@@ -1,0 +1,22 @@
+body {
+  background: repeating-linear-gradient(hotpink 0.5%, blue 1%, blue 1.5%, purple 2%, purple 2.5%, #fd5 3%, #fd5 3.5%, mediumspringgreen 4%, mediumspringgreen 4.5%);
+  -webkit-animation: move 1s infinite linear;
+          animation: move 1s infinite linear;
+}
+
+canvas {
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+@-webkit-keyframes move {
+  to {
+    background-position: 0% 4vh;
+  }
+}
+
+@keyframes move {
+  to {
+    background-position: 0% 4vh;
+  }
+}

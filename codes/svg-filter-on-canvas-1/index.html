@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - SVG-filter on canvas 1</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+
+  <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+
+  <div class="wrapper">
+    <div class="canvas">
+        <canvas id="myCanvas" width="640" height="640"></canvas>
+    </div>
+  </div>
+
+  <svg version="1.1" xmlns='http://www.w3.org/2000/svg'>
+    <defs>
+      <filter id='filter'>
+        <!-- <feGaussianBlur id="feGaussianBlur" stdDeviation='5'/> -->
+        <feTurbulence id="feTurbulence" type="turbulence" baseFrequency="0.05" numOctaves="1" result="turbulence"/>
+        <feDisplacementMap id="feDisplacementMap" in2="turbulence" in="SourceGraphic" scale="100" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

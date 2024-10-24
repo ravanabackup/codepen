@@ -1,0 +1,153 @@
+.gui {
+  box-sizing: border-box;
+}
+.gui input,
+.gui textarea,
+.gui select,
+.gui button,
+.gui label {
+  display: block;
+  width: 100%;
+  margin: 0px;
+  border: none;
+  border-radius: 0px;
+}
+
+.root.gui {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 0px;
+  left: 0px;
+  width: var(--gui-width);
+  max-height: 100vh;
+  padding: 0px;
+  background: rgba(20, 20, 20, 0.5);
+  transition: top 300ms ease-in-out;
+}
+
+.options-container.gui {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 15px;
+  padding-bottom: 0px;
+}
+
+.expand-button.gui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  margin: 0px;
+  height: 35px;
+  margin-top: 10px;
+  background: none !important;
+  font-family: monospace;
+  color: #fff;
+  font-size: 15px;
+}
+.expand-button.gui:hover {
+  text-decoration: underline;
+}
+.expand-button.gui::before {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 35px;
+  left: 30px;
+  right: 30px;
+  height: 1px;
+  background: #ddd;
+}
+
+.input-container.gui {
+  margin-bottom: 15px;
+}
+
+input.gui {
+  padding: 5px;
+  font-family: monospace;
+}
+
+textarea.gui {
+  resize: vertical;
+  min-width: 100%;
+  font-family: monospace;
+  white-space: pre;
+}
+
+.checkbox-container.gui {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.checkbox-container.gui input[type=checkbox].gui {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+.checkbox-container.gui label.gui {
+  flex: 1 1 auto;
+  margin-bottom: 0px;
+  margin-left: 7px;
+}
+
+.slider-value.gui {
+  margin-left: 4px;
+  font-size: 15px;
+}
+
+select.gui {
+  padding: 5px;
+}
+
+button.gui {
+  color: #000;
+  background: #d4a20b;
+  border-radius: 1px;
+  padding: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+button.gui:hover {
+  background: #b58902;
+}
+
+label.gui {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.text.gui {
+  font-family: monospace;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.text-block.gui {
+  margin-bottom: 5px;
+}
+
+hr.gui {
+  color: #ddd;
+}
+
+.spacer.gui {
+  width: 100%;
+  background: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+}
+
+#scene {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}

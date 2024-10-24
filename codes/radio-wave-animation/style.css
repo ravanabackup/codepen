@@ -1,0 +1,129 @@
+.Animation {
+  /**
+   * Define the space between dots. You can also set a fixed value
+   * The default value is 20px
+   */
+  --dots-gap: 20px;
+  /*
+   * Set the size of the dots.
+   */
+  --dots-size: 2px;  
+  /*
+   * Set the color of the odd waves
+   */
+  --dots-color: #333;
+  /*
+   * Set the color of the event waves
+   */  
+  --dots-color-2: gray;
+  
+  --computed-dot-size: calc(var(--dots-size) / 2);
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  mask-image: radial-gradient(
+    black var(--computed-dot-size),
+    transparent var(--computed-dot-size)
+  );
+  mask-size: 
+    calc(var(--dots-gap) + var(--dots-size))
+    calc(var(--dots-gap) + var(--dots-size))
+  ;  
+}
+
+.Wave {
+  --color: var(--dots-color);
+  width: 100%;
+  aspect-ratio: 1;
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: 0 0 0 10vmax var(--color); 
+  bottom: 0;
+  margin-bottom: -50%;
+  scale: 0;
+  transform-origin: center center;
+  animation-name: scaleOne;
+  animation-duration: 22s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.Wave:nth-child(odd) {
+  --color: var(--dots-color);
+}
+
+.Wave:nth-child(even) {
+  --color: var(--dots-color-2);
+}
+
+.Wave:nth-child(1){
+  z-index:8;
+  animation-delay: 21s;
+}
+
+.Wave:nth-child(2){
+  z-index:7;
+  animation-delay: 18s;
+}
+
+.Wave:nth-child(3){
+  z-index:6;
+  animation-delay: 15s;
+}
+
+.Wave:nth-child(4){
+  z-index:5;
+  animation-delay: 12s;
+}
+
+.Wave:nth-child(5){
+  z-index:4;
+  animation-delay: 9s;
+}
+
+.Wave:nth-child(6){
+  z-index:3;
+  animation-delay: 6s;
+}
+
+.Wave:nth-child(7){
+  z-index:2;
+  animation-delay: 3s;
+}
+
+.Wave:nth-child(8){
+  z-index:1;
+  animation-delay: 0s;
+}
+
+@keyframes scaleOne {
+	100%{
+	  scale: 4;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+body {
+  margin: 0;
+  background: black;  
+}

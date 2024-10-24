@@ -1,0 +1,21 @@
+body {
+  background: repeating-linear-gradient(white 0.5%, black 1%, black 1.5%);
+  -webkit-animation: move 1s infinite linear;
+          animation: move 1s infinite linear;
+}
+
+canvas {
+  cursor: pointer;
+}
+
+@-webkit-keyframes move {
+  to {
+    background-position: 0% 1vh;
+  }
+}
+
+@keyframes move {
+  to {
+    background-position: 0% 1vh;
+  }
+}

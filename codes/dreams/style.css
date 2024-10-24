@@ -1,0 +1,134 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 10vmin;
+  background: #000;
+  overflow: hidden;
+}
+
+Horizon {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 30%;
+  background-size: cover;
+  box-shadow: 0 1px 30px 25px #000, inset 0 -25px 150px 25px #000;
+  -webkit-animation: change-dream 30s infinite;
+          animation: change-dream 30s infinite;
+}
+
+Road {
+  display: block;
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  border-right: 1px dashed #fff;
+  box-sizing: border-box;
+  background: #000;
+  -webkit-animation: move-forward 1s infinite linear, radiate 25s infinite linear;
+          animation: move-forward 1s infinite linear, radiate 25s infinite linear;
+}
+
+@-webkit-keyframes move-forward {
+  from {
+    transform: rotateX(25deg) scale(50, 50) translateX(-55%);
+  }
+  to {
+    transform: rotateX(25deg) scale(50, 50) translateX(-55%) rotate(23.2deg);
+  }
+}
+
+@keyframes move-forward {
+  from {
+    transform: rotateX(25deg) scale(50, 50) translateX(-55%);
+  }
+  to {
+    transform: rotateX(25deg) scale(50, 50) translateX(-55%) rotate(23.2deg);
+  }
+}
+@-webkit-keyframes radiate {
+  from, to {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px hotpink;
+  }
+  20% {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px crimson;
+  }
+  40% {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px gold;
+  }
+  60% {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px mediumspringgreen;
+  }
+  80% {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px cyan;
+  }
+}
+@keyframes radiate {
+  from, to {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px hotpink;
+  }
+  20% {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px crimson;
+  }
+  40% {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px gold;
+  }
+  60% {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px mediumspringgreen;
+  }
+  80% {
+    box-shadow: 0 0 0 5px #000, 0 0 10px 5px cyan;
+  }
+}
+@-webkit-keyframes change-dream {
+  from, 17%, to {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo1_500.gif);
+    background-position: center 65%;
+  }
+  20%, 37% {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo4_1280.gif);
+    background-position: center 60%;
+  }
+  40%, 57% {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo5_400.gif);
+    background-position: center center;
+  }
+  60%, 77% {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo2_500.gif);
+    background-position: center 10%;
+  }
+  80%, 97% {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo3_1280.gif);
+    background-position: center center;
+  }
+}
+@keyframes change-dream {
+  from, 17%, to {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo1_500.gif);
+    background-position: center 65%;
+  }
+  20%, 37% {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo4_1280.gif);
+    background-position: center 60%;
+  }
+  40%, 57% {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo5_400.gif);
+    background-position: center center;
+  }
+  60%, 77% {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo2_500.gif);
+    background-position: center 10%;
+  }
+  80%, 97% {
+    background-image: url(https://assets.codepen.io/25387/tumblr_oy13gs1fDi1vq64mxo3_1280.gif);
+    background-position: center center;
+  }
+}

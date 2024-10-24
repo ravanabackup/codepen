@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - shader on shader</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+<canvas id="myCanvas"></canvas>
+
+    <script id="fragmentShader" type="x-shader/x-fragment">
+    uniform float time;
+    varying vec2 vUv;
+
+    float random (in vec2 st) {
+      return fract(sin(dot(st.xy,
+                       vec2(12.9898,78.233)))
+               * 43758.5453123);
+    }
+
+    vec3 wave(vec2 uv,float speed, float thickness, float amplitude, float delay){
+       //bure shake
+       float shake = mix(0.7, 1.0, amplitude);
+       //wave
+       float wave = sin(delay + uv.x * 3.0 - time * speed) / 2.0 * shake;
+       //colwave
+       float colwave = thickness /  abs(uv.y+wave); //線の太さ
+       //color
+       return vec3(random(uv*time)*0.001) * colwave;
+    }
+
+      void main(void) {
+        vec2 uv = - 1.0 + 2.0 * vUv;
+        vec3 col;
+        for(float i = 0.0; i < 10.0; i++){
+					col += wave(uv,0.1,10.,i*sin(time*0.1+i*0.02)+i*cos(time*0.1+i*0.02),i);
+				}
+
+        gl_FragColor = vec4(vec3(abs(col)), 1.0);
+      }
+
+    </script>
+
+    <script id="bg_fragmentShader" type="x-shader/x-fragment">
+      #ifdef GL_ES
+      precision highp float;
+      #endif
+
+      #extension GL_OES_standard_derivatives : enable
+
+      uniform float time;
+      uniform vec2 mouse;
+      uniform vec2 resolution;
+
+      float random (in vec2 st) {
+        return fract(sin(dot(st.xy,
+                         vec2(12.9898,78.233)))
+                 * 43758.5453123);
+      }
+
+      vec3 wave(vec2 uv,float speed, float thickness, float amplitude, float delay){
+         //bure shake
+         float shake = mix(0.7, 1.0, amplitude);
+         //wave
+         float wave = sin(delay + uv.x * 3.0 - time * speed) / 2.0 * shake;
+         //colwave
+         float colwave = thickness /  abs(uv.y+wave); //線の太さ
+         //color
+         return vec3(random(uv*time)*0.004) * colwave;
+      }
+
+      void main( void ) {
+
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+
+        vec3 col;
+        for(float i = 0.0; i < 10.0; i++){
+					col += wave(uv,0.2,1.,0.1*i*sin(time*0.1+i*0.02)+0.1*i*cos(time*0.1+i*0.02),i*0.2);
+				}
+
+        gl_FragColor = vec4(vec3(abs(col)), 1.0);
+      }
+    </script>
+    <script id="vertexShader" type="x-shader/x-vertex">
+
+      varying vec2 vUv;
+
+      void main()
+      {
+        vUv = uv;
+        vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+        gl_Position = projectionMatrix * mvPosition;
+      }
+
+    </script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

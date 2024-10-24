@@ -1,0 +1,304 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  background: #000;
+  perspective: 400px;
+}
+
+.scene {
+  height: 400px;
+  width: 400px;
+  display: grid;
+  place-items: center;
+}
+.scene:hover .container {
+  transform: rotateX(405deg) rotateZ(960deg);
+}
+
+.container {
+  position: relative;
+  width: 350px;
+  height: 346.4101615138px;
+  transition: all 45s;
+}
+.container .item {
+  position: absolute;
+}
+.container .item:nth-child(1) {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+.container .item:nth-child(2) {
+  top: 0;
+  right: 0;
+}
+.container .item:nth-child(3) {
+  bottom: 0;
+  right: 0;
+}
+.container .item:nth-child(4) {
+  bottom: 0;
+  right: 0;
+}
+
+.hex {
+  width: 200px;
+  height: 173.2050807569px;
+}
+.hex div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 50%;
+  color: #e6dcff;
+  box-sizing: border-box;
+}
+.hex div:nth-child(1), .hex div:nth-child(2), .hex div:nth-child(3) {
+  border-top: 2px solid;
+  -webkit-animation: glow-1 infinite 1s;
+          animation: glow-1 infinite 1s;
+}
+.hex div:nth-child(4), .hex div:nth-child(5), .hex div:nth-child(6) {
+  border-bottom: 2px solid;
+  -webkit-animation: glow-2 infinite 1s;
+          animation: glow-2 infinite 1s;
+}
+.hex div:nth-child(1) {
+  transform: translateX(50%);
+}
+.hex div:nth-child(2) {
+  transform-origin: top left;
+  transform: translateX(150%) rotate(60deg);
+}
+.hex div:nth-child(3) {
+  transform-origin: top right;
+  transform: translateX(-50%) rotate(-60deg);
+}
+.hex div:nth-child(4) {
+  transform: translate(50%, 100%);
+}
+.hex div:nth-child(5) {
+  transform-origin: bottom left;
+  transform: translate(150%, 100%) rotate(-60deg);
+}
+.hex div:nth-child(6) {
+  transform-origin: bottom right;
+  transform: translate(-50%, 100%) rotate(60deg);
+}
+
+.tri {
+  width: 300px;
+  height: 259.8076211353px;
+}
+.tri div {
+  position: absolute;
+  height: 100%;
+  color: #dc96ff;
+  border-top: 2px solid;
+  box-sizing: border-box;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+}
+.tri div::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-animation: glow-3 infinite 1s;
+          animation: glow-3 infinite 1s;
+}
+.tri div:nth-child(1) {
+  -webkit-animation-name: tri-1;
+          animation-name: tri-1;
+  -webkit-animation-delay: 0.6666666667s;
+          animation-delay: 0.6666666667s;
+}
+.tri div:nth-child(2) {
+  right: 0;
+  transform-origin: top left;
+  transform: translateX(100%) rotate(120deg);
+  -webkit-animation-name: tri-2;
+          animation-name: tri-2;
+}
+.tri div:nth-child(3) {
+  transform-origin: top right;
+  transform: translateX(-100%) rotate(-120deg);
+  -webkit-animation-name: tri-3;
+          animation-name: tri-3;
+  -webkit-animation-delay: 0.3333333333s;
+          animation-delay: 0.3333333333s;
+}
+
+@-webkit-keyframes glow-1 {
+  10%, 13%, 19%, 20%, 39%, 40%, 81%, 84%, 91%, 95% {
+    box-shadow: 0 -20px 40px -10px #2850ff;
+  }
+  35%, 36%, 65%, 67% {
+    box-shadow: 0 -30px 50px -15px #5078ff;
+  }
+  15%, 18%, 21%, 30%, 37%, 38%, 45%, 60%, 68%, 80%, 85%, 90%, 96% {
+    box-shadow: 0 -10px 20px -5px #2850ff;
+  }
+}
+
+@keyframes glow-1 {
+  10%, 13%, 19%, 20%, 39%, 40%, 81%, 84%, 91%, 95% {
+    box-shadow: 0 -20px 40px -10px #2850ff;
+  }
+  35%, 36%, 65%, 67% {
+    box-shadow: 0 -30px 50px -15px #5078ff;
+  }
+  15%, 18%, 21%, 30%, 37%, 38%, 45%, 60%, 68%, 80%, 85%, 90%, 96% {
+    box-shadow: 0 -10px 20px -5px #2850ff;
+  }
+}
+@-webkit-keyframes glow-2 {
+  10%, 13%, 19%, 20%, 39%, 40%, 81%, 84%, 91%, 95% {
+    box-shadow: 0 20px 40px -10px #2850ff;
+  }
+  35%, 36%, 65%, 67% {
+    box-shadow: 0 30px 50px -15px #5078ff;
+  }
+  15%, 18%, 21%, 30%, 37%, 38%, 45%, 60%, 68%, 80%, 85%, 90%, 96% {
+    box-shadow: 0 10px 20px -5px #2850ff;
+  }
+}
+@keyframes glow-2 {
+  10%, 13%, 19%, 20%, 39%, 40%, 81%, 84%, 91%, 95% {
+    box-shadow: 0 20px 40px -10px #2850ff;
+  }
+  35%, 36%, 65%, 67% {
+    box-shadow: 0 30px 50px -15px #5078ff;
+  }
+  15%, 18%, 21%, 30%, 37%, 38%, 45%, 60%, 68%, 80%, 85%, 90%, 96% {
+    box-shadow: 0 10px 20px -5px #2850ff;
+  }
+}
+@-webkit-keyframes glow-3 {
+  10%, 20%, 40%, 60%, 81%, 90% {
+    box-shadow: 0 -11px 10px -10px, inset 0 11px 10px -10px;
+  }
+  33%, 36%, 65%, 67% {
+    box-shadow: 0 -16px 15px -14px hotpink, inset 0 16px 15px -14px hotpink;
+  }
+  22%, 38%, 62%, 78%, 92%, 96% {
+    box-shadow: 0 -2px 0 -1px, inset 0 2px 0 -1px;
+  }
+}
+@keyframes glow-3 {
+  10%, 20%, 40%, 60%, 81%, 90% {
+    box-shadow: 0 -11px 10px -10px, inset 0 11px 10px -10px;
+  }
+  33%, 36%, 65%, 67% {
+    box-shadow: 0 -16px 15px -14px hotpink, inset 0 16px 15px -14px hotpink;
+  }
+  22%, 38%, 62%, 78%, 92%, 96% {
+    box-shadow: 0 -2px 0 -1px, inset 0 2px 0 -1px;
+  }
+}
+@-webkit-keyframes tri-1 {
+  0% {
+    width: 0%;
+    left: 0;
+  }
+  25%, 50% {
+    width: 100%;
+    left: 0%;
+  }
+  75% {
+    width: 0%;
+    left: 100%;
+  }
+}
+@keyframes tri-1 {
+  0% {
+    width: 0%;
+    left: 0;
+  }
+  25%, 50% {
+    width: 100%;
+    left: 0%;
+  }
+  75% {
+    width: 0%;
+    left: 100%;
+  }
+}
+@-webkit-keyframes tri-2 {
+  0% {
+    width: 0%;
+    top: 0;
+    right: 0;
+  }
+  25%, 50% {
+    width: 100%;
+    top: 0;
+    right: 0;
+  }
+  75% {
+    width: 0%;
+    top: 100%;
+    right: 50%;
+  }
+}
+@keyframes tri-2 {
+  0% {
+    width: 0%;
+    top: 0;
+    right: 0;
+  }
+  25%, 50% {
+    width: 100%;
+    top: 0;
+    right: 0;
+  }
+  75% {
+    width: 0%;
+    top: 100%;
+    right: 50%;
+  }
+}
+@-webkit-keyframes tri-3 {
+  0% {
+    width: 0%;
+    top: 100%;
+    left: 50%;
+  }
+  25%, 50% {
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+  75% {
+    width: 0%;
+    top: 0;
+    left: 0;
+  }
+}
+@keyframes tri-3 {
+  0% {
+    width: 0%;
+    top: 100%;
+    left: 50%;
+  }
+  25%, 50% {
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+  75% {
+    width: 0%;
+    top: 0;
+    left: 0;
+  }
+}

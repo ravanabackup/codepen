@@ -1,0 +1,109 @@
+body {
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: rgb(2, 3, 15);
+}
+
+.scope {
+  position: relative;
+  width: clamp(200px, 90vmin, 1200px);
+  height: clamp(200px, 90vmin, 1200px);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.waves {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  bottom: 0;
+  left: 0;
+  -webkit-backdrop-filter:
+    blur(4px)
+    saturate(70%);
+          backdrop-filter:
+    blur(4px)
+    saturate(70%);
+  pointer-events: none;
+  border-bottom-left-radius: 100% 200%;
+  border-bottom-right-radius: 100% 200%;
+  overflow: hidden;
+  background: conic-gradient(
+    at 50% 120%,
+    transparent 30deg,
+    rgba(25, 15, 0, .2) 50deg 185deg,
+    rgba(30, 0, 10, .2) 185deg 310deg,
+    transparent 330deg
+  );
+}
+
+.wave {
+  display: block;
+  position: absolute;
+  top: calc(var(--r1) * 50vh);
+  left: calc(var(--r2) * 100vw);
+  width: calc(2vmin + var(--r1) * 15vmin);
+  height: calc(.05vmin + var(--r1) * .9vmin);
+  background: rgba(
+    calc(120 + 200 * var(--r1)),
+    calc(90 + 180 * var(--r1)),
+    calc(50 + 80 * var(--r1)),
+    calc(0.04 + 0.02 * var(--r1))
+  );
+  -webkit-animation: float infinite 30s;
+          animation: float infinite 30s;
+  -webkit-animation-delay: calc(var(--i) * -237ms);
+          animation-delay: calc(var(--i) * -237ms);
+  -webkit-clip-path: polygon(
+    30% 0,
+    80% 0,
+    5% 100%,
+    95% 80%
+  );
+          clip-path: polygon(
+    30% 0,
+    80% 0,
+    5% 100%,
+    95% 80%
+  );
+}
+
+@-webkit-keyframes float {
+  from, to {
+    transform:
+      rotate(calc(var(--r1) * 3deg))
+      translate(-100%);
+  }
+  50% {
+    transform:
+      rotate(calc(var(--r1) * -3deg))
+      translateX(100%);
+  }
+}
+
+@keyframes float {
+  from, to {
+    transform:
+      rotate(calc(var(--r1) * 3deg))
+      translate(-100%);
+  }
+  50% {
+    transform:
+      rotate(calc(var(--r1) * -3deg))
+      translateX(100%);
+  }
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+canvas.reset {
+  -webkit-animation: none;
+          animation: none;
+}

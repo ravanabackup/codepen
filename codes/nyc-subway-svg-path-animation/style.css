@@ -1,0 +1,112 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body, #map, #wrap {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  background: #111;
+  font-family: -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol";
+}
+
+h1 {
+  color: white;
+  width: 100%;
+  text-transform: uppercase;
+  font-weight: 200;
+  letter-spacing: 0.8em;
+  text-align: center;
+  font-size: 2em;
+  margin: 0;
+}
+
+#wrap, #map {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  padding: 1em;
+}
+
+svg {
+  position: absolute;
+}
+
+.three-D {
+  transform-style: preserve-3d;
+  transform: translate(0%, 0%)
+    rotateX(-60deg)
+    rotateY(0deg)
+    rotateZ(-10deg)
+    scale(2);
+}
+
+path, polyline {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1;
+}
+
+#front path, #front polyline {
+  stroke-width: 15;
+}
+
+.green path {
+  stroke: #4caf50;
+}
+.lime path {
+  stroke: #76ff03;
+}
+.brown path {
+  stroke: #795548;
+}
+.orange path {
+  stroke: #ff5722;
+}
+.blue path {
+  stroke: #2196f3;
+}
+.navy path {
+  stroke: #3f51b5;
+}
+.yellow path {
+  stroke: #ffeb3b;
+}
+.purple path {
+  stroke: #651fff;
+}
+.red path {
+  stroke: #f44336;
+}
+.gray path {
+  stroke: #607d8b;
+}
+
+#toggle {
+  position: fixed;
+  right: 5%;
+  bottom: 5%;
+  color: #777;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid #111;
+}
+#toggle:hover {
+  border: 1px solid #fff;
+  color: #fff;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}

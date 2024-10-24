@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: pink;
+}
+
+canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  -o-object-fit: cover;
+     object-fit: cover;
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+#realm-bg {
+  filter: blur(1.5em);
+  mix-blend-mode: color;
+}
+
+.safari #realm-bg {
+  mix-blend-mode: overlay;
+}
+
+.with-displacement #possibilities {
+  filter: url(#f);
+}

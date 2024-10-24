@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - [shader]flat_marble</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body>
+      <div id="container"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+
+      <script id="vertexShader" type="x-shader/x-vertex">
+          void main() {
+              gl_Position = vec4( position, 1.0 );
+          }
+      </script>
+      <script id="fragmentShader" type="x-shader/x-fragment">
+// Modified so it doesn't really move. Very childish and easy fix.
+#ifdef GL_ES
+varying vec2 vUv;
+precision mediump float;
+#endif
+uniform float time;
+uniform vec2 resolution;
+
+
+const float fluid_speed     = 100.0;  // スピード
+
+float map(vec2 p) {
+    return length(p) - 0.2;
+}
+
+void main()
+{
+//vec2 p = vUv;
+vec2 p = gl_FragCoord.xy / resolution.xy;
+
+// vec2 fMosaicScal = vec2(12.0);
+// vec2 vScreenSize = vec2(resolution.x,resolution.y);
+// p.x = floor(p.x * vScreenSize.x / fMosaicScal.x) / (vScreenSize.x / fMosaicScal.x);
+// p.y = floor(p.y * vScreenSize.y / fMosaicScal.y) / (vScreenSize.y / fMosaicScal.y);
+
+for(int i=1;i<10;i++)
+{
+    vec2 uv = p + time*0.01;
+    uv.x += 1.5/float(i) * sin(float(i) * uv.y + time/fluid_speed) + 1.0;
+    uv.y += 1.4/float(i) * cos(float(i) * uv.x + time/fluid_speed) - 0.9;
+    p = uv;
+}
+
+// float r = clamp(abs(sin(p.x)),0.0,1.0);
+// float g = clamp(abs(cos(p.x)),0.0,1.0);
+float r = step(0.6,abs(sin(p.x)));
+float g = step(0.5,abs(cos(p.x)));
+// float r = smoothstep(0.,0.6,abs(sin(p.x)));
+// float g = smoothstep(0.,0.6,abs(cos(p.x)));
+vec3 col = vec3(r,g,0.45);
+
+
+gl_FragColor=vec4(col*1.25, 1.0);
+}
+
+      </script>
+  </body>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
