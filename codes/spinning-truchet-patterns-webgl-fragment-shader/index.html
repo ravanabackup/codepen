@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Spinning Truchet Patterns / WebGL Fragment Shader</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+#if __VERSION__ < 130
+#define TEXTURE2D texture2D
+#else
+#define TEXTURE2D texture
+#endif
+precision highp float;
+  in vec4 position;
+
+  void main() {
+    gl_Position = vec4( position );
+  }
+</script>
+
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 fragColor;
+  
+uniform vec2 u_resolution;
+uniform vec4 u_mouse;
+uniform float u_time;
+uniform sampler2D iChannel0;
+uniform sampler2D iChannel1;
+  
+#define R           u_resolution
+#define T           u_time
+#define M           u_mouse
+
+#define PI          3.14159265
+#define PI2         6.28318530
+
+#define MIN_DIST    .1e-5
+#define MAX_DIST    15.
+
+  
+mat2 rot(float a){ return mat2(cos(a),sin(a),-sin(a),cos(a)); }
+float hash21(vec2 p){return fract(sin(dot(p,vec2(23.43,84.21)))*4832.3234);}
+float lsp(float b, float e, float t){return clamp((t-b)/(e-b),0.,1.); }
+float eoc(float t){return (t = t-1.)*t*t+1.; }
+
+float opx(in float d, in float z, in float h){
+    vec2 w = vec2( d, abs(z) - h );
+  	return min(max(w.x, w.y), 0.) + length(max(w, 0.));
+}
+
+vec3 hp,hitpoint;
+vec2 gid, sid;
+float speed=0.,tspeed=0.,tmod=0.,ga1=0.,ga2=0.,ga3=0.,ga4=0.;
+mat2 crot,srot;
+  
+const float size = 2.;
+const float hlf = 1.;
+const float tk = .2;
+    
+vec2 map(vec3 p) {
+    vec2 res = vec2(1e5,0.);
+ 
+    p.y += speed;
+
+    vec2 uv = mod(p.xy+hlf,size)-hlf;
+    vec2 id = floor((p.xy+hlf)/size);
+    
+    float rnd = hash21(id);
+    if(rnd>.5) uv.y = -uv.y;
+    rnd=fract(rnd*32.232);
+    
+    float sn = hash21(id.yx)*15.;
+    sn = mod(sn,10.);
+    
+    float t1 = lsp(sn,sn+1.,tmod);
+    float t2 = lsp(sn+2.,sn+3.,tmod);
+    t1 = eoc(t1); t1 = t1*t1*t1;
+    t2 = eoc(t2); t2 = t2*t2*t2;
+    crot = rot((t1+t2)*1.5707);
+    uv.xy *= crot;
+    
+    vec3 q = vec3(uv.xy,p.z);
+    vec2 u2 = vec2(length(uv-hlf),length(uv+hlf));
+    vec2 q2 = u2.x<u2.y ? uv-hlf : uv+hlf;
+    
+    float d1 = length(uv)-(hlf*.925);
+    float d2 = abs(length(q2)-hlf)-tk;
+    if(rnd>.85) d2 = min(length(q.x)-tk,length(q.y)-tk);
+
+    d2 = max(d1,-d2);
+    d2 = opx(d2,q.z+.45,7.5)-.025;
+    
+    if(d2<res.x) {
+        res=vec2(d2,2.);
+        hp=q;
+        gid=id;
+    }
+
+    return res;
+}
+
+
+vec3 normal(vec3 p, float t) {
+    float e = MIN_DIST*t;
+    vec2 h =vec2(1,-1)*.5773;
+    vec3 n = h.xyy * map(p+h.xyy*e).x+
+             h.yyx * map(p+h.yyx*e).x+
+             h.yxy * map(p+h.yxy*e).x+
+             h.xxx * map(p+h.xxx*e).x;
+    return normalize(n);
+}
+
+
+vec2 marcher(vec3 ro, vec3 rd, inout vec3 p) {
+    float d=0.,m=0.;
+    for(int i=0;i<86;i++){
+        vec2 t = map(p);
+        d += i<32? t.x*.5:t.x;
+        m  = t.y;  
+        p = ro + rd * d;
+        if(t.x<d*MIN_DIST||d>MAX_DIST) break;
+    } 
+    return vec2(d,m);
+}
+
+vec3 tex3D(sampler2D t, in vec3 p, in vec3 n ){
+    n.xy*=srot;
+    n = max(abs(n), MIN_DIST);
+    n /= dot(n, vec3(1));
+	  vec3 tx = texture(t, p.yz).xyz;
+    vec3 ty = texture(t, p.zx).xyz;
+    vec3 tz = texture(t, p.xy).xyz;
+    return mat3(tx*tx, ty*ty, tz*tz)*n;
+}
+
+vec4 render(inout vec3 ro, inout vec3 rd, inout vec3 ref, inout float d, vec2 uv) {
+
+    vec3 C = vec3(0);
+    float m = 0.;
+    vec3 p = ro;
+    vec2 ray = marcher(ro,rd,p);
+    d=ray.x;m=ray.y;
+    
+    // save globals post march
+     sid = gid; hitpoint = hp; srot=crot;
+    
+    if(d<MAX_DIST)
+    {
+        vec3 n = normal(p,d);
+        vec3 lpos = vec3(2,8,12);
+        vec3 l = normalize(lpos-p);
+        
+        float diff = clamp(dot(n,l),0.,1.);
+
+        float shdw = 1.;
+        for( float t = .01; t < 10.; ) {
+            float h = map(p + l*t).x;
+            if( h<MIN_DIST ) { shdw = 0.; break; }
+            shdw = min(shdw, 10.*h/t);
+            t += h;
+            if( shdw<MIN_DIST ) break;
+        }
+        diff = mix(diff,diff*shdw,.45);
+
+        float spec = .75 * pow(max(dot(normalize(p-ro),reflect(normalize(lpos),n)),0.),24.);
+        vec3 h = vec3(1.);
+        if(m == 2.) {
+            float rnd = hash21(sid);
+            h = rnd>.675?tex3D(iChannel1,abs(hitpoint*1.5),n).rgb:tex3D(iChannel0,abs(hitpoint*1.),n).rgb;
+        }
+        if(m == 3.) h = vec3(.005);
+        ref = h;
+   
+        C = h * diff;
+        ro = p+n*.0025;
+        rd = reflect(rd,n);
+    } 
+    return vec4(C,d);
+}
+
+vec3 FC = vec3(.0225,.0125,.0025);
+void main()
+{
+    vec2 F = gl_FragCoord.xy;
+ 
+    speed = T*.15;
+    tspeed = T*.2;
+    tmod = mod(tspeed,15.);
+    
+    // uv ro + rd
+    vec2 uv = (2.* F.xy-R.xy)/max(R.x,R.y);
+    vec3 ro = vec3(0,0,12.25);
+    vec3 rd = normalize(vec3(uv, -1.0));
+    
+    // mouse //
+    float x = M.xy==vec2(0) || M.z<1. ? 0. : -(M.y/R.y*.14-.07)*PI;
+    float y = M.xy==vec2(0) || M.z<1. ? 0. : -(M.x/R.x*.14-.07)*PI;
+    float ff= .1*sin(T*.0879), fx= .1*cos(T*.12);
+    mat2 rx = rot(fx-x), ry = rot(ff-y);
+    
+    ro.zy *= rx;rd.zy *= rx;
+    ro.xz *= ry;rd.xz *= ry;
+    
+    // reflection loop (@BigWings)
+    vec3 C = vec3(0), ref = vec3(0), fil =vec3(.95);
+    float d =0.,a= 0.;
+    
+    // up to 4 is good - 2 average bounce
+    for(float i=0.; i<1.; i++) {
+        vec4 pass = render(ro, rd, ref, d, uv);
+        C += pass.rgb*fil;
+        fil*=ref;
+        if(i==0.)a=pass.w;
+    }
+           
+    C = mix(FC,C,exp(-.0035*a*a*a));
+    C=pow(C, vec3(.4545));
+    fragColor = vec4(C,1);
+}
+
+</script>
+<!-- partial -->
+  <script src='https://jhancock532.github.io/twgl.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Woven Truchet Inversion | WebGL</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+precision highp float;
+in vec4 vPosition;
+void main() {
+	gl_Position = vPosition;
+}
+</script>
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 fragColor;
+  
+uniform vec4 mouse;
+uniform vec2 resolution;
+uniform float time;
+
+#define T 			time
+#define S			  smoothstep
+#define R			  resolution
+#define M			  mouse
+
+
+#define PI          3.14159265359
+#define PI2         6.28318530718
+
+#define MAX_DIST    20.00
+#define MIN_DIST    0.001
+#define SCALE       0.700
+
+#define hue(a) .45 + .45 * cos(T*.3+PI2* a * vec3(.25,.15,1.))
+//utils
+float hash21(vec2 p){ return fract(sin(dot(p,vec2(26.34,45.32)))*4324.23); }
+mat2 rot(float a){ return mat2(cos(a),sin(a),-sin(a),cos(a)); }
+//globals
+vec3 hit,hitP1,sid,id;
+float thsh,fhsh,glow,speed;
+mat2 t90;
+//@iq torus sdf
+float torus( vec3 p, vec2 t ) {
+  vec2 q = vec2(length(p.xy)-t.x,p.z);
+  return length(q)-t.y;
+}
+//make tile piece
+float truchet(vec3 p,vec3 x, vec2 r) {
+    return min(torus(p-x,r),torus(p+x,r));
+}
+//const
+const float size = 1./SCALE;
+const float hlf = size/2.;
+const float shorten = 1.26;   
+//domain rep
+vec3 drep(inout vec3 p) {
+    vec3 id=floor((p+hlf)/size);
+    p = mod(p+hlf,size)-hlf;
+    return id;
+}
+
+vec2 map(vec3 q3, float sg){
+    vec2 res = vec2(100.,0.);
+
+    float k = 5.0/dot(q3,q3); 
+    q3 *= k;
+
+    q3.z += speed;
+
+    vec3 qm = q3;
+    vec3 qd = q3+hlf;
+    qd.xz*=t90;
+    vec3 qid=drep(qm);
+    vec3 did=drep(qd);
+    
+    float ht = hash21(qid.xy+qid.z);
+    float hy = hash21(did.xz+did.y);
+    
+    // truchet build parts
+    float thx = (.075-.025*sin(T+(q3.y+qid.z)*5.15) ) *size;
+    float thz = (.075+.025*sin(T*4.+(q3.y+did.z)*3.) ) *size;
+
+    if(ht>.5) qm.x *= -1.;
+    if(hy>.5) qd.x *= -1.;
+
+    float t = truchet(qm,vec3(hlf,hlf,.0),vec2(hlf,thx));
+    if(t<res.x) {
+        sid = qid;
+        hit = qm;
+        res = vec2(t,2.);
+    }
+
+    float d = truchet(qd,vec3(hlf,hlf,.0),vec2(hlf,thz));
+    if(d<res.x) {
+        sid = did;
+        hit = qd;
+        res = vec2(d,1.);
+    }
+
+    float mul = 1.0/k;
+    res.x = res.x * mul / shorten;
+    
+    return res;
+}
+
+// Tetrahedron technique @iq
+// https://www.iquilezles.org/www/articles/normalsSDF
+vec3 normal(vec3 p, float t)
+{
+    float e = MIN_DIST*t;
+    vec2 h =vec2(1,-1)*.5773;
+    vec3 n = h.xyy * map(p+h.xyy*e,0.).x+
+             h.yyx * map(p+h.yyx*e,0.).x+
+             h.yxy * map(p+h.yxy*e,0.).x+
+             h.xxx * map(p+h.xxx*e,0.).x;
+    return normalize(n);
+}
+
+vec4 FC= vec4(.001,.001,.001,0.);
+vec3 lpos = vec3(.0,.001,3.85);
+
+vec4 render(inout vec3 ro, inout vec3 rd, inout vec3 ref, bool last, inout float d) {
+
+    vec3 C = vec3(0);
+    vec3 p = ro;
+    float m = 0.;
+    
+    for(int i=0;i<100;i++) {
+        p = ro + rd * d;
+        vec2 ray = map(p,1.);
+        if(abs(ray.x)<MIN_DIST*d||d>MAX_DIST)break;
+        d += i<32? ray.x*.35: ray.x*.95;
+        m  = ray.y;
+    } 
+    hitP1 = hit;
+    id = sid;
+    
+    float alpha = 0.;
+    if(d<MAX_DIST) {
+    
+        vec3 p = ro + rd * d;
+        vec3 n = normal(p,d);
+        vec3 l = normalize(lpos-p);
+        
+        vec3 h = vec3(.5);
+
+        float diff = clamp(dot(n,l),0.,1.);
+        float fresnel = pow(clamp(1.+dot(rd, n), 0., 1.), 5.);
+        fresnel = mix(.01, .7, fresnel);
+
+        float shdw = 1.0;
+        for( float t=.01; t < 12.; ){
+            float h = map(p + l*t,0.).x;
+            if( h<MIN_DIST ) { shdw = 0.; break; }
+            shdw = min(shdw, 24.*h/t);
+            t += h;
+            if( shdw<MIN_DIST || t>32. ) break;
+        }
+        diff = mix(diff,diff*shdw,.65);
+        
+        vec3 view = normalize(p - ro);
+        vec3 ret = reflect(normalize(lpos), n);
+        float spec =  0.5 * pow(max(dot(view, ret), 0.), (m==2.||m==4.)?24.:64.);
+        
+
+        //h=color(m,hitP1,n);
+        
+        if(m==1.) {
+            float hs = hash21(vec2(id.z+22.75));
+            float xt = floor(10.*hs)*2.;
+   
+            // strip patterns..
+            vec3 hp = hitP1/(1./SCALE);
+            float dir = mod(id.x + id.y,2.) * 2. - 1.;  
+
+            vec2 uv = hp.xy-sign(hp.x+hp.y+.001)*.5;
+            float angle = atan(uv.x, uv.y);
+            float a = sin( dir * angle * xt + T * 1.25);
+            a =  abs(abs(abs(a)-.5)-.24)-.124;
+            //h = mix(vec3(0.004,0.698,0.141), vec3(0.000,0.259,0.153), smoothstep(.01, .02, a));   
+            h = mix(hue(23.5), hue(24.5), smoothstep(.01, .02, a));   
+            
+          ref = vec3(.3)-fresnel;
+        }
+
+        if(m==2.) {
+            float hs = hash21(vec2(id.x+12.75));
+            float xt = floor(1.+(3.23*hs))*2.;
+            // strip patterns..
+            vec3 hp = hitP1/(1./SCALE);
+            float dir = mod(id.x + id.y,2.) * 2. - 1.;  
+
+            vec2 cUv = hp.xy-sign(hp.x+hp.y+.001)*.5;
+            float angle = atan(cUv.x, cUv.y);
+            float a = sin( dir * angle * xt + T);
+            a = abs(a)-.5;a = abs(a)-.24;
+            h = mix(vec3(1), vec3(0), smoothstep(.01, .02, a)); 
+            ref = h-fresnel;
+        }
+
+        C = diff*h+spec;
+        if(last) C = mix(FC.rgb,C,  exp(-.05*d*d*d));
+    
+        ro = p+n*.002;
+        rd = reflect(rd,n);
+    } else {
+        C = FC.rgb;
+    }
+     
+    return vec4(C,alpha);
+}
+
+void main() {
+    // precal
+    t90 = rot(90.*PI/180.);
+    speed = T*.225;
+    //
+    vec2 F =gl_FragCoord.xy;
+    vec2 uv = (2.*F.xy-R.xy)/max(R.x,R.y);
+    vec3 ro = vec3(0,0,3.5);
+    vec3 rd = normalize(vec3(uv,-1));
+
+    float x = M.xy == vec2(0) ? -.005 : -(M.y/R.y * .5 - .25) * PI;
+    float y = M.xy == vec2(0) ? 0.015 : -(M.x/R.x * .5 - .25) * PI;
+    
+    mat2 rx = rot(x);
+    mat2 ry = rot(y);
+    
+    ro.yz *= rx;
+    rd.yz *= rx;
+    ro.xz *= ry;
+    rd.xz *= ry;
+    
+    vec3 C = vec3(0);
+    vec3 ref=vec3(0);
+    vec3 fil=vec3(1.);
+    
+    float d =0.;
+    float bounces = 2.;
+    for(float i=0.; i<bounces; i++) {
+        vec4 pass = render(ro, rd, ref, i==bounces-1., d);
+        C += pass.rgb*fil;
+        fil*=ref;
+        if(i==0.) FC = vec4(FC.rgb,exp(-.145*d*d*d));
+    }
+
+    float glowMask = clamp(glow,.0,1.);
+    C = mix(C,C+glow*.3,glowMask);
+    
+    C = mix(C,FC.rgb,1.-FC.w);
+    C = clamp(C,vec3(0),vec3(1));
+    C = pow(C, vec3(.4545));
+    fragColor = vec4(C,1.0);
+}
+</script>
+<div id="container" />
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Isometric Cubes Polar Warp - WebGL Shader</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+precision highp float;
+  in vec4 position;
+
+  void main() {
+    gl_Position = vec4( position );
+  }
+</script>
+
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#define R           u_resolution
+#define T           u_time
+#define PI          3.14159265359
+#define PI2         6.28318530718
+
+mat2 rot(float g) {
+ return mat2(cos(g), sin(g),-sin(g), cos(g));
+}
+
+float hash21( vec2 p ) {
+    return fract(sin(dot(p,vec2(23.43,84.21)))*4832.3234);
+}
+
+const float N = 3.;
+// @Shane - a very tightly compacted, self-contained version 
+// of IQ's 3D value noise function.
+//---------------------------------------------------------------
+float n3D(vec3 p){
+    const vec3 s = vec3(113, 57, 27);
+    vec3 ip = floor(p); p -= ip; 
+    vec4 h = vec4(0., s.yz, s.y + s.z) + dot(ip, s);
+    p = p*p*(3. - 2.*p);
+    h = mix(fract(sin(h)*43758.5453), fract(sin(h + s.x)*43758.5453), p.x);
+    h.xy = mix(h.xz, h.yw, p.y);
+    return mix(h.x, h.y, p.z); // Range: [0, 1].
+}
+//---------------------------------------------------------------
+// @iq fbm generator
+float fbm3( in vec3 x) {
+
+    //@mla : shifting the xy value from the range [-PI,+PI] to [0,2N]
+    x.x = mod(x.x,4.*N);
+    x.y = mod(x.y,4.*N);
+    
+    x*=.085;
+    float a = 0.1,b = .5,f = 2.;
+    vec3  d = vec3(0.);
+    for (int i = 0; i < 4; ++i) {      
+        float n = n3D(f*x);
+        a += b*n;
+        b *= 0.5;
+        f *= 1.8;
+    }
+    return a;
+}
+
+vec4 hexgrid(vec2 uv) {
+    vec2 p1 = floor(uv/vec2(1.732,1))+.5;
+    vec2 p2 = floor((uv-vec2(1,.5))/vec2(1.732,1))+.5;
+    
+    vec2 h1 = uv-p1*vec2(1.732,1);
+    vec2 h2 = uv-(p2+.5)*vec2(1.732,1);
+    return dot(h1,h1) < dot(h2,h2) ? vec4(h1,p1) : vec4(h2,p2+.5);
+}
+
+vec3 hue(vec3 a) { 
+    float t = a.x+T*.1;
+    vec3 d = vec3(0.929,0.690,0.027);
+    return .45 +.45*cos( PI2*t*vec3(.984,.914,.914)+d ); 
+}
+float truch(vec2 uv, vec2 id) {
+    float ln = .125;
+    vec2 vv = uv;
+    vec2 vd = floor(vv*10.);
+    vv = fract(vv*10.)-.5;
+    float rnd = hash21(vd+id);
+    if(rnd>.5) vv.x = -vv.x;
+    
+    float t = abs(max(abs(vv.x),abs(vv.y))-.5)-.02;
+    vec2 q = length(vv-.5) < length(vv+.5) ? vv-.5 : vv+.5;
+    float d = abs(length(q)-.5)-ln;
+    if(fract(rnd*43.57)>.8) d = min(length(vv.x)-ln,length(vv.y)-ln);
+    float ck = mod(vd.x+vd.y,2.)*2.-1.;
+    return min(t,d);
+}
+
+void cube(inout vec3 C, vec2 uv, vec2 id, float px, float rnd, float lvl) {
+
+    float ln = .005, hn = ln/2.;
+    float hs = 1.;
+    
+    float d = max(abs(uv.x)*.866025 + abs(uv.y)/2., abs(uv.y))-(hs*.497);
+    C = mix(C,vec3(0),smoothstep(px,-px,abs(d)-ln));
+    
+    uv.x -= (hs*.5);
+    float tbase =length( abs(uv.x)*.866025 + abs(uv.y)/2.)- (hs*.433);
+    float e = min(tbase, length(uv.y));
+    
+    rnd = fbm3(vec3(id*5.,1.));
+    lvl = (lvl*1.35)+fract(rnd*31.37);
+    
+    // color sides
+    C = mix(C,hue(vec3(lvl,.5,.8)),smoothstep(px,-px,max(tbase,d)) );
+    C = mix(C,hue(vec3(lvl+.15,1,.4)),smoothstep(px,-px,max(max(uv.y,-tbase),d)) );
+    C = mix(C,hue(vec3(lvl+.75,1,.2)),smoothstep(px,-px,max(max(max(-uv.y,uv.x),-tbase),d)) );
+
+    if(lvl>1.) C = mix(C,rnd>.5? C+.25: C*.25,smoothstep(px,-px,length(uv+vec2(.52,0)*hs)-(hs*.35)));
+    
+    // truchet patterns
+    id+=floor(rnd*15.);
+    float uvx = uv.x*.86602;
+    float uvy = uv.y/1.33;
+    vec2 vv = vec2(uvx,uv.y/2.);
+
+    vv *= rot(.78);
+    vv *= 1.12;
+    vv += vec2(.05,-.05);
+    float t = truch(vv, id);
+    C = mix(C,clamp(C+.25,C,vec3(1)),smoothstep(px,-px,max(max(tbase,d),t)) );
+    
+    vv = vec2(uvx,uvy)+vec2(uv.y*.5,0);
+    vv *= 1.02;
+    vv -= vec2(.055,.01);
+    t = truch(vv, id);
+    C = mix(C,clamp(C+.2,C,vec3(1)),smoothstep(px,-px,max(max(uv.y,max(d,-tbase)),t) ) );
+    
+    vv = vec2(uvx,uvy)-vec2(uv.y*.5,0);
+    vv *= 1.02;
+    vv -= vec2(.055,-.01);
+    t = truch(vv, id);
+    C = mix(C,clamp(C-.15,vec3(0),C),smoothstep(px,-px,max(max(max(-uv.y,uv.x),-tbase),t)) );
+ 
+    C = mix(C,vec3(0),smoothstep(px,-px,max(abs(e)-hn,d)));
+}
+
+const float mx = 4.;
+const float mz = mx-1.;
+
+void main() {
+	  vec2 F = gl_FragCoord.xy;
+    vec2 uv = (2.*F-R.xy)/max(R.x,R.y);
+
+    vec3 C = vec3(.004);
+    uv *= rot(T*.05);
+    uv = vec2(log(length(uv)),atan(uv.y,uv.x));
+    uv /= 3.627;
+    uv *= N;
+    uv.x += T*.025;
+  
+    float px = fwidth(uv.x);
+
+    vec4 H;
+    vec2 p, id;
+    float rnd;
+
+    for(float i=0.;i<mx;i++) {
+        float sc = mx-i;
+        sc*=2.;
+        H = hexgrid(uv.yx*sc);
+        p = H.xy, id = H.zw;
+        rnd = fbm3(vec3((id*sc)+i,1.));
+        if(rnd>.55) cube(C,p,id*sc,px,rnd,i+.5);
+        if(i<mz) C *= (i+.5)*.3;
+        uv.x += T*.025;
+    }
+    
+    fragColor = vec4(pow(C,vec3(.4545)),1);
+}
+
+
+
+
+
+
+
+
+
+
+// end
+
+</script>
+<!-- partial -->
+  <script src='https://jhancock532.github.io/twgl.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

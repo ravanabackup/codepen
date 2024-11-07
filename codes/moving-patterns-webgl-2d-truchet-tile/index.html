@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Moving Patterns | WebGL 2D Truchet Tile</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+precision highp float;
+  in vec4 position;
+
+  void main() {
+    gl_Position = vec4( position );
+  }
+</script>
+
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2 u_resolution;
+uniform vec4 u_mouse;
+uniform float u_time;
+
+#define R           u_resolution
+#define T           u_time
+#define M           u_mouse
+#define PI          3.14159265359
+#define PI2         6.28318530718
+
+mat2 rot(float a) {return mat2(cos(a),sin(a),-sin(a),cos(a));}
+float hash21(vec2 a){ return fract(sin(dot(a,vec2(22.54,35.45)))*4823.232);}
+float box(vec2 p, vec2 a) {vec2 q=abs(p)-a;return length(max(q,0.))+min(max(q.x,q.y),0.);}
+
+vec3 hue(float t) { 
+    vec3 d = vec3(0.929,0.690,0.027);
+    return .45 +.45*cos( PI2*t*vec3(.984,.914,.914)+d ); 
+}
+
+// @Shane compacted self-contained version of @iq's 3D value noise function.
+float n3D(vec3 p){
+    const vec3 s = vec3(113, 57, 27);
+    vec3 ip = floor(p); p -= ip; 
+    vec4 h = vec4(0., s.yz, s.y + s.z) + dot(ip, s);
+    p = p*p*(3. - 2.*p);
+    h = mix(fract(sin(h)*43758.5453), fract(sin(h + s.x)*43758.5453), p.x);
+    h.xy = mix(h.xz, h.yw, p.y);
+    return mix(h.x, h.y, p.z); // Range: [0, 1].
+}
+
+// @iq fbm generator with some mods
+float fbm3( in vec3 x) {
+    vec2 uv = x.xy;
+    x*=.1;
+    float a = 0.1,b = .5,f = 2.;
+    vec3  d = vec3(0.);
+    for (int i = 0; i < 4; ++i) {      
+        float n = n3D(f*x);
+        a += b*n;
+        b *= 0.5;
+        f *= 1.8;
+    }
+    float aa = 1.5+1.5*sin(uv.y*.75);
+    if(uv.x<(1.+aa) && uv.x>-(2.5-aa)  && a>.5) a = 0.;//&& a>.25
+	return a;
+}
+
+vec3 truchet(vec2 p) {
+    vec2 uv = p;
+    uv -= vec2(0,T*.633);
+    
+    vec2 id = floor(uv), q = fract(uv)-.5;
+    float hs = hash21(id);
+
+    const float sx = .755;
+    // cheap check of the hood
+    vec3 nid = vec3(id,T*1.185);
+    float ns = fbm3(vec3(nid*sx));
+    vec4 hhs = vec4(
+        fbm3(vec3((nid+vec3(0,-1,0))*sx)),
+        fbm3(vec3((nid+vec3(1,0,0))*sx)),
+        fbm3(vec3((nid+vec3(0,1,0))*sx)),
+        fbm3(vec3((nid+vec3(-1,0,0))*sx))
+    );
+    
+    float rnd = fract(hs*4324.79);
+    if(rnd>.5) q.xy*= rot(1.5707);
+    
+    const float pf = .5, wd = .165;
+    vec2 q2 = q;
+    
+    // main pattern
+    vec2 pq = length(q.xy+pf)<length(q.xy-pf)? q.xy+pf : q.xy-pf;
+    float d = length(pq)-.5;
+    d = abs(d) - wd;
+    
+    // alt pattern
+    if(hs>.65) {
+        d = min(length(q2.x),length(q2.y))-wd;
+        float xd = length(abs(q2.x)-(wd*1.2))-(wd*.2);
+        d = max(d,-xd);
+    }
+
+    // edge block check to cap and alter patterns
+    // prob could do better with logic but first stab at it..
+    const float thr = .5;
+    if(ns<thr) {
+        d = 1.;
+        // basic just the tips additive 
+        if(rnd>.5) { q2.xy*= rot(-1.5707); } 
+        if(hhs.x>thr) d = min(min(box(q2+vec2(0,.5),vec2(wd,wd*1.25)),length(q2+vec2(0,.3))-wd), d);
+        if(hhs.z>thr) d = min(min(box(q2-vec2(0,.5),vec2(wd,wd*1.25)),length(q2-vec2(0,.3))-wd), d);
+        if(hhs.y>thr) d = min(min(box(q2-vec2(.5,0),vec2(wd*1.25,wd)),length(q2-vec2(.3,0))-wd), d);
+        if(hhs.w>thr) d = min(min(box(q2+vec2(.5,0),vec2(wd*1.25,wd)),length(q2+vec2(.3,0))-wd), d);
+        
+        // just for single ends
+        float ck = mod(id.y+id.x,2.);
+        if(fract(47.43*rnd)<.32) ck = 1.;
+        if(hhs.x<thr&&hhs.y>thr&&hhs.z<thr&&hhs.w<thr&&ck<1.) d = min(box(q2-vec2(.2,0),vec2(wd*2.7,wd)),length(q2+vec2(.25,0))-wd);
+        if(hhs.x<thr&&hhs.y<thr&&hhs.z>thr&&hhs.w<thr&&ck<1.) d = min(box(q2-vec2(0,.2),vec2(wd,wd*2.7)),length(q2+vec2(0,.25))-wd);
+        if(hhs.x<thr&&hhs.y<thr&&hhs.z<thr&&hhs.w>thr&&ck<1.) d = min(box(q2+vec2(.2,0),vec2(wd*2.7,wd)),length(q2-vec2(.25,0))-wd);
+        if(hhs.x>thr&&hhs.y<thr&&hhs.z<thr&&hhs.w<thr&&ck<1.) d = min(box(q2+vec2(0,.2),vec2(wd,wd*2.7)),length(q2-vec2(0,.25))-wd);
+
+        // just two corners - rounded
+        if(hhs.x>thr&&hhs.y>thr&&hhs.z<thr&&hhs.w<thr) {
+            d = rnd<.5? abs(length(q.xy+vec2(-.5,.5))-.5)-wd : abs(length(q.xy+vec2(.5,.5))-.5)-wd;
+        }
+        if(hhs.z>thr&&hhs.w>thr&&hhs.x<thr&&hhs.y<thr) {
+            d = rnd<.5? abs(length(q.xy-vec2(-.5,.5))-.5)-wd : abs(length(q.xy-vec2(.5,.5))-.5)-wd;
+        }
+        if(hhs.w>thr&&hhs.x>thr&&hhs.z<thr&&hhs.y<thr) {
+            d = rnd<.5? abs(length(q.xy-vec2(-.5,-.5))-.5)-wd : abs(length(q.xy-vec2(-.5,.5))-.5)-wd;
+        }
+        if(hhs.z>thr&&hhs.y>thr&&hhs.w<thr&&hhs.x<thr) {
+            d = rnd<.5? abs(length(q.xy-vec2(.5,.5))-.5)-wd : abs(length(q.xy-vec2(.5,-.5))-.5)-wd;
+        }
+        
+        // directly across from each other
+        if(hhs.x>thr&&hhs.z>thr && hhs.w<thr&&hhs.y<thr) d = length(q2.x)-wd;
+        if(hhs.w>thr&&hhs.y>thr && hhs.x<thr&&hhs.z<thr) d = length(q2.y)-wd;
+   
+    }
+
+    return vec3(d,uv);
+}
+
+void main() {
+	  vec2 F = gl_FragCoord.xy;
+    vec2 uv = (2.*F-R.xy)/max(R.x,R.y); 
+    float dx = fwidth(uv.x);
+    vec2 f = uv;
+    
+    float check = 0.;
+    vec3 clr;
+    if(R.x>R.y){
+      check = uv.x;  
+      clr = hue(1.75-(uv.y*.75)+sin(uv.x*8.+T*2.)*.075);
+    }else{
+      check = uv.y; 
+      clr = hue(3.5-(uv.x*.85)+sin(uv.y*4.+T*.8)*.075);
+    }
+  
+
+    vec3 C = check<0. ? vec3(.01):vec3(.1);
+    
+    float sc = check<0.? 12.:24.;
+    //f.x+=check<0.? T*-.02:T*.02; 
+     if(R.x>R.y){
+      f.y+=check<0.? T*-.02:T*.02; 
+    }else{
+      f.x+=check<0.? T*-.02:T*.02; 
+    }
+  
+    f = fract(f*sc)-.5;
+
+    C = f.x*f.y>0. ? C*.5 : C;
+    
+    uv *= check<0.? 8.:16.; 
+
+    vec3 dt = truchet(uv);
+    float d = dt.x;
+
+    vec3 st = truchet(uv*2.);
+    float s = st.x;
+    
+    float px = fwidth(uv.x); 
+    // backdrop motion
+    C = mix(C,check<0.?vec3(0):vec3(.0035),smoothstep(px,-px,s));
+    
+    // truchet and accent
+    C = mix(C,C*.45,smoothstep(.05+px,-px,d-.04));
+    C = mix(C,clr,smoothstep(px,-px,d));
+    C = mix(C,mix(vec3(0),vec3(.65),.5+.5*sin(dt.z*PI2+T*2.)),smoothstep(px,-px,abs(d+.02)-.02));
+
+    float ln = length(check)-.001;
+    C = mix(C,vec3(1),smoothstep(dx,-dx,ln));
+    // gamma and output
+    C = pow(C,vec3(.4545));
+   fragColor = vec4(C,1.);
+}
+
+</script>
+<!-- partial -->
+  <script src='https://jhancock532.github.io/twgl.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

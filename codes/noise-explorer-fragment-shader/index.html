@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Noise Explorer / Fragment Shader</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+precision highp float;
+in vec4 vPosition;
+void main() {
+	gl_Position = vPosition;
+}
+</script>
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 fragColor;
+  
+uniform vec4 mouse;
+uniform vec2 resolution;
+uniform float time;
+
+#define T 			time
+#define M				mouse
+#define R				resolution
+
+#define PI  3.14159265359
+#define PI2 6.28318530718
+
+#define MIN_DIST .0001
+#define MAX_DIST 20.
+
+mat2 rot (float a) { return mat2(cos(a),sin(a),-sin(a),cos(a)); }
+float hash21( vec2 p ) { return fract(sin(dot(p,vec2(23.43,84.21))) *4832.3234); }
+
+// @Shane - tightly compacted, self-contained version of IQ's 3D value noise function.
+float n3D(vec3 p){
+    const vec3 s = vec3(113, 57, 27);
+    vec3 ip = floor(p); p -= ip; 
+    vec4 h = vec4(0., s.yz, s.y + s.z) + dot(ip, s);
+    p *= p*p*(p*(p*6. - 15.) + 10.); // Smoother alternative.
+    h = mix(fract(sin(h)*4378.5453), fract(sin(h + s.x)*4378.5453), p.x);
+    h.xy = mix(h.xz, h.yw, p.y);
+    return mix(h.x, h.y, p.z); // Range: [0, 1].
+}
+// @iq fbm generator
+float fbmd( in vec3 x, float oct ) {
+    const float scale  = .8;
+    float a = .0,b = .5,f = 2.;
+    vec3  d = vec3(0.);
+    for( float i=0.; i<oct; i++ ) {      
+        float n = n3D(f*x*scale);
+        a += b*n;
+        b *= 0.5;
+        f *= 1.8;
+    }
+	return a;
+}
+// @iq sdf's
+float cap( vec3 p, float h, float r ){
+  vec2 d = abs(vec2(length(p.xz),p.y)) - vec2(h,r);
+  return min(max(d.x,d.y),0.0) + length(max(d,0.0));
+}
+float box( in vec2 p, in vec2 b ){
+    vec2 d = abs(p)-b;
+    return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+}
+float box( vec3 p, vec3 b ){
+  vec3 q = abs(p) - b;
+  return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
+}
+float octa( vec3 p, float s){
+  p = abs(p);
+  return (p.x+p.y+p.z-s)*0.57735027;
+}
+// globals
+mat2 turn,pulse,ry;
+vec3 hit,hitPoint,sto,gto;
+vec2 gid,sid;
+float shs,ghs,mofs,mofx,ftm,otm;
+// consts
+const float c = .4, c2=c/2.;
+
+// scene
+vec2 map(vec3 p) {
+    vec2 res = vec2(1e5,0);
+    vec3 f =p;
+    vec3 sf=f;
+    p+=vec3(0,ftm*c,0);
+    p.x=abs(p.x)-3.25;
+    p.xz*=ry;
+    f.x=abs(f.x)-3.25;
+    f.xz*=ry;
+    vec3 q = p;
+    vec3 id =floor((p-c2)/c);
+    float wd  = 11.;
+    float hgt = 15.;
+    q.x = q.x - c*clamp(round(q.x/c),-wd,wd);
+    q.y = q.y - c*clamp(round(q.y/c),-hgt,hgt);
+
+    float nz = fbmd((id*.055)+vec3(mofx,otm,mofs),4.);
+
+    // blocks
+    float sfct = c2*.75;
+    float d2 =  nz>.5 ? cap(q.yzx,c2*.7,sfct*.5) : box(q,vec3(sfct*1.35,sfct*.25,sfct*.5));
+    if(d2<res.x) {
+        res = vec2(d2,2.);
+    	hit=p;
+        ghs=nz;
+    }
+    
+    f.y=abs(f.y);
+    float d5 =  box(f-vec3(2.5,5.,2.5),vec3(7,.05,1.));
+    if(d5<res.x) {
+        res = vec2(d5,1.);
+    	hit=sf;
+    }  
+
+    sf.yz*=pulse;
+    sf.xz*=turn;
+    sf=abs(sf);
+    
+    float d8 =  octa(sf,3.5);
+    sf.xz*=ry;
+    d8 =  min(octa(sf,3.5),d8);
+    if(d8<res.x) {
+        res = vec2(d8,4.);
+    	hit=sf;
+    }  
+    
+    return res;
+}
+
+vec3 normal(vec3 p, float t)
+{
+    float e = MIN_DIST*t;
+    vec2 h =vec2(1,-1)*.5773;
+    vec3 n = h.xyy * map(p+h.xyy*e).x+
+             h.yyx * map(p+h.yyx*e).x+
+             h.yxy * map(p+h.yxy*e).x+
+             h.xxx * map(p+h.xxx*e).x;
+    return normalize(n);
+}
+
+//@iq https://www.iquilezles.org/www/articles/palettes/palettes.htm
+vec3 hue(float t){ 
+    return .525 + .475*cos(PI2*t*(vec3(0.145,0.831,0.663)+vec3(0.847,0.667,0.933)) ); 
+}
+
+vec4 render(inout vec3 ro, inout vec3 rd, inout vec3 ref, inout float d, vec2 uv) {
+
+    vec3 C = vec3(0);
+    float m = 0.;
+    vec3 p = ro;
+    
+    for(int i=0;i<100;i++)
+    {
+        p = ro + rd * d;
+        vec2 ray = map(p);
+        if(abs(ray.x)<MIN_DIST*d||d>MAX_DIST)break;
+        d += i<32? ray.x*.5: ray.x;
+        m  = ray.y;
+    } 
+
+    hitPoint = hit;
+    sid = gid;
+    shs = ghs;
+    
+    float alpha = 0.;
+    if(d<MAX_DIST)
+    {
+        vec3 n = normal(p,d);
+        vec3 lpos =  vec3(1,3,9);
+        vec3 l = normalize(lpos-p);
+
+        float diff = clamp(dot(n,l),0.,1.);
+        float fresnel = pow(clamp(1.+dot(rd, n), 0., 1.), 9.);
+        fresnel = mix(.01, .7, fresnel);
+
+        vec3 view = normalize(p - ro);
+        vec3 ret = reflect(normalize(lpos), n);
+        float spec =  0.5 * pow(max(dot(view, ret), 0.), 14.);
+
+        vec3 h = vec3(.5);
+        
+        if(m==1.) {
+            vec3 hp = hitPoint+vec3(.0,0,.2);
+            hp.xz*=rot(.785312);
+            h = vec3(0.929,0.929,0.929);
+            vec2 f = fract(hp.xz*.74)-.5;
+            if(f.x*f.y>0.) h=vec3(0.090,0.090,0.090);
+            ref = vec3(.4)-fresnel;
+        }
+        
+        if(m==2.) {
+            h=shs<.5?vec3(.05):hue(floor(shs*15.)*.05);
+            ref = vec3(0);
+        }
+        if(m==4.) {
+            h=vec3(.0);
+            ref = vec3(.25)-fresnel;
+        }
+        
+        C = diff*h+spec;
+        ro = p+n*.01;
+        rd = reflect(rd,n);
+        
+    }else{
+        C = mix(vec3(0.059,0.059,0.059),hue(.34),(uv.y+.5)*.5);
+    } 
+    
+    return vec4(clamp(C,vec3(.03),vec3(1.)),alpha);
+}
+
+void overLay(inout vec3 C, vec2 uv, float d) {
+    float scl=40.;
+    float px = fwidth(uv.x);
+    vec2 id = floor(uv*scl);
+    vec2 grid=fract(uv*scl)-.5;
+    float hs = fbmd((id.xyx*.065)+vec3(mofx,T*.15,mofs),4.);
+    if((uv.x>0.7 && uv.x<.975 || uv.x<-.7 && uv.x>-.975 ) && (uv.y>-.4 &&uv.y<.4)) {
+        float b= (hs>.5) ? length(grid)-.35:box(grid,vec2(.35));
+        if(hs<.5)b=abs(b)-.05;
+        b=smoothstep(.05+px,-px,b);
+        C =mix(C,hs>.5? hue(.1-floor(hs*15.)*.05)+.2 :vec3(.035),b);
+    }
+    
+    float bs = length(uv)-.39;
+    bs=smoothstep(.3+px,-px,bs);
+    C=mix(C, C+.05,d*.05>1.?bs:0.);  
+    vec3 uclr = hue(23.);
+    
+    bs = length(uv)-.51;
+    bs=abs(abs(bs)-.015)-.005;
+    bs=smoothstep(px,-px,bs);
+    C=mix(C, uclr,d*.05>1.?bs*.75:0. );  
+
+}
+
+void main() 
+{
+    // precal / chew your vars!
+    mofx = (M.y/R.y)*2.;
+    mofs = (M.x/R.x)*2.;
+    
+    float my = M.xy==vec2(0) ? 0.2 : (2.*M.y-R.y)/R.y;
+    pulse = rot(my);
+    turn = rot(-T*30.*PI/180.);
+    ry =rot(.7851);
+    
+    ftm = fract(T);
+    otm = (((T*.35)-ftm/6.)*c);
+    //
+   vec2 F = gl_FragCoord.xy;
+    vec2 uv = (2.* F.xy-R.xy)/max(R.x,R.y);
+
+    vec3 ro = vec3(0, 0, 13.);
+    vec3 rd = normalize(vec3(uv, -1.0));
+
+    vec3 C = vec3(0);
+    vec3 ref=vec3(0); 
+    vec3 fil=vec3(1);
+    
+    float d =0.;
+    float alpha =1.;
+    for(float i=0.; i<2.; i++) {
+        d =0.;
+        C += render(ro, rd, ref, d, uv).rgb*fil;
+        fil*=ref;
+        if(i==0.) alpha+=d;
+    }
+
+    overLay(C,uv,alpha);
+    
+    C = mix(C,C+.035,hash21(uv));
+    C = clamp(C,vec3(.03),vec3(.9));
+
+    // gamma correction
+    C = pow(C, vec3(.4545));
+    fragColor = vec4(C,1.0);
+}
+
+</script>
+<div id="container" />
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

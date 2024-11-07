@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>WebGL / Truchet Tunnel - Fragment Shader</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+#if __VERSION__ < 130
+#define TEXTURE2D texture2D
+#else
+#define TEXTURE2D texture
+#endif
+precision highp float;
+  in vec4 position;
+
+  void main() {
+    gl_Position = vec4( position );
+  }
+</script>
+
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 fragColor;
+  
+uniform vec2 u_resolution;
+uniform vec4 u_mouse;
+uniform float u_time;
+uniform sampler2D iChannel1;
+uniform sampler2D iChannel2;
+  
+#define R           u_resolution
+#define T           u_time
+#define M           u_mouse
+
+#define PI  3.14159265359
+#define PI2 6.28318530718
+
+#define MAX_DIST    100.
+#define MIN_DIST    .0001
+
+mat2 r45,r1,r2;
+vec3 hit,hitPoint;
+
+mat2 rot(float a){ return mat2(cos(a),sin(a),-sin(a),cos(a)); }
+float hash21(vec2 p){return fract(sin(dot(p,vec2(23.43,84.21)))*4832.323); }
+float box(vec3 p, vec3 b) {vec3 q = abs(p) - b;return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);}
+
+//@iq extrude & twist
+float opx(in float d, in float p, in float h){
+    vec2 w = vec2(d,abs(p)-h);
+  	return min(max(w.x, w.y),0.)+length(max(w,0.));
+}
+vec3 twist( in vec3 p ){
+    float cx = .015+.01*sin(T*.08);
+    return vec3(rot(cx*p.z)*p.xy,p.z)/1.5;
+}
+
+float tile(vec2 uv, float wd) {
+
+    vec2 id = floor(uv), q = fract(uv)-.5;
+    float hs = hash21(id.xy);
+
+    if(hs>.5)  q.xy *= rot(1.5707);
+    hs = fract(hs*75.32);
+    
+    float pf = .353;
+    vec2 q2 = q; q*=r45;
+    
+    vec2 p2 = vec2(length(q.x+pf),length(q.x-pf));
+    float pq = p2.x<p2.y? q.x+pf : q.x-pf;
+
+    // main pattern
+    float d = abs(length(pq))-wd;
+
+    // alt pattern
+    if(hs>.85) {
+        d = min(length(q2.x),length(q2.y))-(wd*1.4);
+        float xd = length(abs(q2.x)-(wd*1.65))-(wd*.25);
+        d = max(d,-xd);
+    }
+    
+    return d;
+}
+
+vec2 map(vec3 pos){
+
+    vec2 res = vec2(1e5,0);
+
+    vec3 xpo = pos;
+    xpo.z += 12.+5.*sin(T*.1);
+    xpo.yz*=r1;
+    xpo.xz*=r2;
+    
+    float bx = box(xpo,vec3(1.5))-.05;
+    if(bx<res.x) {
+        res = vec2(bx,4.);
+        hit = xpo;
+    }
+    
+    pos = twist(pos);
+    pos.z -= T;
+
+    float k = tile(pos.yz*.75,.15+.1*sin(pos.z*.2));
+    float b = opx(k,abs(pos.x)-8.,1.5)-.02;
+
+    if(b<res.x) {
+        res = vec2(b,2.);
+        hit = pos;
+    }
+
+    return res;
+}
+
+vec3 normal(vec3 p, float t) {
+    float e = MIN_DIST*t;
+    vec2 h =vec2(1,-1)*.5773;
+    vec3 n = h.xyy * map(p+h.xyy*e).x+
+             h.yyx * map(p+h.yyx*e).x+
+             h.yxy * map(p+h.yxy*e).x+
+             h.xxx * map(p+h.xxx*e).x;
+    return normalize(n);
+}
+
+vec2 marcher(vec3 ro, vec3 rd){
+	float d = 0.,m = 0.;
+    for(int i=0;i<100;i++){
+    	vec2 ray = map(ro + rd * d);
+        if(ray.x<MIN_DIST*d||d>MAX_DIST) break;
+        d += i<32?ray.x*.3:ray.x*.8;
+        m  = ray.y;
+    }
+	return vec2(d,m);
+}
+
+vec2 getHit(vec3 n) {
+        vec3 aN = abs(n);
+        ivec3 idF = ivec3(n.x<-.25? 0 : 5, n.y<-.25? 1 : 4, n.z<-.25? 2 : 3);
+        int face = aN.x>.5? idF.x : aN.y>.5? idF.y : idF.z;
+        
+        vec2 hpp;
+        if(face==0) hpp = hitPoint.zy;
+        if(face==1) hpp = hitPoint.zx;
+        if(face==2) hpp = hitPoint.xy;
+        if(face==3) hpp = hitPoint.xy;
+        if(face==4) hpp = hitPoint.zx;
+        if(face==5) hpp = hitPoint.yz;
+        return hpp;
+}
+
+vec3 fog = vec3(.11,.09,.08);
+vec3 render(inout vec3 ro, inout vec3 rd, inout vec3 ref, inout float d, vec2 uv, float bnc) {
+
+    vec3 C = vec3(0);
+    vec2 ray = marcher(ro,rd);
+    float m = ray.y;
+    d = ray.x;
+    hitPoint = hit;
+
+    if(d<MAX_DIST)
+    {
+        vec3 p = ro + rd * d,
+             n = normal(p,d);
+             
+        vec3 lpos =vec3(-1.,-2,5.),
+             l = normalize(lpos-p),
+             h = vec3(.5);
+        
+        float shdw = 1.,
+              diff = clamp(dot(n,l),0.,1.);
+              
+        for( float t=.1; t < 8.; ) {
+            float h = map(p + l*t).x;
+            if( h<MIN_DIST ) { shdw = 0.; break; }
+            shdw = min(shdw, 18.*h/t);
+            t += h;
+            if( shdw<MIN_DIST || t>8. ) break;
+        }
+        diff = mix(diff,diff*shdw,.75);
+
+        vec3 tn = n;
+        vec2 hpp = getHit(tn);
+
+        if(m==2.) {
+              h = texture(iChannel1,hpp*.25).rgb;
+            ref = h*.5;
+        }
+
+        tn = n;
+        tn.yz*=r1;
+        tn.xz*=r2;
+        hpp = getHit(tn);
+
+        if(m==4.) {
+              h = texture(iChannel2,hpp*.25).rgb;
+            ref = vec3(.5);
+        }
+        
+        C = diff * h;
+        
+        ro = p+n*.01;
+        rd = reflect(rd,n);
+    } 
+
+    if(bnc>0.) C = mix(C,fog,1.-exp(-.000008*d*d*d));
+    return C;
+}
+
+void main()
+{
+    vec2 F = gl_FragCoord.xy;
+    r45 = rot(.7853981634);
+    r1 = rot(T*.05);
+    r2 = rot(T*.1);
+    
+    vec2 uv = (2.*F.xy-R.xy)/max(R.x,R.y);
+    vec3 ro = vec3(0,0,.5);
+    vec3 rd = normalize(vec3(uv,-1));
+
+    //camera
+    float x = M.xy==vec2(0) || M.z<0. ? .0 : -(M.y / R.y * .2 - .1) * PI;
+    float y = M.xy==vec2(0) || M.z<0. ? .0 :  (M.x / R.x * .2 - .1) * PI;
+    mat2 rx = rot(x), ry = rot(y);
+    
+    ro.yz *= rx, ro.xz *= ry;
+    rd.yz *= rx, rd.xz *= ry;
+
+    // reflection loop (@BigWings)
+    vec3 C = vec3(0), ref=vec3(0), fil=vec3(1);
+    
+    float d =0., a = 0., bnc = 2.;
+    for(float i=0.; i<bnc; i++) {
+        vec3 pass = render(ro, rd, ref, d, uv, bnc);
+        C += pass.rgb*fil;
+        fil*=ref;
+        if(i==0.) a = exp(-.00001*d*d*d);
+    }
+    
+    C = mix(C,fog,1.-a);
+    C=pow(C, vec3(.4545));
+    fragColor = vec4(C,1);
+}
+
+
+</script>
+<!-- partial -->
+  <script src='https://jhancock532.github.io/twgl.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

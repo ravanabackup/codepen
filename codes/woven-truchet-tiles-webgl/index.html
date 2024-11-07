@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Woven Truchet Tiles / WebGL</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+#if __VERSION__ < 130
+#define TEXTURE2D texture2D
+#else
+#define TEXTURE2D texture
+#endif
+precision highp float;
+  in vec4 position;
+
+  void main() {
+    gl_Position = vec4( position );
+  }
+</script>
+
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 fragColor;
+  
+uniform vec2 u_resolution;
+uniform vec4 u_mouse;
+uniform float u_time;
+uniform sampler2D iChannel0;
+uniform sampler2D iChannel1;
+  
+#define R           u_resolution
+#define T           u_time
+
+#define PI         3.14159265359
+#define PI2        6.28318530718
+#define SQ3        1.732
+
+mat2 rot(float a){return mat2(cos(a),sin(a),-sin(a),cos(a));}
+float hash21(vec2 p){return fract(sin(dot(p, vec2(27.609, 57.583)))*43758.5453);}
+
+vec3 hue(float t) {
+    return .15 + .15*cos(PI2*t*(vec3(0.922,0.506,0.118)+vec3(0.88,.97,.85))); 
+}
+
+//@Shane
+vec4 hexGrid(vec2 uv, float scale){
+    uv*=scale;
+    const vec2 s = vec2(SQ3, 1.);
+    vec4 hC = floor(vec4(uv, uv - vec2(1, .5))/s.xyxy) + .5;
+    vec4 h4 = vec4(uv - hC.xy*s, uv - (hC.zw + .5)*s);
+    return dot(h4.xy, h4.xy) < dot(h4.zw, h4.zw) ? vec4(h4.xy, hC.xy) : vec4(h4.zw, hC.zw + .5);
+}
+
+const float scale = 10.;
+const float s4 = .577350;
+const float s3 = .288683;
+
+void main()
+{
+    vec2 F = gl_FragCoord.xy;
+    vec2 uv = F.xy/max(R.x,R.y);
+    vec2 vv = uv;
+  
+    vec3 C = vec3(.05);
+    uv += vec2(0,.0125) * T;
+    
+    float px = scale/R.x;
+    
+    vec4 hex = hexGrid(uv,scale);
+    vec2 id = hex.zw, p = hex.xy;
+
+    float rnd = hash21(id);
+    float dir =  -1.;
+    mat2 r2 = rot(1.047197);
+    
+    if(rnd>.5) {
+        p *= r2;
+        p.y=-p.y;
+    } 
+
+    // set vectors
+    vec2 p0 = p - vec2(-s3, .5);
+    vec2 p1 = p - vec2( s4,  0);
+    vec2 p2 = p - vec2(-s3,-.5);
+    
+    // find closest point
+    vec3 d3 = vec3(length(p0), length(p1), length(p2));
+    vec2 pp = vec2(0);
+
+    if(d3.x>d3.y) pp = p1;
+    if(d3.y>d3.z) pp = p2;
+    if(d3.z>d3.x && d3.y>d3.x) pp = p0;
+
+    // hex background
+    float tileform = max(abs(hex.x)*.8660254 + abs(hex.y)*.5, abs(hex.y)) - .5;
+    float cells = smoothstep(px,-px, abs(tileform)-.006);
+    
+    float thk = .08;
+    float circle = length(pp)-s3;
+    circle = abs(circle)-thk;
+
+    float c1 = 1e5, c2 = 1e5, c3 = 1e5;  
+    vec2 pq = p;
+    
+    rnd = fract(rnd*4731.75);
+    float rwd = fract(rnd*3232.32);
+    
+    if(rnd>.8) {
+        c3 = length(pq.x)-thk;
+        circle = c3;
+        c3 = abs(c3)-.001;
+        pq*=r2;
+        c2 = length(pq.x)-thk;
+        circle = min(c2,circle);
+        c2 = abs(c2)-.001;
+        pq*=r2;
+        c1 = length(pq.x)-thk;
+        circle = min(c1,circle);
+        c1 = abs(c1)-.001;
+
+        c1 = rwd>.4?rwd>.7?c2:c3:c1;
+        circle = max(circle,-c1);
+    }
+    
+    if(rnd<.045) {
+        pq*=r2;pq*=r2;circle = length(pq.x)-thk;
+        c2 = length(p0)-s3;
+        c1 = length(p0+vec2(-.58,1.))-s3;
+        c1 = min(c2,c1);
+        c1 = abs(c1)-thk;
+        circle = min(circle,c1);
+    } else if(rnd<.075) {
+        circle = length(pq.x)-thk;
+        c2 = length(p1)-s3;
+        c1 = length(p1+vec2(1.155,0))-s3;
+        c1 = min(c2,c1);
+        c1 = abs(c1)-thk;
+        circle = min(circle,c1);
+    }
+
+    float sc = smoothstep(px,-px,circle-.05);
+    float sd = smoothstep(px,-px,circle+.05);
+
+    circle = abs(circle)-.02;
+    circle = smoothstep(px,-px,circle);
+
+    //mixdowns and stuff
+    vec3 clr =  vec3(0.000,0.561,0.839);
+
+    C = texture(iChannel0,(p-.58)).rgb;
+    C = mix(C,vec3(0),cells);
+ 
+    C = mix(C,vec3(0),sc);
+    C = mix(C,clr,circle);
+    C = mix(C,texture(iChannel1,(p-.58)).rgb,sd);
+    C = mix(C,C*.5,cells);
+    
+    //output
+    C = pow(C,vec3(.4545));
+    fragColor = vec4(C,1.);
+}
+
+</script>
+<!-- partial -->
+  <script src='https://jhancock532.github.io/twgl.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

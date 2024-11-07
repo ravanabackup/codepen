@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>QuadTree in a LogPolar Warp / WebGL Shader</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+precision highp float;
+in vec4 vPosition;
+void main() {
+	gl_Position = vPosition;
+}
+</script>
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 fragColor;
+  
+uniform vec4 mouse;
+uniform vec2 resolution;
+uniform float time;
+
+#define R           resolution
+#define T           time
+
+#define PI         3.14159265359
+#define PI2        6.28318530718
+
+
+mat2 rot (float a) { return mat2(cos(a),sin(a),-sin(a),cos(a)); }
+float hash21(vec2 p){ return fract(sin(dot(p,vec2(26.34,45.32)))*4324.23); }
+
+vec3 hue(float t){ 
+    const vec3 d = vec3(0.067,0.812,0.910);
+    return .55 + .45*cos(PI2*t*(vec3(.95,.97,.98)*d)); 
+}
+
+float box( in vec2 p, in vec2 b ){
+    vec2 d = abs(p)-b;
+    return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+}
+
+vec2 logPolar(vec2 p) {
+	p = vec2(log(length(p)), atan(p.y, p.x));
+	return p;
+}
+
+void main() {
+    vec2 F = gl_FragCoord.xy;
+    vec2 uv = (2.*F.xy-R.xy)/max(R.x,R.y);
+    vec2 vuv= uv*rot(T*.085);
+    
+    vuv=logPolar(vuv)*3.5;
+    vuv.x+=T*.35;
+    
+    float px = fwidth(vuv.x);
+    float level=1.;
+
+    vec3 C = vec3(.0325);
+    float mask = smoothstep(.65,.0,length(uv)-.2);
+    C = mix(C, vec3(.125),mask);
+    
+    for(int k=0; k<4; k++){
+        vec2 id = floor(vuv*level);
+        float rnd = hash21(id);
+        
+        // threshold or if last loop
+        if(rnd>.45||k>2) {
+
+            vec2 p = vuv -(id+.5)/level;
+            rnd = hash21(rnd+id.yx);
+
+            float d = length(p)-.495/level;
+            float s = length(p)-.425/level;
+
+            
+            d = smoothstep(px,-px,d);
+            
+  
+            if(rnd<.67) {
+                if(rnd>.23)s=abs(s)-.05/level;
+                s = smoothstep(px,-px,s);
+                C=mix(C,hue((id.y*.05)+float(k+1)*.25),s);
+            } else {
+                C=mix(C,vec3(.2),d);
+                            
+                if(hash21(rnd+id)>.8) {
+                    p*=rot(rnd+T*.5);
+                    vec2 cs = vec2(.3,.075)/level;
+                    float cx = box(p,cs);
+                    cx=min(box(p,cs.yx),cx);
+                    cx=smoothstep(px,-px,cx);
+                    C=mix(C,vec3(.8),cx);
+                }
+            }
+
+            break;
+        }
+        level*=2.;
+    }
+    
+    C = pow(C, vec3(.4545));    
+    fragColor = vec4(C,1.);
+}
+</script>
+<div id="container" />
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

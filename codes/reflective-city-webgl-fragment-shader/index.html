@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Reflective City | WebGL Fragment Shader</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+precision highp float;
+  in vec4 position;
+
+  void main() {
+    gl_Position = vec4( position );
+  }
+</script>
+
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+  
+out vec4 fragColor;
+  
+uniform vec4 u_mouse;
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#define R           u_resolution
+#define T           u_time
+#define M           u_mouse
+
+#define PI          	3.14159265358
+#define PI2         	6.28318530718
+
+#define MIN_DIST    .0001
+#define MAX_DIST    55.
+
+float hash21(vec2 a){ return fract(sin(dot(a, vec2(27.609, 57.583)))*43758.5453); }
+mat2 rot(float a) { return mat2(cos(a),sin(a),-sin(a),cos(a)); }
+float lsp(float begin, float end, float t) { return clamp((t - begin) / (end - begin), 0.0, 1.0); }
+
+//@iq https://iquilezles.org/articles/palettes
+vec3 hue(float t){ 
+    vec3 d = vec3(0.110,0.584,0.949);
+    return .45+.4*cos( PI2*t*vec3(.95,.97,.88)*d ); 
+}
+//@iq 
+float box( vec3 p, vec3 b ) {
+    vec3 q = abs(p)-b;
+    return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.);
+}
+float box( vec2 p, vec2 b ) {
+    vec2 d = abs(p)-b;
+    return length(max(d,0.)) + min(max(d.x,d.y),0.);
+}
+
+//global
+float thrs = .15,xln,tm,tmod,ga1,ga2;
+float mat,hash,smat,shash;
+vec2 gid,sid;
+vec3 hp,hitPoint;
+
+const float scale = 2./1.;
+const float scale_h = scale*.5;
+const vec2 s = vec2(scale)*2.;
+const vec2 pos = vec2(.5,-.5);
+const vec2[4] ps4 = vec2[4](pos.yx,pos.xx,pos.xy,pos.yy);
+
+vec2 map(vec3 p3) {
+    vec2 r = vec2(1e5,0.);
+    p3.x+=T*.5;
+
+    vec2 p,ip,id=vec2(0),ct=vec2(0);
+         
+    for(int i =0; i<4; i++){
+        ct = ps4[i]/2. - ps4[0]/2.;
+        p  = p3.xz - ct*s;
+        ip = floor(p/s)+.5;
+        p -= (ip)*s;
+        vec2 idi = (ip+ct)*s;
+
+        float hs = hash21(idi),
+             shs = hs;
+        
+        hs=floor(hs*12.)*.2;
+
+        vec3 q = vec3(p.x,p3.y+2.-hs,p.y);
+
+        vec2 bz = vec2(.52,.1+hs),
+             bx = vec2(bz.x+.01,.01);
+        
+        float d = box(q,bz.xyx);
+        if(d<r.x) {
+            r = vec2(fract(shs*34.23)>thrs?d:1.,2.);
+            sid=idi;
+            shash=hs;
+            hitPoint=q;
+        }
+
+    }
+
+    float f = p3.y+2.;
+    if(f<r.x) {
+        r = vec2(f,1.);
+        sid=vec2(15);
+        shash=.0;
+        hitPoint=p3;
+    }
+    return r;
+}
+
+// Tetrahedron technique @iq
+// https://iquilezles.org/articles/normalsSDF
+vec3 normal(vec3 p, float t) {
+    float e = MIN_DIST*t;
+    vec2 h =vec2(1,-1)*.5773;
+    vec3 n = h.xyy * map(p+h.xyy*e).x+
+             h.yyx * map(p+h.yyx*e).x+
+             h.yxy * map(p+h.yxy*e).x+
+             h.xxx * map(p+h.xxx*e).x;
+    return normalize(n);
+}
+
+vec2 marcher(vec3 ro, vec3 rd, inout vec3 p, inout bool hit, int steps) {
+    hit = false; float d=0., m = 0.;
+    for(int i=0;i<steps;i++) {
+        p = ro + rd * d;
+        vec2 t = map(p);
+        if(abs(t.x)<d*MIN_DIST) hit = true;
+        d += i<32? t.x*.4:t.x*.9;
+        m  = t.y;
+        if(d>MAX_DIST) break;
+    } 
+    return vec2(d,m);
+}
+
+vec3 FC = vec3(0);
+vec3 render(inout vec3 ro, inout vec3 rd, inout vec3 ref, int bnc, inout float d) {
+        
+    vec3 RC=vec3(0);
+    vec3 p = ro;
+    float m = 0., fA = 0., f = 0.;
+    bool hit = false;
+    
+    vec2 ray = marcher(ro,rd,p, hit, 100);
+    d = ray.x;
+    m = ray.y;
+    
+    hp = hitPoint;
+    hash=shash;
+    gid=sid;
+    
+    if(d<MAX_DIST)
+    {
+        vec3 n = normal(p,d);
+        vec3 lpos =  vec3(5.5,12,2.5);
+        vec3 l = normalize(lpos);
+
+        float diff = clamp(dot(n,l),0.,1.);
+
+        float shdw = 1.0;
+        for(float z=.01;z<14.;) {
+            float h = map(p+l*z).x;
+            if(h<MIN_DIST) {shdw=0.;break;}
+            shdw = min(shdw, 14.*h/z);
+            z+=h;
+            if(shdw<MIN_DIST) break;
+        }
+        diff = mix(diff,diff*shdw,.75);
+
+        float fresnel = pow(clamp(1.+dot(rd, n), 0., 1.), 11.);
+        fresnel = mix(.0, .9, fresnel);
+
+        vec3 view = normalize(p - ro);
+        vec3 ret = reflect(normalize(lpos), n);
+        float spec =  0.75 * pow(max(dot(view, ret), 0.), 24.);
+
+        vec3 h = vec3(.5);
+            
+        if(m==1.) {
+            float px = 4./R.x;
+            h = vec3(.1);
+
+            vec2 uv = fract(hp.xz/scale);
+
+            float d = min(
+                length(abs(uv.x-.5))-.1,
+                length(abs(uv.y-.5))-.1
+                );
+
+            float b=smoothstep(px,-px,abs(d)-.015);
+            d=smoothstep(px,-px,d);
+
+            h=mix(h,vec3(.0),d);  
+            h=mix(h,vec3(.3),b); 
+            
+            ref = vec3(1.-d);
+        }
+
+        if(m==2.) {
+            float px = 4./R.x;
+            float ss = floor(5./.45);
+
+            vec3 ff = floor(hp*ss)+gid.xyx,
+                 vv = fract(hp*ss)-.5;
+            vec2 uv = fract(hp.xz*ss)-.5;
+
+            float b = box(vv,vec3(.375))-.075;
+            b=smoothstep(px,-px,b);
+
+            h = vec3(.25);
+            float hx = hash21(ff.xy),
+                  hy = hash21(ff.yz),
+                  hs = max(hx,hy);
+
+            h = vec3(mix(h,vec3(hs),b));
+            
+            ref = vec3(mix(vec3(.3),1.-h,b));
+            if(hp.y>hash+.085) {
+                h = vec3(.1);ref=vec3(.0);
+            }
+            
+        }
+
+        RC = h * diff + min(spec,shdw);
+        if(bnc<3) RC = mix(RC,FC, 1.-exp(-.5*d*d*d));
+        
+        ro = p+n*.001;
+        vec3 rf = reflect(rd,n);
+        rd = mix(rd,rf,1.-fresnel);
+        
+    } else {
+        RC = FC;
+    } 
+
+    return RC;
+}
+
+void main()
+{
+    // uv ro + rd
+    vec2 F = gl_FragCoord.xy;
+    vec2 uv = (2.* F.xy-R.xy)/max(R.x,R.y);
+
+    vec3 ro = vec3(0, 0, 10);
+    vec3 rd = normalize(vec3(uv, -1.0));
+    
+    float ttt = T*.5;
+    
+    tmod = mod(ttt, 10.);
+    tm   = mod(ttt, 20.);
+    
+    float t1 = lsp(3.,  5., tmod);
+    float t2 = lsp(8., 10., tmod);
+    
+    ga1 = ((t1-t2)*2.4)-1.2;
+
+    float px = tm<10.? .18 : 1.457;
+    float py = tm<10.? .28 : .0;
+
+    xln = tmod<5.?ga1-uv.y*.123:ga1+uv.y*.123;
+    
+    if(uv.x>xln) { 
+    
+        px = tm>5.&&tm<15.? .55: .1*sin(T*.2);
+        py = tm>5.&&tm<15.? .78+T*.04: -1.475;
+    }
+    
+    float ux = (uv.y+.5)*.6;
+    FC = mix(vec3(0.153,0.027,0.027),vec3(0.012,0.024,0.208),ux);
+    
+    // mouse //
+    float x = M.xy==vec2(0)||M.z<1. ? px : px-(M.y/R.y*.25-.125)*PI;
+    float y = M.xy==vec2(0)||M.z<1. ? py : py-(M.x/R.x* 2.-1.)*PI;
+
+    mat2 rx = rot(x), ry = rot(y);
+
+    ro.yz*=rx; ro.xz*=ry; 
+    rd.yz*=rx; rd.xz*=ry;
+
+    vec3 C=vec3(0), RC=vec3(0), ref=vec3(0), fill=vec3(1);
+    vec3 p = ro;
+    float m = 0., d = 0., fA = 0., f = 0.;
+    bool hit = false;
+ 
+    int bnc = 3;
+    for(int i = 0; i < bnc; i++){
+        RC = render(ro,rd,ref,bnc-i,d);
+        C += RC*fill;
+        fill *= ref; 
+        if(i==0)fA=d;
+    }
+    C = mix(C,FC, 1.-exp(-.001*fA*fA*fA));
+    C = mix(C,FC,smoothstep(0.,1.,f*0.015));
+    if(uv.x+.005>xln && uv.x-.005<xln)C=vec3(0);  
+    C = pow(C, vec3(.4545));
+    fragColor = vec4(C,1.0);
+}
+</script>
+<!-- partial -->
+  <script src='https://jhancock532.github.io/twgl.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
