@@ -1,0 +1,89 @@
+body {
+  background: #000;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.container, .circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-image: linear-gradient(#fff 25%, #000 25%, #000 75%, #fff 75%);
+  background-size: 25px 25px;
+  background-position: center;
+}
+
+.container {
+  transform: translate(-50%, -50%);
+  height: 440px;
+  width: 440px;
+  border-radius: 77.1929824561px;
+}
+
+.circle {
+  border-radius: 50%;
+}
+.circle:nth-child(1) {
+  -webkit-animation: spin 1s -0.25s ease-in-out alternate infinite;
+          animation: spin 1s -0.25s ease-in-out alternate infinite;
+  height: 386px;
+  width: 386px;
+  margin: -193px;
+}
+.circle:nth-child(2) {
+  -webkit-animation: spin 1s -0.5s ease-in-out alternate infinite;
+          animation: spin 1s -0.5s ease-in-out alternate infinite;
+  height: 336px;
+  width: 336px;
+  margin: -168px;
+}
+.circle:nth-child(3) {
+  -webkit-animation: spin 1s -0.75s ease-in-out alternate infinite;
+          animation: spin 1s -0.75s ease-in-out alternate infinite;
+  height: 286px;
+  width: 286px;
+  margin: -143px;
+}
+.circle:nth-child(4) {
+  -webkit-animation: spin 1s -1s ease-in-out alternate infinite;
+          animation: spin 1s -1s ease-in-out alternate infinite;
+  height: 236px;
+  width: 236px;
+  margin: -118px;
+}
+.circle:nth-child(5) {
+  -webkit-animation: spin 1s -1.25s ease-in-out alternate infinite;
+          animation: spin 1s -1.25s ease-in-out alternate infinite;
+  height: 186px;
+  width: 186px;
+  margin: -93px;
+}
+.circle:nth-child(6) {
+  -webkit-animation: spin 1s -1.5s ease-in-out alternate infinite;
+          animation: spin 1s -1.5s ease-in-out alternate infinite;
+  height: 136px;
+  width: 136px;
+  margin: -68px;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    transform: rotate(-7deg);
+  }
+  100% {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(-7deg);
+  }
+  100% {
+    transform: rotate(7deg);
+  }
+}

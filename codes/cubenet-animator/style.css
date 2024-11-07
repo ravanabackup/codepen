@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  font-family: cubenet, monospace;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2em 0;
+}
+
+h1, input {
+  font: inherit;
+}
+
+.output {
+  position: relative;
+  display: block;
+  width: 38em;
+  height: 38em;
+  margin: 2em auto;
+  border: 1em solid white;
+  font-family: cubenet, monospace;
+  text-align: left;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px black;
+}
+.output p {
+  position: absolute;
+  left: 0;
+  bottom: -1em;
+  visibility: hidden;
+  width: 100%;
+  line-height: 1;
+  margin: 0;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}

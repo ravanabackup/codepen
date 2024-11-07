@@ -1,0 +1,16 @@
+html {
+  background: #cfd6c2;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  filter: url(#noisy);
+  -ms-interpolation-mode: nearest-neighbor;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}

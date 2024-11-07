@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>rainbow flakes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="container"></div>
+
+<script type="x-shader/x-vertex" id="vertexshader">
+
+    #define M_PI 3.1415926535897932384626433832795
+    
+    attribute vec3 color;
+    varying vec3 vColor;
+    attribute vec3 displacement;
+    attribute float startTime;
+    
+    uniform float time;
+    varying float vTime;
+    
+		void main() {
+    	vTime = ( time - startTime ) * 0.05;
+      float xVal = displacement.x * vTime - (10.0 + (0.05*vTime)) * vTime;
+      float yVal = sin(2.0*M_PI*(xVal/400.0))*30.0 + displacement.y * vTime;
+      float zVal = sin(2.0*M_PI*(xVal/300.0))*20.0 + displacement.z * vTime;
+      vec3 newPosition = position + vec3(xVal, yVal, zVal);
+  		gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+      vColor = color;
+    }
+
+</script>
+
+<script type="x-shader/x-fragment" id="fragmentshader">
+
+    varying vec3 vColor;
+    varying float vTime;
+
+    void main() {
+      gl_FragColor = vec4( vColor.rgb, 1.0 - vTime*0.005 );
+    }
+
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

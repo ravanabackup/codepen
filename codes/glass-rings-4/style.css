@@ -1,0 +1,13 @@
+html {
+  background: #cfd6c2;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  filter: url(#noisy);
+  image-rendering: crisp-edges;
+}

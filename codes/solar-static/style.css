@@ -1,0 +1,18 @@
+body {
+  overflow: hidden;
+  cursor: none;
+}
+
+.space, .planet, .sun {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.space, .planet {
+  top: 50%;
+  left: 50%;
+}
+
+.planet, .sun {
+  border-radius: 50%;
+}
