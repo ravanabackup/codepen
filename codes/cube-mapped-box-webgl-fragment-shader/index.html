@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Cube Mapped Box/WebGL Fragment Shader</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- VertexShader code here -->
+<script id="vertexShader" type="x-shader/x-vertex">#version 300 es
+precision highp float;
+in vec2 a_texCoord;
+in vec4 vPosition;
+out vec2 v_texcoord;
+void main() {
+	gl_Position = vPosition;
+  v_texcoord = a_texCoord;
+}
+</script>
+<!-- FragmentShader code here -->
+<script id="fragmentShader" type="x-shader/x-fragment">#version 300 es
+  #if __VERSION__ < 130
+#define TEXTURE2D texture2D
+#else
+#define TEXTURE2D texture
+#endif
+
+precision highp float;
+out vec4 fragColor;
+uniform sampler2D iChannel0;
+uniform sampler2D iChannel1;
+uniform sampler2D iChannel2;
+uniform sampler2D iChannel3;
+uniform vec2 v_texCoord;
+uniform vec4 mouse;
+uniform vec2 resolution;
+uniform float time;
+
+#define R           resolution
+#define T           time
+#define M           mouse
+
+#define PI         3.14159265359
+#define PI2        6.28318530718
+
+#define MAX_DIST    100.
+#define MIN_DIST    .0001
+
+float hash21(vec2 p){ return fract(sin(dot(p,vec2(26.34,45.32)))*4324.23); }
+mat2 rot(float a){ return mat2(cos(a),sin(a),-sin(a),cos(a)); }
+float vmax(vec3 p){ return max(max(p.x,p.y),p.z); }
+//@iq
+float cap( vec3 p, float h, float r ){
+    vec2 d = abs(vec2(length(p.xz),p.y)) - vec2(h,r);
+    return min(max(d.x,d.y),0.0) + length(max(d,0.0));
+}
+//@iq
+float vcap( vec3 p, float h, float r ){
+    p.y -= clamp( p.y, 0.0, h );
+    return length( p ) - r;
+}
+
+float modPolar(inout vec2 p, float rep) {
+    float angle = 2.*PI/rep;
+    float a = atan(p.y, p.x) + angle/2.;
+    float c = floor(a/angle);
+    a = mod(a,angle) - angle/2.;
+    p = vec2(cos(a), sin(a))*length(p);
+    return (abs(c) >= (rep/2.)) ? abs(c) : c;
+} 
+
+float box(vec3 p, vec3 b){
+	vec3 d = abs(p) - b;
+	return length(max(d,vec3(0))) + vmax(min(d,vec3(0)));
+}
+
+vec3 hit=vec3(0),hitPoint=vec3(0);
+mat2 ria,gia,turn,spin;
+
+const float sz = 3.;
+const float hf = sz*.5;
+
+vec2 map(vec3 pos, float sg){
+    vec2 res = vec2(1e5,0.);
+    pos.y+=1.25;;
+    vec3 q = pos-vec3(0,2.5,0);
+    vec3 b = pos-vec3(0,1.05,0);
+    
+    q.yx*=spin;
+    q.zx*=spin;
+
+    float d1 = box(q,vec3(1.5))-.0423;
+    if(d1<res.x){
+        res = vec2(d1,2.);
+        hit=q;
+    }
+
+    b.xz=abs(abs(abs(b.xz)-12.)-6.)-3.;
+    vec3 hitb = b;
+    
+    float pillar = cap(b,.3,1.5);
+    vec3 tb =vec3(b.x,abs(b.y),b.z);
+    float pcap = box(tb-vec3(0,1.45,0),vec3(.5,.15,.5))-.005;
+        pcap=min(cap(tb-vec3(0,1.3,0),.4,.05),pcap);
+    
+    modPolar(b.xz,16.);
+    vec3 bt = b-vec3(.3,-1.1,0);
+    
+    float grv = vcap(bt,2.2,.045);
+    pillar = max(pillar,-grv);
+    pillar = min(pcap,pillar);
+
+    if(pillar<res.x)
+    {
+        res = vec2(pillar*.75,3.);
+    	hit=hitb;
+    }
+
+    float ground =pos.y+.5;
+    if(ground<res.x){
+        res = vec2(ground,1.);
+        hit=pos;
+    }
+  
+    return res;
+}
+
+vec3 normal(vec3 p, float t){
+    float e = MIN_DIST*t;
+    vec2 h =vec2(1,-1)*.5773;
+    vec3 n = h.xyy * map(p+h.xyy*e,0.).x+
+             h.yyx * map(p+h.yyx*e,0.).x+
+             h.yxy * map(p+h.yxy*e,0.).x+
+             h.xxx * map(p+h.xxx*e,0.).x;
+    return normalize(n);
+}
+
+vec2 marcher(vec3 ro, vec3 rd, int maxsteps, float sg){
+	float d = 0.;
+    float m = 0.;
+    for(int i=0;i<maxsteps;i++){
+    	vec2 ray = map(ro + rd * d, sg);
+        if(ray.x<MIN_DIST*d||d>MAX_DIST) break;
+        d += ray.x * .85;
+        m  = ray.y;
+    }
+	return vec2(d,m);
+}
+
+// Tri-Planar blending function. GPU Gems 3 - Ryan Geiss:
+vec3 tex3D(sampler2D t, in vec3 p, in vec3 n ){
+    n = max(abs(n), MIN_DIST);
+    n /= dot(n, vec3(1));
+	  vec3 tx = texture(t, p.yz).xyz;
+    vec3 ty = texture(t, p.zx).xyz;
+    vec3 tz = texture(t, p.xy).xyz;
+    return mat3(tx*tx, ty*ty, tz*tz)*n;
+    //return (tx*tx*n.x + ty*ty*n.y + tz*tz*n.z);
+}
+
+float sface;
+vec3 getFace(int face, vec3 p){
+    float cir = 0.;
+    vec2 uv;
+    
+    if(face==0) uv=p.yz;
+    if(face==1) uv=p.zx;
+    if(face==2) uv=p.xy;
+    if(face==3) uv=p.xy;
+    if(face==4) uv=p.xz;
+    if(face==5) uv=p.zy;
+    uv*=2.;
+    
+    float px = fwidth(uv.x);
+    vec2 grid_uv = fract(uv)-.5;
+    vec2 grid_id = floor(uv);
+    
+    float chk = mod(grid_id.y + grid_id.x,2.) * 2. - 1.;
+    float hs = hash21(grid_id);
+    if(hs>.5) grid_uv.x*=-1.;
+    
+    vec2 d2 = vec2(length(grid_uv-.5), length(grid_uv+.5));
+    vec2 gx = d2.x<d2.y? vec2(grid_uv-.5) : vec2(grid_uv+.5);
+
+    float circle = length(gx)-.5;
+    float circle2 =abs(circle)-.025;
+    circle2=smoothstep(.001+px,-px,circle2);
+    circle=(chk>0.^^ hs>.5)?smoothstep(-px,.001+px,circle):smoothstep(.001+px,-px,circle);
+
+    cir= mix(cir,.0,circle);
+    cir= mix(cir,1.,circle2);
+    sface=mix(0.,1.,circle);
+    return vec3(cir);
+}
+// based on bmp mapping from
+// https://www.shadertoy.com/view/ld3yDn
+vec3 doBumpMap( vec3 p, vec3 n, float bf, float per, int face){
+    vec2 e = vec2(per*MIN_DIST, 0);   
+    mat3 m = mat3( 
+        getFace(face, p - e.xyy), 
+        getFace(face, p - e.yxy), 
+        getFace(face, p - e.yyx)
+    );
+    vec3 g = vec3(0.299, 0.587, 0.114) * m; 
+    g = (g - dot(getFace(face, p), vec3(0.299, 0.587, 0.114)) )/e.x; g -= n*dot(n, g);  
+    return normalize( n + g*bf );
+}
+
+vec4 FC = vec4(0.019,0.019,0.019,0.);
+
+vec4 render(inout vec3 ro, inout vec3 rd, inout vec3 ref, bool last, inout float d, vec2 uv) {
+
+    vec3 C = vec3(0);
+    vec2 ray = marcher(ro,rd,128, 1.);
+
+    hitPoint = hit;
+    gia=ria;
+    d = ray.x;
+    float m = ray.y;
+    float alpha = 0.;
+    
+    if(d<MAX_DIST)
+    {
+        vec3 p = ro + rd * d;
+        vec3 n = normal(p,d);
+        vec3 lpos =vec3(3.,8,3.);
+        vec3 lpos2 =vec3(5.,5,-5.);
+        vec3 l = normalize(lpos-p);
+        vec3 l2 = normalize(lpos2-p);
+        
+        vec3 h = vec3(.5);
+        vec3 hp = hitPoint;
+        vec3 cuv;
+        int face;
+        vec3 tn = n;
+        vec3 cn = n;
+        if(m==2.){
+            tn = n;
+            tn.yx*=spin;
+            tn.zx*=spin;
+            //https://www.shadertoy.com/view/3sVBDd
+            //finding the face of a cube using normal
+            vec3 aN = abs(tn);
+            ivec3 idF = ivec3(tn.x<-.25? 0 : 5, tn.y<-.25? 1 : 4, tn.z<-.25? 2 : 3);
+            face = aN.x>.5? idF.x : aN.y>.5? idF.y : idF.z;
+            
+            // set coords
+            if(face==0) cuv = hp.xyz;
+            if(face==1) cuv = hp.xyz;
+            if(face==2) cuv = hp.xyz;
+            if(face==3) cuv = hp.xyz;
+            if(face==4) cuv = hp.zyx;
+            if(face==5) cuv = hp.xyz;
+       
+            // get bump map surface
+            n=doBumpMap( cuv, n, .05, d, face);
+        }
+
+        float diff = clamp(dot(n,l),0.,1.);
+        float diff2 = clamp(dot(n,l2),0.,1.);
+        float fresnel = pow(clamp(1.+dot(rd, n), 0., 1.), 9.);
+        fresnel = mix(.01, .7, fresnel);
+
+        float shdw = 1.0;
+        for( float t=.01; t < 11.; )
+        {
+            float h = map(p + l*t,0.).x;
+            if( h<MIN_DIST ) { shdw = 0.; break; }
+            shdw = min(shdw, 16.*h/t);
+            t += h;
+            if( shdw<MIN_DIST || t>32. ) break;
+        }
+        float shdw2 = 1.0;
+        for( float t=.01; t < 11.; )
+        {
+            float h = map(p + l2*t,0.).x;
+            if( h<MIN_DIST ) { shdw2 = 0.; break; }
+            shdw2 = min(shdw2, 16.*h/t);
+            t += h;
+            if( shdw2<MIN_DIST || t>32. ) break;
+        }
+        
+        diff = mix(diff,diff*shdw,.75);
+        diff2 = mix(diff2,diff2*shdw2,.75);
+        
+        vec3 diffMix =vec3(0);
+        diffMix = diff * vec3(0.502,0.290,0.000);
+        diffMix += diff2 * vec3(0.004,0.510,0.894);
+        
+        vec3 view = normalize(p - ro);
+        vec3 ret = reflect(normalize(lpos), n);
+        float spec =  0.5 * pow(max(dot(view, ret), 0.), (m==2.||m==4.)?24.:64.);
+
+        // materials
+        if(m==1.){
+            h=tex3D(iChannel1,hitPoint*.25,n).rgb;
+            C = (diffMix*h);
+            ref = vec3(clamp(.35-fresnel-(d*.01),.01,1.));
+        }
+        if(m==2.){
+            h = mix(tex3D(iChannel0,cuv*.55,tn).rgb, tex3D(iChannel2,cuv*.75,tn).rgb ,sface);
+            C = (diffMix*h)+spec;
+            ref = vec3(clamp(sface-fresnel,.01,.9));
+        }
+        if(m==3.){
+            h=clamp(tex3D(iChannel2,hitPoint*.5,tn).rrr+.5+fresnel,vec3(0),vec3(.8));//vec3(.2);
+            C = (diffMix*h);
+            ref = clamp((h-fresnel)-.5,vec3(0),vec3(1));
+        }
+        
+        C = mix(FC.rgb,C,exp(-.00015*d*d*d));
+        ro = p+n*.001;
+        rd = reflect(rd,n);
+    } else {
+        if(last) C = mix(FC.rgb,C,exp(-.000015*d*d*d));
+    }
+    C = clamp(C,vec3(0),vec3(1));
+    return vec4(C,alpha);
+}
+
+void main()
+{   
+    float timer = T*04.*PI/180.;
+    turn = rot(timer);
+    spin = rot(T*15.*PI/180.);
+    
+    vec2 F = gl_FragCoord.xy; 
+    vec2 uv = (2.*F.xy-R.xy)/max(R.x,R.y);
+    vec3 ro = vec3(0,0,6.75);
+    vec3 rd = normalize(vec3(uv,-1));
+    
+    //mouse
+    float x = M.xy == vec2(0) ? 0. : -(M.y/R.y * 1. - .5) * PI;
+    float y = M.xy == vec2(0) ? 0. : -(M.x/R.x * 1. - .5) * PI;
+    if(x<-.15)x=-.15;
+    mat2 rx = rot(x+.1);
+    mat2 ry = rot(y+timer);
+    
+    ro.yz *= rx;
+    rd.yz *= rx;
+    ro.xz *= ry;
+    rd.xz *= ry;
+    
+    // reflection loop (@BigWings)
+    vec3 C = vec3(0);
+    vec3 ref=vec3(0), fil=vec3(1);
+    float d =0.;
+    float numBounces = 2.;
+    // 3 is pretty but slows down 
+    for(float i=0.; i<numBounces; i++) {
+        vec4 pass = render(ro, rd, ref, i==numBounces-1., d, uv);
+        C += pass.rgb*fil;
+        fil*=ref;
+        if(i==0.) FC = vec4(FC.rgb,exp(-.000075*d*d*d));
+    }
+ 
+    C = mix(C,FC.rgb,1.-FC.w);
+    // gamma
+    C = clamp(C,vec3(0),vec3(1)); 
+    C = pow(C, vec3(.4545));
+    fragColor = vec4(C,1.);
+}
+
+</script>
+<div id="container" />
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
