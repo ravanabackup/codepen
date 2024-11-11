@@ -1,0 +1,100 @@
+html,body{
+	margin:0;
+	width:100%;
+	height:100vh;
+	background:#020a06;
+	font-size:1.7vw;
+	font-family:arial,tahoma;
+	color:white;
+}
+
+#master{
+	height:100vh;
+}
+
+#main{
+	position:relative;
+	top:50%;
+	transform:translateY(-50%);
+	float:left;
+    width:87vw;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-align-items: center;
+	align-items: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+	-webkit-flex-flow: row wrap;
+	flex-flow: row wrap;
+	-webkit-align-content: space-between;
+	align-content: space-between;
+}
+
+.puzzleDiv{
+	margin:1.5vw;
+	width:80vw;
+}
+
+.board{
+  float:left;
+	width:24.5vw;
+	height:24.5vw;
+	border:2px solid #acb;
+	background:rgba(30,40,35,1);
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.tile{
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+	width:33.333333333%;
+	height:33.333333333%;
+	float:left;
+	border:1px dotted #687;
+}
+.text,.textS{
+	position: relative;
+	float: left;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.text{
+	color:#dfe;	
+}
+.textS{
+	color:#3d8;
+}
+.poss{
+	position: absolute;
+	font-size:.45em;
+	width:2.6vw;
+	word-wrap:break-word;
+	color:#466;
+}
+
+.clear{
+	clear:both;
+}
+.arrow{
+	margin-top:11.2vw;
+	float:left;
+}
+button{
+	position:relative;
+	top:50%;
+	transform:translateY(-50%);
+	float:left;
+	margin-left:1vw;
+	font-size:.8em;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:5px;
+	padding-bottom:5px;
+	border-radius:10px;
+	background:#355;
+	color:#bfe;
+}

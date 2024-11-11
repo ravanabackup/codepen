@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>square walkers</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!--
+TODO:
+
+  2.  UI
+  3.  Improve spawning algorithm to only choose from available nodes instead of randomly looping over the whole grid.
+BUGS:
+  1.  Walkers are allowed to spawn on clearly "visited" nodes.  Maybe due to a race condition where the pathing walker and the spawning walker trigger in an unintentionally asynchronous manner?
+  2.  Very, very rarely a node is left unfilled when the drawing concludes.
+-->
+<canvas id="canvas"></canvas>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

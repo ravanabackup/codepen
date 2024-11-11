@@ -1,0 +1,23 @@
+body,html{
+  background: #000;
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+#canvas{
+  background:#000;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+#button{
+  position:absolute;
+  right:4%;
+  z-index: 10000;
+  top:2%;
+  font-size:3.5vh;
+  background:#262;
+  color:#fff;
+  border-radius:5px;
+}

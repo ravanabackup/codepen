@@ -1,0 +1,14 @@
+body,html{
+  background: #000;
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+#c{
+  border: 1px solid #4f81;
+  background:#000;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
