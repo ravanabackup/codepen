@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>dot topography</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="c"></canvas>
+<script id="v" type="x-shader/x-vertex">
+  attribute vec3 a_position;
+  uniform vec2 u_resolution;
+  uniform vec3 u_colorLow;
+  uniform vec3 u_colorHigh;
+  uniform float u_pointSize;
+  uniform float u_maxSteps;
+  
+  varying vec4 v_color;
+  
+  void main() {
+    vec2 scale = ((a_position.xy/ u_resolution) * 2.0) - 1.0;
+    vec2 coords = scale * vec2(1, -1);
+
+    float pct = a_position.z / u_maxSteps;
+    vec3 color = mix(u_colorLow, u_colorHigh, pct);
+    
+    gl_Position = vec4(coords, 1.0, 1.0);
+    gl_PointSize = u_pointSize;
+    v_color = vec4(color, 1.0);
+  }
+</script>
+<script id="f" type="x-shader/x-fragment">
+  precision mediump float;
+  varying vec4 v_color;
+  
+  void main() {
+    gl_FragColor = v_color;
+  }
+</script>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.2/dat.gui.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

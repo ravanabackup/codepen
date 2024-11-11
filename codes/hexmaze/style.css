@@ -1,0 +1,29 @@
+html,body{
+	margin:0px;
+	width:100%;
+	height:100%;
+	overflow:hidden;
+  background:#000;
+}
+#sides {
+  font-size: 24px;
+  color: white;
+  background: black;
+  cursor: pointer;
+}
+.sidesDiv {
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+  color: white;
+  font-family: arial;
+  margin-top: 20px;
+  text-align: center;
+}
+
+canvas{
+	position: absolute;
+	width:100%;
+	height:100%;
+  cursor:crosshair;
+}

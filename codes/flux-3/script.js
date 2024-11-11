@@ -7,6 +7,15 @@ function rgb(col){
   return "#"+("0" + r.toString(16) ).slice (-2)+("0" + g.toString(16) ).slice (-2)+("0" + b.toString(16) ).slice (-2);
 }
 
+function rgb2(col){
+
+  col += 0.000001;
+  var r = parseInt((0.2+Math.sin(col)*0.2)*256);
+  var g = parseInt((0.2+Math.cos(col)*0.2)*256);
+  var b = parseInt((0.2-Math.sin(col)*0.2)*256);
+  return "#"+("0" + r.toString(16) ).slice (-2)+("0" + g.toString(16) ).slice (-2)+("0" + b.toString(16) ).slice (-2);
+}
+
 function Vert(x,y){
   this.x = x;
   this.y = y;
@@ -17,20 +26,14 @@ function Vert(x,y){
 }
 
 function process(vars){
-
   var p,d,x,y,t;
   for(var i=0;i<vars.particles.length;++i){
     x=vars.particles[i].ox;
     y=vars.particles[i].oy;
-    if(y>vars.canvas.height){
-      vars.particles[i].oy=0;
-      vars.particles[i].ox=Math.random()*vars.canvas.width;
-    }
-    vars.particles[i].oy+=2;
     d=Math.sqrt((vars.cx-x)*(vars.cx-x)+(vars.cy-y)*(vars.cy-y));
     vars.particles[i].dist=d;
     t=1/(2+d/2000);
-    p=Math.atan2(vars.cx-x,vars.cy-y)+Math.sin(vars.frameNo/65)*Math.PI*2/(1+d/200)-Math.sin(vars.frameNo/65)*2;
+    p=Math.atan2(vars.cx-x,vars.cy-y)+Math.sin(vars.frameNo/50)*Math.PI*2/(1+d/100)-Math.sin(vars.frameNo/50)*2.5;
     x=vars.cx-Math.sin(p)*d/t;
     y=vars.cy-Math.cos(p)*d/t;
     vars.particles[i].x=x;
@@ -40,17 +43,29 @@ function process(vars){
 
 function draw(vars){
 
-  vars.ctx.globalAlpha=.1;
-  vars.ctx.fillStyle="#000";
+  vars.ctx.globalAlpha=.2;
+  vars.ctx.fillStyle=rgb2(vars.frameNo/10+Math.PI);
   vars.ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  var x,y,size=15;
   vars.ctx.globalAlpha=1;
-  for(var i=0;i<vars.particles.length;++i){
-    vars.ctx.fillStyle=rgb(vars.particles[i].dist/150-vars.frameNo/10);
-    x=vars.particles[i].x;
-    y=vars.particles[i].y;
-    vars.ctx.fillRect(x-size/2,y-size/2,size,size);
+  vars.ctx.lineWidth=3;
+  var t;
+  for(var i=0;i<vars.cols-1;++i){
+    for(var j=0;j<vars.rows-1;++j){
+      t=j+i*vars.rows;
+      vars.ctx.strokeStyle=rgb(vars.particles[t].dist/100-vars.frameNo/20);
+      x=vars.particles[t].x;
+      y=vars.particles[t].y;
+      vars.ctx.beginPath();
+      vars.ctx.moveTo(x,y);
+      x=vars.particles[t+vars.rows].x;
+      y=vars.particles[t+vars.rows].y;
+      vars.ctx.lineTo(x,y);
+      x=vars.particles[t+vars.rows+1].x;
+      y=vars.particles[t+vars.rows+1].y;
+      vars.ctx.lineTo(x,y);
+      vars.ctx.stroke();
+    }
   }
 }
 
@@ -58,12 +73,16 @@ function draw(vars){
 function loadScene(vars){
 
   vars.particles=[];
-  var initParticles=10000;
+  var size=25;
   var x,y;
-  for(var i=0;i<initParticles;++i){
-    x=Math.random()*vars.canvas.width;
-    y=Math.random()*vars.canvas.height;
-    vars.particles.push(new Vert(x,y));
+  vars.cols=parseInt(vars.canvas.width/size);
+  vars.rows=parseInt(vars.canvas.height/size);
+  for(var i=0;i<vars.cols;++i){
+    for(var j=0;j<vars.rows;++j){
+      x=i*size;
+      y=j*size;
+      vars.particles.push(new Vert(x,y));
+    }
   }
 }
 
