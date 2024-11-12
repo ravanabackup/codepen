@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Binary Decomposition</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+
+<!-- I wrote the code in paperscript, but could not find a way to use in codepen, so the js code is up here. -->
+
+<script type="text/paperscript" canvas="canvas">
+////////////
+// CLASSES
+////////////
+function Shape(path) {
+    this.path = path;
+
+    this.linearVel = randomRange(200, 400);
+//    this.angularVel = randomRange(30, 60) * (Math.random() > 0.5 ? 1 : -1);
+
+    this.thresholdLine = new Path.Line(new Point(), new Point());
+    this.thresholdLine.strokeWidth = 4;
+    this.thresholdLine.strokeCap = 'round';
+    this.thresholdLine.strokeColor = '#0f0';
+    this.thresholdLine.shadowColor = '#0f0';
+    this.thresholdLine.shadowBlur = 6;
+    this.thresholdLine.visible = false;
+
+    this.emitParticles = false;
+}
+Shape.prototype = {
+    update:function(dt) {
+        this.updateShape(dt);
+
+        if (this.emitParticles){
+            this.spawnParticles();
+        }
+    },
+    updateShape:function(dt) {
+        this.path.position.y += this.linearVel * dt;
+//        this.path.rotation += this.angularVel * dt;
+
+        var intersections = this.path.getIntersections(mThresholdLine);
+
+        if (intersections.length === 2) {
+            var p0 = intersections[0].point,
+                p1 = intersections[1].point,
+                delta = p1 - p0;
+
+            if (delta.length > mMinIntersectionWidth) {
+                this.thresholdLine.segments[0].point = p0;
+                this.thresholdLine.segments[1].point = p1;
+                this.thresholdLine.visible = true;
+                this.emitParticles = true;
+            }
+        }
+        else {
+            this.thresholdLine.visible = false;
+            this.emitParticles = false;
+        }
+    },
+    getRandomParticleSpawnPoint:function() {
+        return this.thresholdLine.getPointAt(Math.random() * this.thresholdLine.length);
+    },
+    spawnParticles:function() {
+        spawnParticle(this.getRandomParticleSpawnPoint(), this.linearVel);
+    },
+    destroy:function() {
+        this.path.remove();
+        this.thresholdLine.remove();
+    }
+};
+
+function Particle(path) {
+    this.path = path;
+}
+Particle.prototype = {
+    update:function(dt) {
+        this.linearVel += this.linearAcc * dt;
+        this.path.position.y += this.linearVel * dt;
+    },
+    destroy:function() {
+        this.path.remove();
+    },
+    set:function(start, startVel) {
+        this.path.position = start;
+
+        this.linearVel = startVel;
+        this.linearAcc = randomRange(100, 400);
+    }
+};
+
+////////////
+// init
+////////////
+var mMinIntersectionWidth = 16;
+
+var thresholdLeft = new Point(0, view.size.height * 0.5),
+    thresholdRight = new Point(view.size.width, view.size.height * 0.5),
+    mThresholdLine = new Path.Line(thresholdLeft, thresholdRight),
+    mTopRect = new Path.Rectangle(new Point(0, 0), view.size.width, view.size.height * 0.5),
+    mBottomRect = new Path.Rectangle(new Point(0, view.size.height * 0.5), view.size.width, view.size.height * 0.5);
+
+var topBg = mTopRect.clone(),
+    bottomBg = mBottomRect.clone();
+
+var mShapeGroup = new Group(),
+    mParticleGroup = new Group();
+
+mShapeGroup.addChild(mTopRect);
+mShapeGroup.setClipped(true);
+
+mParticleGroup.addChild(mBottomRect);
+mParticleGroup.setClipped(true);
+
+mThresholdLine.strokeColor = '#333';
+topBg.fillColor = '#f1f1f1';
+bottomBg.fillColor = '#1f1f1f';
+
+// setup shapes & particles
+var mShapes = [];
+var mParticles = [];
+var mParticlePool = [];
+
+var mOneText = new PointText(new Point());
+
+mOneText.justification = 'center';
+mOneText.fillColor = '#0f0';
+mOneText.shadowColor = '#0f0';
+mOneText.shadowBlur = 8;
+mOneText.fontFamily = 'monospace';
+mOneText.fontSize = 24;
+mOneText.content = '1';
+
+var mZeroText = mOneText.clone();
+
+mZeroText.content = '0';
+
+mOneText = mOneText.rasterize();
+mZeroText = mZeroText.rasterize();
+
+var mOneSymbol = new Symbol(mOneText),
+    mZeroSymbol = new Symbol(mZeroText);
+
+for (var i = 0; i < 1024; i++) {
+    mParticlePool.push(createNewParticle());
+}
+
+function spawnShape() {
+    var size = new Size(
+            randomRange(50, 350),
+            randomRange(25, 200)
+        ),
+        point = new Point(
+            randomRange(0, view.size.width - 300),
+            -400
+        );
+
+    var path = new Path.Rectangle(point, size);
+
+    path.fillColor = getRandomColor();
+    path.shadowBlur = 8;
+    path.shadowColor = '#000';
+    path.rotation = Math.random() * 360;
+
+    var shape = new Shape(path);
+
+    mShapes.push(shape);
+    mShapeGroup.addChild(shape.path);
+}
+
+function spawnParticle(start, speed) {
+    var particle = mParticlePool.shift() || createNewParticle();
+
+    particle.set(
+        start,
+        speed
+    );
+
+    mParticles.push(particle);
+    mParticleGroup.addChild(particle.path);
+}
+
+function createNewParticle() {
+    var symbol = Math.random() > 0.5 ? mOneSymbol : mZeroSymbol,
+        instance = symbol.place(false),
+        particle = new Particle(instance);
+
+    instance.remove();
+
+    return particle;
+}
+
+////////////
+// UPDATE
+////////////
+
+var fixedStep = (1/60);
+
+function onFrame(e) {
+    mShapes.forEach(function(s) {
+        s.update(fixedStep);
+
+        if (s.path.position.y > view.center.y + 256) {
+            mShapes.splice(mShapes.indexOf(s), 1);
+            s.destroy();
+        }
+    });
+
+    mParticles.forEach(function(p) {
+        p.update(fixedStep);
+
+        if (p.path.position.y > view.size.height + 16) {
+            mParticles.splice(mParticles.indexOf(p), 1);
+            p.destroy();
+            mParticlePool.push(p);
+        }
+    });
+
+    if (e.count % 20 === 0) {
+        spawnShape();
+    }
+}
+
+////////////
+// utils
+////////////
+
+function getRandomColor() {
+    return new Color({
+        hue:randomRange(0, 360, true),
+        saturation:0.75,
+        lightness:0.5
+    })
+}
+
+function randomIndex(arr) {
+    return arr[randomRange(0, arr.length, true)];
+}
+
+function randomRange(min, max, floor) {
+    var v = min + Math.random() * (max - min);
+    floor = floor || false;
+    return floor ? (v | 0) : v;
+}
+</script>
+<!-- partial -->
+  <script src='//cdnjs.cloudflare.com/ajax/libs/paper.js/0.9.18/paper-full.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/gsap/1.14.1/TweenMax.min.js'></script>
+</body>
+</html>

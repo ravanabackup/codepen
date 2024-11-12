@@ -62,7 +62,7 @@ class App {
             TweenMax.set(p, {
                 x: -10,
                 y: -10,
-                //alpha:1,
+                alpha: 1,
                 scale: this.randomBetween(5, 20) / 10
             });
         };
@@ -76,11 +76,6 @@ class App {
         });
         TweenMax.set(this.whole, {
             svgOrigin: '400 300'
-        });
-        TweenMax.to('#rectGrad', 2, {
-            opacity: 0,
-            repeat: -1,
-            yoyo: true
         });
         const tl = new TimelineMax({ repeat: -1, yoyo: false, onUpdate: this.playParticle, onUpdateScope: this });
         let orbitPath = MorphSVGPlugin.pathDataToBezier(this.ring, {

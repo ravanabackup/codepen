@@ -1,0 +1,17 @@
+body {
+    background-color: #f1f1f1;
+    margin: 0;
+  overflow: hidden;
+}
+
+#paper_canvas {
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    background-color: #ffffff;
+}

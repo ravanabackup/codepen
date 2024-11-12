@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  cursor: move;
+}
+
+#three {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+
+#controls {
+  color: white;
+  font-size: 24px;
+  font-family: monospace;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding-bottom: 16px;
+}
+
+#controls div {
+  display: inline-block;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.btn {
+  cursor: pointer;
+}
+.btn.disabled {
+  color: gray;
+  pointer-events: none;
+}
+
+.count {
+  pointer-events: none;
+}
