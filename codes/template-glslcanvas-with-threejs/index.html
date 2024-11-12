@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>template-glslCanvas-with-threejs</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<head>
+  <meta charset=utf-8>
+  <title>glsl</title>
+  <style>
+    body { 
+				margin: 0; 
+				overflow: hidden; 
+				cursor: pointer;
+			}
+  </style>
+</head>
+<body>
+
+  <script id="vs" type="x-shader/x-vertex">
+    precision mediump float;
+    attribute vec3 position;
+    uniform mat4 projectionMatrix;
+    uniform mat4 modelViewMatrix;
+    void main() {
+      vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+      gl_Position = projectionMatrix * modelViewPosition;
+    }
+  </script>
+
+  <script id="fs" type="x-shader/x-fragment">
+    precision mediump float;
+		uniform float time;
+		uniform vec2 resolution;
+		uniform vec2 mouse;
+		
+		void main() {
+			float shortSide = min(resolution.x, resolution.y);
+			vec2 pixelPos = (gl_FragCoord.xy * 2.0 - resolution) / shortSide;
+			vec2 mousePos = ((mouse * 2.0 - resolution) / shortSide);
+			mousePos.y *= -1.0;
+
+			float d = distance(mousePos, pixelPos);
+			d *= 50.0;
+			d = abs(sin(d + time)) * 1.0;
+			float color = step(0.98, d);
+			
+			gl_FragColor = vec4(color, color, color, 1.0);
+		}
+  </script>
+
+  <div id="WebGL-output"></div>
+
+</body>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/98/three.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
