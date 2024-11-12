@@ -1,0 +1,40 @@
+@import url(https://fonts.googleapis.com/css?family=Passion+One);
+html, body {
+  background: #212121;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+button {
+  align-self: center;
+  margin-bottom: 1rem;
+  width: 12rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  background: transparent;
+  color: #ccc;
+  font-family: "Passion One", cursive;
+  font-size: 1.1rem;
+  letter-spacing: 3px;
+}
+
+div {
+  align-self: center;
+  background: #212121;
+}
+div.bg {
+  background: #ccc;
+}
+div input {
+  width: 1rem;
+  height: 1rem;
+}
+div input:checked {
+  visibility: hidden;
+}
+div input.show {
+  visibility: visible;
+}

@@ -1,0 +1,18 @@
+html,
+body {
+  margin: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.note {
+  position: absolute;
+  color: rgba(249,241,204,.5);
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  margin: auto;
+  text-align: center;
+  user-select: none;
+  font-family: Arial;
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Pixel shader experiment </title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="canvas"></canvas>
+ 
+<script id="vertexShader" type="x-shader/vertex"> 
+    attribute vec3 position;
+
+    void main() {
+        gl_Position = vec4( position, 1.0 );
+    }
+</script> 
+
+<script id="fragmentShader" type="x-shader/fragment"> 
+    precision mediump float;
+  
+    uniform float time;
+    uniform vec2 resolution;
+    uniform vec2 mouse;
+
+    float diagonal = sqrt(pow(resolution.x,2.0)+pow(resolution.y,2.0));
+
+    float mirror(float val, float basis) {
+        return basis - val;       
+    }
+
+    void main( void ) {
+        float reverseMouseY = mirror(mouse.y, resolution.y);
+        vec2 center = resolution / 2.0;
+        vec2 position = gl_FragCoord.xy;
+        
+        float distFromCenter = sqrt(pow(position.x - center.x, 2.0)+pow(position.y - center.y, 2.0));
+
+        float r = 0.0;
+        float g = 0.0;
+        float b = 0.0;
+
+        float radius = min(resolution.x, resolution.y);
+        r = 43.0  / 255.0;
+        g = 205.0 / 255.0;
+        b = 255.0 / 255.0;
+
+        r *= mirror(distFromCenter / radius*2.0, 1.0) - cos(time) / 2.0;
+        g *= mirror(distFromCenter / radius*2.0, 1.0) - cos(time) / 5.0;
+        b *= mirror(distFromCenter / radius*2.0, 1.0) - sin(time) / 5.0;
+
+        float dx = position.x - mouse.x;
+        float dy = position.y - reverseMouseY;
+        float dc = sqrt(pow(dx, 2.0) + pow(dy, 2.0));
+        r = mirror(r, 1.0) * (diagonal / dc) / 20.0;
+        g = mirror(g, 1.0) * (diagonal / dc) / 20.0;
+        b = mirror(b, 1.0) * (diagonal / dc) / 20.0;
+
+
+        gl_FragColor = vec4(r,g,b,1.0);
+    }
+</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
