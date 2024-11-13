@@ -1,0 +1,19 @@
+* {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #FFF;
+  font-size: 1.2em;
+}
+
+.me {
+  position: fixed;
+  top: 20%;
+  left: 5%;
+}
+
+.js {
+  position: fixed;
+  top: 20%;
+  right: 5%;
+}

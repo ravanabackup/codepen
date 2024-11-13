@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>#88 in 2021 / GLSL Shader</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="fs" type="x-shader/x-fragment">
+  precision mediump float;
+  uniform float time;
+  uniform vec2  mouse;
+  uniform vec2  resolution;
+  // window ratio
+  float ratio = resolution.x / resolution.y; 
+  float PI = 3.1415926;
+  
+  mat2 scale(vec2 scale) {
+    return mat2(scale.x, 0.0, 0.0, scale.y);
+  }
+  
+  void main(void) {
+    // center center
+    vec2 p = vec2(gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+    // left bottom
+    //vec2 p = gl_FragCoord.xy / resolution.xy;
+    p = scale(vec2(sin(time / 2.0) + 2.0)) * p;
+    float l = length(p);
+    vec3 c = vec3(l, abs(sin(time) * 1.0 - p.x), abs(cos(time) * 1.0 - p.y));
+    float u = abs(sin((atan(p.y, p.x) + sin(time) * length(p) * PI / 2.0 + time * PI / 2.0) * 8.0) * 0.3) + 0.3;
+    float t = 0.1 / abs(0.25 + u - l);
+    gl_FragColor = vec4(c * t, 1.0);
+  }
+</script>
+
+<script id="vs" type="x-shader/x-vertex">
+  attribute vec3 position;
+
+  void main(void){
+    gl_Position = vec4(position, 1.0);
+  }
+</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

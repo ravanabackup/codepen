@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>#144 in 2021 / GLSL Shader</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform float time;
+uniform vec2  mouse;
+uniform vec2  resolution;
+float PI = 3.1415926;
+  
+vec2 rotate2d(vec2 p, float angle){
+  p =  mat2(cos(angle), -sin(angle), sin(angle), cos(angle)) * p;
+  return p;
+}
+  
+vec2 rand(vec2 p) {
+  return fract((pow(p + 2.0, p.yx + 2.0) * 22222.0));
+}
+  
+vec2 rand2(vec2 p) {
+  return rand(rand(p));  
+}
+
+/**
+ * Noise
+ * Referenced / https://gist.github.com/rgngl/5492389,
+ * https://web.archive.org/web/20180214103210/http://www.demoscene.jp/?p=1147,
+ */
+  
+float softnoise(vec2 p, float scale) {
+  vec2 spos = p * scale;
+  float c0 = rand2((floor(spos) + vec2(0.0, 0.0)) / scale).x;
+  float c1 = rand2((floor(spos) + vec2(1.0, 0.0)) / scale).x;
+  float c2 = rand2((floor(spos) + vec2(0.0, 1.0)) / scale).x;
+  float c3 = rand2((floor(spos) + vec2(1.0, 1.0)) / scale).x;
+  vec2 a = fract(spos);
+  return mix(
+    mix(c0, c1, smoothstep(0.0, 1.0, a.x)),
+    mix(c2, c3, smoothstep(0.0, 1.0, a.x)),
+    smoothstep(0.0, 1.0, a.y)
+  );
+}  
+
+/**
+ * Referenced - https://web.archive.org/web/20180214103210/http://www.demoscene.jp/?p=1147
+ */
+vec2 trans(vec2 p) {
+  float x = acos(-p.x / sqrt(1.0 - p.y * p.y));
+  float y = asin(p.y);
+  float r = length(p);
+  return (r > 0.0 && r < 1.0) ? vec2(x, y) : p;
+}
+  
+void main(void) {
+  // center center
+  vec2 p = vec2(gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+  // mouse position
+  vec2 m = mouse;
+  // start
+  //p = rotate2d(p, time * 0.1);
+	float color = 0.0 - length(p);
+	p = trans(p);
+	
+	for(float i = 1.0; i <= 8.0; i++) {
+		color += 2.0 / pow(2.0, i) * softnoise(p + vec2(0.0, -time * 0.05), pow(2.0, i) * 4.0);
+	}
+	gl_FragColor = vec4(color, color - sin(time), color - cos(time), 1.0);
+}
+</script>
+
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+
+void main(void){
+  gl_Position = vec4(position, 1.0);
+}
+</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>#125 in 2021 / GLSL Shader</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform float time;
+uniform vec2  mouse;
+uniform vec2  resolution;
+// window ratio
+float ratio = resolution.x / resolution.y; 
+float PI = 3.1415926;
+  
+vec2 rotate2d(vec2 p, float angle){
+  p =  mat2(cos(angle), -sin(angle), sin(angle), cos(angle)) * p;
+  return p;
+}
+  
+/**
+ * Referenced - https://web.archive.org/web/20180214103210/http://www.demoscene.jp/?p=1147
+ */
+float lengthN(vec2 v, float n) {
+  vec2 tmp = pow(abs(v), vec2(n));
+  return pow(tmp.x + tmp.y, 1.0 / n);
+}
+ 
+float rings(vec2 p) {
+  vec2 p2 = mod(p * 4.0, 2.0) - 1.0;
+  return sin(lengthN(p2, 1.0) * sin(time / 10.0) * 5.0);
+}
+
+vec2 trans(vec2 p) {
+  float theta = atan(p.y, p.x);
+  float r = length(abs(p) - time / 10.0);
+  return vec2(theta, r);
+}
+
+void main(void) {
+  // center center
+  vec2 p = vec2(gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+  // mouse position
+  vec2 m = vec2(mouse.x * 2.0 - 1.0, -mouse.y * 2.0 + 1.0);
+  // start
+  vec4 color = vec4(1.0 - length(p), abs(sin(time)) * p.x, abs(cos(time)) * p.y, 1.0);
+  gl_FragColor = vec4(color + rings(trans(vec2(rotate2d(p, -time / 10.0)))));
+}
+</script>
+
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+
+void main(void){
+  gl_Position = vec4(position, 1.0);
+}
+</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

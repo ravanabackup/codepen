@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>#89 in 2021 / GLSL Shader</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<script id="fs" type="x-shader/x-fragment">
+  precision mediump float;
+  uniform float time;
+  uniform vec2  mouse;
+  uniform vec2  resolution;
+  // window ratio
+  float ratio = resolution.x / resolution.y; 
+  float PI = 3.1415926;
+  
+  mat2 rotate2d(float angle) {
+    return mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+  }
+  
+  vec2 movingTiles(vec2 p, float zoom, float speed) {
+    p *= zoom;
+    float t = time * speed;
+    if (fract(t) > 0.5) {
+      if (fract(p.y * 0.5) > 0.5) {
+        p.x += fract(t) * 2.0;
+      } else {
+        p.x -= fract(t) * 2.0;
+      }
+    } else {
+      if (fract(p.x * 0.5) > 0.5) {
+        p.y += fract(t) * 2.0;
+      } else {
+        p.y -= fract(t) * 2.0;
+      }
+    }
+    return fract(p);
+  }
+  
+  float square(vec2 p, vec2 size, float edge) {
+    size = vec2(0.5) - size * 0.5;
+    vec2 aa = vec2(edge * 0.5);
+    vec2 uv = smoothstep(size, size + aa, p);
+    uv *= smoothstep(size, size + aa, vec2(0.0) + p);
+    return uv.x * uv.y;
+  }
+  
+  void main(void) {
+    // center center
+    vec2 p = vec2(gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+    // left bottom
+    //vec2 p = gl_FragCoord.xy / resolution.xy;
+    p = rotate2d(-time / 4.0) * p;
+    p = movingTiles(p, 3.0, 1.0);
+    vec3 c = vec3(0.5, step(0.5, p.y), 0.5);
+    vec3 color = vec3(square(p, vec2(0.95), 0.05));
+    gl_FragColor = vec4(c * color, 1.0);
+  }
+</script>
+
+<script id="vs" type="x-shader/x-vertex">
+  attribute vec3 position;
+
+  void main(void){
+    gl_Position = vec4(position, 1.0);
+  }
+</script>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
