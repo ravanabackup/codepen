@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:100,200,400|News+Cycle&display=swap");
+body {
+  font-family: "Poppins", sans-serif;
+  color: white;
+  margin: 0;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+}
+
+img {
+  position: static;
+  width: 150px;
+}
+
+.header {
+  width: 25rem;
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  user-select: none;
+}
+
+small {
+  color: white;
+}
+
+.icon-guide {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.5s;
+}
+
+.footer {
+  z-index: 1;
+  right: 1rem;
+  bottom: 2rem;
+  position: absolute;
+}
+.footer img {
+  width: 2.5rem;
+  transition: opacity 0.5s;
+}
+.footer img:hover {
+  opacity: 0.5;
+}

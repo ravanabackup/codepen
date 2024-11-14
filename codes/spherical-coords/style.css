@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css?family=Fauna+One|Playfair+Display&display=swap");
+body {
+  margin: 0;
+  cursor: cell;
+  color: #FFE225;
+  background-color: #002931;
+  font-family: "Playfair Display", serif;
+}
+
+p {
+  color: #AEAEBD;
+  font-family: "Fauna One", serif;
+}
+
+hr {
+  width: 70%;
+  border-color: #AEAEBD;
+}
+
+canvas {
+  top: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: fixed;
+}
+
+.header {
+  top: 50%;
+  left: 50%;
+  display: none;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.5s;
+}
+.header:hover {
+  opacity: 0;
+}
+
+.footer {
+  right: 1rem;
+  bottom: 2rem;
+  position: absolute;
+}
+.footer img {
+  width: 2.5rem;
+  transition: opacity 0.5s;
+}
+.footer img:hover {
+  opacity: 0.5;
+}

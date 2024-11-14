@@ -1,0 +1,75 @@
+BODY {
+  background: #000;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+svg,
+.hand {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  width: 500px;
+  height: 500px;
+}
+
+.circle--mask {
+  fill: #FFF;
+}
+
+.circle--stripes {
+  fill: white;
+  stroke: #000;
+  stroke-width: 100%;
+  stroke-dasharray: 25;
+}
+
+.stop-dark {
+  stop-color: black;
+}
+
+.stop-light {
+  stop-color: white;
+}
+
+.hand {
+  text-align: center;
+  line-height: 400px;
+  font-size: 30rem;
+  color: #FFF;
+  text-shadow: 0 30px 35px red, 30px -30px 35px blue, -30px -30px 35px green;
+  /* border: 1px solid red; */
+  mix-blend-mode: difference;
+  -webkit-animation: rotation 4s linear infinite;
+          animation: rotation 4s linear infinite;
+  -webkit-animation-name: rotation, fsz;
+          animation-name: rotation, fsz;
+}
+.hand:nth-child(even) {
+  animation-direction: reverse;
+}
+
+@-webkit-keyframes rotation {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotation {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes fsz {
+  50% {
+    font-size: 20em;
+  }
+}
+@keyframes fsz {
+  50% {
+    font-size: 20em;
+  }
+}

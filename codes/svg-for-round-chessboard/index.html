@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>SVG for round chessboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<svg viewBox="0 0 300 300">
+    
+    <filter id="invert">
+      <feComponentTransfer>
+          <feFuncR type="table" tableValues="1 0"/>
+          <feFuncG type="table" tableValues="1 0"/>
+          <feFuncB type="table" tableValues="1 0"/>
+      </feComponentTransfer>
+    </filter>
+    
+    <symbol id="s-circle">
+        <circle
+            r="50%"
+            cx="50%" cy="50%"></circle>
+    </symbol>
+    
+    <radialGradient id="gradient">
+        <stop offset="10%" class="stop-dark"/>
+        
+        <stop offset="10%" class="stop-light"/>
+        <stop offset="20%" class="stop-light"/>
+        
+        <stop offset="20%" class="stop-dark"/>
+        <stop offset="30%" class="stop-dark"/>
+        
+        <stop offset="30%" class="stop-light"/>
+        <stop offset="40%" class="stop-light"/>
+        
+        <stop offset="40%" class="stop-dark"/>
+        <stop offset="50%" class="stop-dark"/>
+        
+        <stop offset="50%" class="stop-light"/>
+        <stop offset="60%" class="stop-light"/>
+        
+        <stop offset="60%" class="stop-dark"/>
+        <stop offset="70%" class="stop-dark"/>
+        
+        <stop offset="70%" class="stop-light"/>
+        <stop offset="80%" class="stop-light"/>
+        
+        <stop offset="80%" class="stop-dark"/>
+        <stop offset="90%" class="stop-dark"/>
+        
+        <stop offset="90%" class="stop-light"/>
+        <stop offset="100%" class="stop-light"/>
+    </radialGradient>
+    
+    <mask id="mask">
+        <use xlink:href="#s-circle" class="circle--mask"></use>
+    </mask>
+    
+    <mask id="mask--stripes">
+        <use xlink:href="#s-circle" class="circle--stripes"></use>
+    </mask>
+    
+    <mask id="mask--stripes-invert">
+        <use xlink:href="#s-circle" 
+             class="circle--stripes circle--stripes-invert"
+             filter="url(#invert)"></use>
+    </mask>
+    
+    <use xlink:href="#s-circle"
+         fill="url(#gradient)"
+         mask="url(#mask--stripes)"
+             ></use>
+    <use xlink:href="#s-circle"
+         fill="url(#gradient)"
+         mask="url(#mask--stripes-invert)"
+         filter="url(#invert)"
+             ></use>
+    <use xlink:href="#s-circle"
+         stroke="white" fill="none"
+             ></use>
+</svg>
+
+<div class="hand">&#9650;</div>
+<div class="hand">&#9650;</div>
+<!-- partial -->
+  
+</body>
+</html>

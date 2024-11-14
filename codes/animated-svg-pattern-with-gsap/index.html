@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Animated SVG pattern with GSAP</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- <div class="test" id="test">123</div> -->
+
+<svg>
+    <defs>
+        <path class="shape" d="M45,0 L90,30 90,80 45,110 0,80 0,30 z">
+         </path>
+    </defs>
+    
+    <pattern id="patt" class="pattern"
+      width="400" height="400"
+      patternUnits="userSpaceOnUse" 
+      viewBox="0 45 900 900">    
+        <rect 
+          fill="#FFF"
+          width="1000" height="1000"
+        ></rect>
+        <g class="shapes-filled"></g>
+        <g class="shapes-stroked"></g>
+    </pattern>
+    
+    <g fill="url(#patt)">
+        <text x="50%" y="50%"
+          dy=".3em"
+          text-anchor="middle"
+          class="text">
+            &hearts;
+        </text>
+    </g>
+</svg>
+<!-- partial -->
+  <script src='//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+:root {
+  --step: calc(100% / 7);
+}
+
+BODY {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: #000;
+}
+
+DIV {
+  position: relative;
+  width: 75vmin;
+  height: 75vmin;
+  border: 5vmin solid transparent;
+  box-sizing: border-box;
+  border-radius: 50%;
+  -o-border-image: radial-gradient(transparent 60%, purple 62%, crimson, tomato, gold, yellowgreen, mediumaquamarine, teal, purple 68%, transparent 70%);
+     border-image: radial-gradient(transparent 60%, purple 62%, crimson, tomato, gold, yellowgreen, mediumaquamarine, teal, purple 68%, transparent 70%);
+  border-image-slice: 7% fill;
+}
+DIV::before, DIV::after {
+  content: "";
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  background: repeating-conic-gradient(at 25% 50%, teal, purple, crimson, tomato, gold, yellowgreen, mediumaquamarine, teal 50%);
+  border-radius: 50%;
+  transform: rotate(0);
+  -webkit-mask-image: repeating-radial-gradient(rgba(0, 0, 0, 0) calc(var(--step) * .5), black 0, black calc(var(--step) * .75), rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) calc(var(--step) * 1.5));
+          mask-image: repeating-radial-gradient(rgba(0, 0, 0, 0) calc(var(--step) * .5), black 0, black calc(var(--step) * .75), rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) calc(var(--step) * 1.5));
+  -webkit-mask-size: 20% 100%;
+          mask-size: 20% 100%;
+  -webkit-mask-position: 35% 65%;
+          mask-position: 35% 65%;
+  -webkit-animation: linear infinite;
+          animation: linear infinite;
+  -webkit-animation-name: rotate, mask;
+          animation-name: rotate, mask;
+  -webkit-animation-duration: 7s, 11s;
+          animation-duration: 7s, 11s;
+}
+DIV::after {
+  background-position: 45% 45%;
+  animation-direction: reverse;
+  mix-blend-mode: difference;
+  -webkit-animation-duration: 11s, 7s;
+          animation-duration: 11s, 7s;
+  -webkit-animation-delay: -3s;
+          animation-delay: -3s;
+}
+
+@-webkit-keyframes rotate {
+  50% {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes rotate {
+  50% {
+    transform: rotate(180deg);
+  }
+}
+@-webkit-keyframes mask {
+  50% {
+    -webkit-mask-size: 30% 650%;
+            mask-size: 30% 650%;
+    -webkit-mask-position: 75% 35%;
+            mask-position: 75% 35%;
+  }
+}
+@keyframes mask {
+  50% {
+    -webkit-mask-size: 30% 650%;
+            mask-size: 30% 650%;
+    -webkit-mask-position: 75% 35%;
+            mask-position: 75% 35%;
+  }
+}

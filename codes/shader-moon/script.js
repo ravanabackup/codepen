@@ -205,7 +205,7 @@ skinElement = function(geo_frag = 5) {
   var geo_size = 20;
   if (geo_frag>=5) geo_frag = 5;
   //---
-  geo = new THREE.IcosahedronBufferGeometry(geo_size,geo_frag);
+  geo = new THREE.DodecahedronBufferGeometry(15, 4);
   //---
   mat = new THREE.ShaderMaterial({
     uniforms: uniforms,
