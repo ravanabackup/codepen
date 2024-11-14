@@ -1309,3 +1309,21 @@ https://ravanabackup.github.io/codepen/codes/35-in-2020-javascript-canvas/index.
 https://ravanabackup.github.io/codepen/codes/46-in-2021-javascript-canvas/index.html
 https://ravanabackup.github.io/codepen/codes/53-in-2021-javascript-canvas/index.html
 https://ravanabackup.github.io/codepen/codes/59-in-2021-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/67-in-2020-javascript-css/index.html
+https://ravanabackup.github.io/codepen/codes/68-in-2020-javascript-css/index.html
+https://ravanabackup.github.io/codepen/codes/94-in-2021-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/99-in-2020-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/122-in-2021-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/166-in-2020-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/214-in-2020-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/248-in-2020-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/273-in-2020-css-stylus-pug/index.html
+https://ravanabackup.github.io/codepen/codes/practice-canvas2d/index.html
+https://ravanabackup.github.io/codepen/codes/practice-canvas2d (1)/index.html
+https://ravanabackup.github.io/codepen/codes/practice-shader/index.html
+https://ravanabackup.github.io/codepen/codes/4-in-2021-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/9-in-2020-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/11-in-2021-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/26-in-2021-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/41-in-2021-javascript-canvas/index.html
+https://ravanabackup.github.io/codepen/codes/48-in-2021-javascript-canvas/index.html
