@@ -1,0 +1,46 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: #000;
+  color: #FFF;
+}
+
+input[type="range"] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  transform-origin: top left;
+}
+
+div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 42%;
+  text-align: right;
+  transform-origin: top left;
+}
+
+span {
+  position: absolute;
+}
+
+@media screen and (min-width: 48rem) {
+
+  h1 {
+    font-size: 2.4rem;
+  }
+
+  input[type="range"] {
+    width: 20%;
+  }
+
+  div {
+    width: 22%;
+  }
+
+}

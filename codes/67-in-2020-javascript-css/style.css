@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  overflow: hidden;
+  background: #000;
+}
+
+input {
+  margin: 5px;
+  width: 10px;
+  height: 10px;
+}
+
+main {
+  height: 110%;
+  width: 110%;
+  overflow: hidden;
+  position: absolute;
+  top: 55%;
+  left: 55%;
+  transform: translateX(-55%) translateY(-55%);
+}

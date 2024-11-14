@@ -5,8 +5,8 @@ const setupGui = () => {
   
   gui.params = {
     timeScale: 0.0005,
-    number: 20,
-    size: 30,
+    number: 10,
+    size: 60,
     reset: () => initialize()
   };
 
@@ -41,6 +41,7 @@ const initialize = () => {
   num = gui.params.number;
   maxDist = 0;
   
+  /*
   const ajust = num * size / 2 - size / 2;
   
   for (let y = 0; y < num; y++) {
@@ -49,37 +50,65 @@ const initialize = () => {
       const ny = size * y - ajust;
       const nx = size * x - ajust;
       const dist = Math.sqrt(nx * nx + ny * ny);
+      const angle = Math.atan2(ny, nx);
+      const index = y * num + x;
       
       params.x = nx;
       params.y = ny;
       params.d = dist;
+      params.a = angle;
+      params.i = index;
       
       maxDist = Math.max(dist, maxDist);
       
       shapes.push(params);
     }
   }
+  */
   
-  /*
+  const ajust = num * size / 2 - size / 2;
+  
+  for (let x = 0; x < num; x++) {
+    const params = {};
+    const nx = size * x - ajust;
+    const dist = Math.sqrt(nx * nx + 0 * 0);
+    const angle = Math.atan2(0, nx);
+
+    params.x = nx;
+    params.y = 0;
+    params.d = dist;
+    params.a = angle;
+    params.i = x;
+
+    maxDist = Math.max(dist, maxDist);
+
+    shapes.push(params);
+  }
+  
+  //tilingCircular();
+  
+  draw(0);
+};
+
+const tilingCircular = () => {
   for (let i = 1; i <= 8; i++) {
     for (let j = 0; j < i * 6; j++) {
       const params = {};
       const x = Math.cos(Math.PI * 2 / (6 * i) * j) * 3 * 10 * i;
       const y = Math.sin(Math.PI * 2 / (6 * i) * j) * 3 * 10 * i;
       const d = Math.sqrt(x * x + y * y);
-      
+      const index = i * (i * 6) + j;
+            
       params.x = x;
       params.y = y;
       params.d = d;
+      params.i = index;
 
       maxDist = Math.max(d, maxDist);
       
       shapes.push(params);
     }
   }
-  */
-  
-  draw(0);
 };
 
 // Referred to https://easings.net/ Thank you so much.
@@ -131,26 +160,46 @@ const draw = (t) => {
     if (j === 2) color = '#0000FF';
     for (let i = 0; i < shapes.length; i++) {
       c.save();
-
-      let scaledT = (t - j * 0.01 - (shapes[i].d / maxDist)) % 1;
-      scaledT = ease(scaledT);
       
-      //c.translate(shapes[i].x, shapes[i].y);
-      //c.rotate(Utils.lerp(scaledT, 0, Math.PI / 2));
-      //c.translate(-shapes[i].x, -shapes[i].y);
+      let scaledT = (t - j * 0.03) % 1;
+      scaledT = ease(Math.abs(scaledT));
       
       let moveY = 0;
-      if (scaledT < 0.5) {
-        moveY = Utils.map(scaledT, 0, 0.5, 0, 100);
-        //c.rotate(Utils.map(scaledT, 0, 0.5, 0, Math.PI));
+      let moveX = 0;
+      
+      if (shapes[i].i % 2 === 0) {
+        if (scaledT < 0.25) {
+          moveX = Utils.map(scaledT, 0, 0.25, 0, size);
+          moveY = Utils.map(scaledT, 0, 0.25, 0, 0);
+        } else if (scaledT >= 0.25 && scaledT < 0.5) {
+          moveX = Utils.map(scaledT, 0.25, 0.5, size, size);
+          moveY = Utils.map(scaledT, 0.25, 0.5, 0, size);
+        } else if (scaledT >= 0.5 && scaledT < 0.75) {
+          moveX = Utils.map(scaledT, 0.5, 0.75, size, 0);
+          moveY = Utils.map(scaledT, 0.5, 0.75, size, size);
+        } else {
+          moveX = Utils.map(scaledT, 0.75, 1.0, 0, 0);
+          moveY = Utils.map(scaledT, 0.75, 1.0, size, 0);
+        }
       } else {
-        moveY = Utils.map(scaledT, 0.5, 1.0, 100, 0);
-        //c.rotate(Utils.map(scaledT, 0.5, 1.0, Math.PI, Math.PI * 2));
+        if (scaledT < 0.25) {
+          moveX = Utils.map(scaledT, 0, 0.25, 0, -size);
+          moveY = Utils.map(scaledT, 0, 0.25, 0, 0);
+        } else if (scaledT >= 0.25 && scaledT < 0.5) {
+          moveX = Utils.map(scaledT, 0.25, 0.5, -size, -size);
+          moveY = Utils.map(scaledT, 0.25, 0.5, 0, -size);
+        } else if (scaledT >= 0.5 && scaledT < 0.75) {
+          moveX = Utils.map(scaledT, 0.5, 0.75, -size, 0);
+          moveY = Utils.map(scaledT, 0.5, 0.75, -size, -size);
+        } else {
+          moveX = Utils.map(scaledT, 0.75, 1.0, 0, 0);
+          moveY = Utils.map(scaledT, 0.75, 1.0, -size, 0);
+        }
       }
       
       c.fillStyle = color;
       c.beginPath();
-      c.arc(shapes[i].x, shapes[i].y + moveY, size / 2, 0, Math.PI * 2, false);
+      c.arc(shapes[i].x + moveX, shapes[i].y + moveY, size / 3, 0, Math.PI * 2, false);
       c.fill();
       
       //drawPolygon(shapes[i].x, shapes[i].y, 4, size / 2, color, color);
