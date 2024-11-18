@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Watercolor (SVG filter + CSS)</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<css-doodle>
+  :doodle {
+    @grid: 10 / 100vmax; 
+    background: #0A0D25;
+    overflow: hidden;
+  }
+
+  :container {
+    transform: scale(2) rotate(-45deg) translate(-10%, -10%);
+    @use: var(--water-color);
+  }
+
+  background: hsla(
+    calc(150 - 3 * @row() * @col()),
+    78%, 98%, @r(.8)
+  );
+
+  --d: @r(360deg);
+  --s: @r(.5, 3);
+
+  transform: scale(var(--s)) rotate(var(--d));
+  animation: r @r(20s, 40s) linear infinite;
+
+  @keyframes r {
+    to {
+      transform: scale(var(--s)) rotate(calc(var(--d) + 1turn));
+    }
+  }
+</css-doodle>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/css-doodle/0.4.8/css-doodle.min.js'></script>
+</body>
+</html>

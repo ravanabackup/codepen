@@ -1,0 +1,112 @@
+html {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  position: relative;
+  background: #111;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+#ui {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  filter: blur(2px);
+}
+#ui .bar {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  border-top: 7px solid;
+  border-radius: 100%;
+  transition: all 1500ms cubic-bezier(0.545, 0.08, 0.52, 0.975);
+  mix-blend-mode: screen;
+}
+#ui .bar:nth-child(1) {
+  border-color: rgba(255, 0, 0, 0.8);
+  animation: rotateRing 4000ms linear infinite;
+  filter: drop-shadow(0px 0px 20px red);
+}
+#ui .bar:nth-child(2) {
+  border-color: rgba(255, 165, 0, 0.8);
+  animation: rotateRing 5000ms linear infinite;
+  filter: drop-shadow(0px 0px 20px orange);
+}
+#ui .bar:nth-child(3) {
+  border-color: rgba(255, 255, 0, 0.8);
+  animation: rotateRing 6000ms linear infinite;
+  filter: drop-shadow(0px 0px 20px yellow);
+}
+#ui .bar:nth-child(4) {
+  border-color: rgba(0, 128, 0, 0.8);
+  animation: rotateRing 7000ms linear infinite;
+  filter: drop-shadow(0px 0px 20px green);
+}
+#ui .bar:nth-child(5) {
+  border-color: rgba(0, 255, 255, 0.8);
+  animation: rotateRing 8000ms linear infinite;
+  filter: drop-shadow(0px 0px 20px aqua);
+}
+#ui .bar:nth-child(6) {
+  border-color: rgba(0, 0, 255, 0.8);
+  animation: rotateRing 9000ms linear infinite;
+  filter: drop-shadow(0px 0px 20px blue);
+}
+#ui .bar:nth-child(7) {
+  border-color: rgba(128, 0, 128, 0.8);
+  animation: rotateRing 10000ms linear infinite;
+  filter: drop-shadow(0px 0px 20px red);
+}
+#ui.switch .bar:nth-child(1) {
+  width: 200px;
+  height: 200px;
+  margin: -100px 0 0 -100px;
+}
+#ui.switch .bar:nth-child(2) {
+  width: 210px;
+  height: 210px;
+  margin: -105px 0 0 -105px;
+}
+#ui.switch .bar:nth-child(3) {
+  width: 230px;
+  height: 230px;
+  margin: -115px 0 0 -115px;
+}
+#ui.switch .bar:nth-child(4) {
+  width: 260px;
+  height: 260px;
+  margin: -130px 0 0 -130px;
+}
+#ui.switch .bar:nth-child(5) {
+  width: 300px;
+  height: 300px;
+  margin: -150px 0 0 -150px;
+}
+#ui.switch .bar:nth-child(6) {
+  width: 350px;
+  height: 350px;
+  margin: -175px 0 0 -175px;
+}
+#ui.switch .bar:nth-child(7) {
+  width: 410px;
+  height: 410px;
+  margin: -205px 0 0 -205px;
+}
+
+@keyframes rotateRing {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}

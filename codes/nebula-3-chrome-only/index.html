@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Nebula #3  (Chrome only)</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!-- https://css-doodle.com -->
+
+<css-doodle>
+  :doodle {
+    @grid: 6x1 / 100vmax;
+    overflow: hidden;
+  }
+  :container {
+    transform: scale(1.5);
+    @min-size: 100vmax;
+  }
+
+  mix-blend-mode: difference;
+  background-blend-mode: difference;
+  background: @multi(10, (
+    linear-gradient(
+      @r(360deg),
+      @multi(5, @pick(
+        rgb(@r(255), @r(255), @r(255)),
+        #fff, #fff, #fff
+      ))
+    ),
+    radial-gradient(
+      @multi(5, @pick(
+        rgb(@r(255), @r(255), @r(255)),
+        #fff, #fff, #fff
+      ))
+    )
+  ));
+
+  position: absolute;
+  @size: 100%;
+  left: 0; top: 0;
+
+  animation: r @r(30s, 60s) linear infinite;
+  animation-delay: calc(@r(2s, 20s) * -1);
+  @keyframes r {
+    to { transform: rotate(@pick(1turn, -1turn)) }
+  }
+</css-doodle>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/css-doodle/0.4.1/css-doodle.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
