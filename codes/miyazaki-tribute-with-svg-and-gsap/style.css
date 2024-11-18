@@ -1,0 +1,56 @@
+body {
+  margin: 0;
+  background-color: #000;
+  overflow: visible;
+  font-family: sans-serif;
+  color: #9DD0E0;
+}
+
+.horizontal-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.transparent {
+  opacity: 0;
+}
+
+#header {
+  height: 100%;
+  width: 100%;
+}
+
+#kodama-graphic {
+  height: 100%;
+  opacity: 0;
+}
+
+.controls {
+  position: fixed;
+  bottom: 20px;
+  z-index: 1;
+  width: 100%;
+  max-width: 960px;
+  text-align: center;
+}
+.controls .btn {
+  position: relative;
+  cursor: pointer;
+  opacity: 0.25;
+}
+.controls .btn .btn-label {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+  margin: 0;
+  margin-top: 5px;
+}
+.controls .mute-btn {
+  float: left;
+  margin-left: 30px;
+}
+.controls .replay-btn {
+  float: right;
+  margin-right: 30px;
+}

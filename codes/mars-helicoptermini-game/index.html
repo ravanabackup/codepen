@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Mars Helicopter - Mini Game</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="container">
+    <div id="sector">
+        <div id="drone">
+			<div class="ingenuity">
+				<div class="solar-panel"></div>
+				<div class="rotor-shaft" id="out-screen">
+					<span></span>
+					<span></span>
+				</div>
+				<div class="helix-top"></div>
+				<div class="helix-bot"></div>
+				<div class="body-box">
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<div class="leg leg1"></div>
+				<div class="leg leg2"></div>
+				<div class="leg leg3"></div>
+				<div class="leg leg4"></div>
+			</div>
+		</div>
+		<div class="grid">
+			<div class="landing spot" id="landing"></div>
+			<div class="crater spot" id="crater"><span></span></div>
+			<div class="scan spot" id="scan"></div>
+			<div class="base spot" id="base"></div>
+			<div class="landing-place">
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid" id="crash-rock">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+			</div>
+			<div class="crater-hole"></div>
+			<div class="farthest-rocks">
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+				<div class="cuboid">
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+					<span class="side"></span>
+				</div>
+			</div>
+			<div class="charging-base"></div>
+		</div>
+    </div>
+</div>
+<div class="overlay"></div>
+<div class="sky">
+	<div class="message start" id="msg">Mars Helicopter<br>Mini Game</div>
+	<div class="controls">
+		<div class="reload">
+			<span>F5&nbsp;RELOAD<br>THE&nbsp;GAME</span>
+		</div>
+		<div class="move">
+			<span>ARROW&nbsp;KEYS<BR>TO&nbsp;MOVE</span>
+		</div>
+		<div class="action">
+			<span>SPACEBAR<BR>FOR&nbsp;ACTION</span>
+		</div>
+	</div>
+	<div class="misions">
+		<div class="m-land">LANDING<br>TEST</div>
+		<div class="m-photo">CRATER<BR>PHOTO</div>
+		<div class="m-scan">ROCK<BR>SCAN</div>
+	</div>
+</div>
+<div class="land"></div>
+<div class="battery">
+	<div class="battery-level" id="battery-level"></div>
+	<div id="battery-percent">99%</div>
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

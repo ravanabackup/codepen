@@ -1,0 +1,106 @@
+body {
+	margin: 0;
+	overflow: hidden;
+	background: linear-gradient(to bottom, #0d0d0d, #4b0082);
+	font-family: "Arial", sans-serif;
+}
+
+.container {
+	display: flex;
+	height: 100vh;
+	width: 100vw;
+}
+
+.fish-tank {
+	cursor: none;
+	position: relative;
+	width: 80%;
+	height: 100%;
+	overflow: hidden;
+	background: linear-gradient(to bottom, #0d0d0d, #4b0082);
+}
+#score-wrapper {
+	width: 20%;
+	position: relative;
+	top: 0;
+	left: 0;
+	color: #ff4500;
+	font-size: 24px;
+	padding: 20px;
+	background: rgba(0, 0, 0, 0.7);
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	backdrop-filter: blur(8px);
+}
+
+#score {
+	font-weight: bold;
+	text-shadow: 1px 1px 5px rgba(255, 165, 0, 0.8);
+	margin-bottom: 10px; /* Space between score and target display */
+}
+
+.target-display {
+	width: 100%;
+}
+
+#target-display {
+	margin-top: 10px;
+	border-top: 1px solid #ff4500;
+	padding-top: 10px;
+	color: #ffd700; /* Gold color for targets */
+	text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.target-display input[type="range"] {
+	width: 100%;
+	margin-top: 5px;
+}
+
+.fish-section {
+	position: absolute;
+	border-radius: 40%;
+	box-shadow: 0px 0px 15px rgba(255, 165, 0, 0.8);
+	transition: transform 0.1s ease-out;
+}
+
+.obstacle,
+.bonus {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	font-size: 30px;
+}
+
+@keyframes shake {
+	0% {
+		transform: translate(0) scale(1);
+		box-shadow: inset 0 0 100px rgba(255, 140, 0, 0.7);
+	}
+	50% {
+		transform: translate(-5px, 0) scale(1.05);
+	}
+	100% {
+		transform: translate(0) scale(1);
+	}
+}
+
+.fish-tank.shake {
+	animation: shake 0.3s ease;
+}
+
+.congrats-message {
+	position: fixed; /* Use fixed to position relative to the viewport */
+	top: 50%;
+	left: 40%;
+	transform: translate(-50%, -50%); /* This centers the element */
+	font-size: 3rem;
+	color: gold;
+	text-align: center; /* Center text within the div */
+	background-color: rgb(0 0 0 / 80%);
+	padding: 20px; /* Optional: add some padding */
+	border-radius: 10px; /* Optional: rounded corners */
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Optional: add shadow for depth */
+}
