@@ -1,0 +1,198 @@
+#current-balance {
+  font-family: monospace;
+}
+
+#reader {
+  text-align: center;
+  font-size: 8vw;
+  line-height: 1em;
+  position: relative;
+  width: 80%;
+  margin: 6px auto;
+  pointer-events: none;
+}
+
+#cards {
+  text-align: center;
+  padding: 10px;
+}
+
+.money {
+  text-align: center;
+  font-size: 3vw;
+}
+
+#hud {
+  text-align: center;
+}
+
+#bets {
+  text-align: center;
+}
+#hero-holder-holder {
+    animation: shake 17s linear infinite;
+}
+#hero-holder {
+    animation: bounce 23s linear infinite;
+}
+#hero {
+  text-align: center;
+  font-size: 12vw;
+  animation: shake 7s 5s linear infinite;
+  height: 1.1em;
+  margin-top: -0.2em;
+}
+
+.attr {
+  text-align: center;
+}
+
+.inactive {
+  filter: grayscale(1);
+  pointer-events: none;
+}
+
+.flop-suit {
+  font-size: 3vw;
+  line-height: 1.2em;
+}
+
+.flop-value {
+  font-size: 3vw;
+  font-weight: bold;
+  padding-bottom: 0.2em;
+}
+
+.card {
+  margin: 0.1vw;
+  background: transparen;t
+}
+
+.card .btn {
+  position: relative;
+  text-transform: capitalize;
+  font-size: 2vw;
+}
+
+.flop {
+  border: 2px solid black;
+  margin: 0 3px;
+  position: relative;
+  top: 5px;
+  font-size: 3vw;
+}
+
+.card:after {
+  content: '🛡️';
+  position: absolute;
+  font-size: 5vw;
+  bottom: -0.35em;
+  width: 100%;
+  line-height: 1em;
+  z-index:1;
+  pointer-events: none;
+  transition: all 0.25s 0s ease;
+  transform: scale(0);
+  text-align: center;
+}
+
+.card.betted:after {
+    transition: all 0.5s 0.5s ease;
+transform: scale(1);
+}
+
+.card.betted.alert {
+  opacity: 0.5;
+}
+
+.betted button.btn {
+  background-color: #ccc;
+  border: 1px solid #ccc;
+  color: white;
+}
+
+.face {
+  font-size: 2em;
+  line-height: 0.5em;
+}
+
+#animate-betting {
+  display: none;
+  position: absolute;
+  z-index: 800;
+  margin-top: -0em;
+}
+
+.card-betting {
+  display: none;
+  position: absolute;
+  z-index: 8;
+  font-size: 6em;
+  white-space: 'nowrap';
+  color: black;
+}
+
+.bar {
+  position: relative;
+}
+.next {
+  position: absolute;
+  right: 20px;
+}
+
+.progress-bar {
+  transition: width 1s linear;
+}
+
+.progress-bar.pause-transition {
+  transition: none;
+}
+
+.progress-ui {
+  transition: all 0.5s ease;
+}
+
+.alert {
+  padding: 5px;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+/* 
+#timer .progress {
+    position: absolute;
+    width: 100%;
+    height: 10em;
+    top: 0;
+} */
+
+.bg-purple {
+  background: purple;
+}
+.jello {
+  animation-delay: 0.2s;
+}
+.jello:before {
+  content: '🗡️';
+  position: absolute;
+  top: -0.25em;
+  margin-left: -0.5em;
+  font-size: 8vw;
+  z-index: 2;
+  opacity: 0.5;
+  animation: bounceInDown 0.5s linear;
+}
+
+
+.heartBeat:before {
+  content: '✨';
+  position: absolute;
+  top: -0.25em;
+  margin-left: -0.5em;
+  font-size: 8vw;
+  z-index: 2;
+  opacity: 0.5;
+  animation: flip 0.2s ease 3;
+}

@@ -1,0 +1,28 @@
+body {
+  background: black;
+}
+
+#img {
+  width: 100vw;
+  height: 100vh;
+  background-image: url(https://picsum.photos/1500/1500);
+  background-position: center center;
+  background-size: 150% 150%;
+  filter: sepia(0.7) grayscale(0.8) contrast(0.75);
+  transition: background-position 10s steps(60);
+}
+
+canvas {
+  position: absolute;
+  mix-blend-mode: hard-light;
+  top: 0;
+  left: 0;
+}
+
+#scratch {
+    filter: url(#disp-1);
+}
+
+svg {
+  diisplay: none;
+}

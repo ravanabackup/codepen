@@ -1,0 +1,197 @@
+body {
+  background-color: #000;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  font-size: .8vmin;
+  overflow: hidden;
+  filter: sepia() saturate(7) hue-rotate(-30deg) drop-shadow(0 0 5em #f40);
+  justify-content: center;
+  align-items: center;
+}
+
+.line {
+  width: 10vw;
+  height: 100vh;
+}
+
+.scene, .scene * {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.scene {
+  width: 100em;
+  aspect-ratio: 1;
+  perspective: 200em;
+  display: grid;
+  animation: wobble 20s ease-in-out alternate infinite;
+  z-index: -1;
+}
+
+@keyframes wobble {
+  0% {
+    perspective-origin: 50% -10%;
+  }
+  100% {
+    perspective-origin: 50% 110%;
+  }
+}
+
+.wall {
+  --angle: acos(1/3);
+  --wallH: calc(100em*sin(45deg));
+  --dir: 1; 
+  height: var(--wallH);
+  aspect-ratio: calc(2*tan(30deg));
+  -webkit-mask-image: conic-gradient(from calc(60deg + 90deg*var(--dir)) at 50% calc(50%*(1 - var(--dir))), black 60deg, transparent 0);
+  mask-image: conic-gradient(from calc(60deg + 90deg*var(--dir)) at 50% calc(50%*(1 - var(--dir))), black 60deg, transparent 0);
+  --clrs: red, yellow, blue, lime, fuchsia, cyan,red;
+  justify-self: center;
+  padding: .15em;
+  mix-blend-mode: difference;
+}
+
+.side {
+  transform-origin: 50% calc(50% - 50%*var(--dir));
+  transform: rotateY(calc(var(--step)*120deg)) rotateX(calc(90deg - var(--angle)));
+}
+
+.wall:nth-child(4n+1) {
+  --step: 0;
+  background-image: repeating-conic-gradient(from calc(150deg + 90deg*(1 - var(--dir))) at 50% calc(50%*(1 - var(--dir))), var(--clrs) 60deg, transparent 0);
+}
+
+.wall:nth-child(4n+2) {
+  --step: 1;
+  background-image: repeating-conic-gradient(from calc(-60deg + 90deg*(1 - var(--dir))) at 0% calc(50%*(1 + var(--dir))), var(--clrs) 60deg, transparent 0), repeating-linear-gradient(var(--clrs) 50%);
+}
+
+.wall:nth-child(4n+3) {
+  --step: 2;
+  background-image: repeating-conic-gradient(from calc(-60deg + 90deg*(1 - var(--dir))) at 50% calc(50%*(1 + var(--dir)/3)), var(--clrs) 60deg, transparent 0), repeating-linear-gradient(90deg,var(--clrs) 50%);
+}
+
+.wall:nth-child(4n+4) {
+  --step: 3;
+  background-image: repeating-radial-gradient(at 50% calc(50%*(1 + var(--dir)/3)), var(--clrs) 50%);
+}
+
+.wall:nth-child(n+5) {
+  --dir: -1;
+}
+
+.side:nth-child(n+5) {
+  align-self: end;
+}
+
+.floor {
+  align-self: center;
+  transform-origin: 50% calc(50%*(1 + var(--dir)/3));
+  transform: translateY(calc(-100%/6*var(--dir))) rotateX(90deg) translateZ(calc(-100em/6*var(--dir)));
+}
+
+.line:hover ~ .scene .wall {
+  rotate: y calc(var(--lineStep)*var(--dir)*3.6deg);
+}
+
+.line1:hover ~ .scene .wall { --lineStep: 0; }
+.line2:hover ~ .scene .wall { --lineStep: 1; }
+.line3:hover ~ .scene .wall { --lineStep: 2; }
+.line4:hover ~ .scene .wall { --lineStep: 3; }
+.line5:hover ~ .scene .wall { --lineStep: 4; }
+.line6:hover ~ .scene .wall { --lineStep: 5; }
+.line7:hover ~ .scene .wall { --lineStep: 6; }
+.line8:hover ~ .scene .wall { --lineStep: 7; }
+.line9:hover ~ .scene .wall { --lineStep: 8; }
+.line10:hover ~ .scene .wall { --lineStep: 9; }
+.line11:hover ~ .scene .wall { --lineStep: 10; }
+.line12:hover ~ .scene .wall { --lineStep: 11; }
+.line13:hover ~ .scene .wall { --lineStep: 12; }
+.line14:hover ~ .scene .wall { --lineStep: 13; }
+.line15:hover ~ .scene .wall { --lineStep: 14; }
+.line16:hover ~ .scene .wall { --lineStep: 15; }
+.line17:hover ~ .scene .wall { --lineStep: 16; }
+.line18:hover ~ .scene .wall { --lineStep: 17; }
+.line19:hover ~ .scene .wall { --lineStep: 18; }
+.line20:hover ~ .scene .wall { --lineStep: 19; }
+.line21:hover ~ .scene .wall { --lineStep: 20; }
+.line22:hover ~ .scene .wall { --lineStep: 21; }
+.line23:hover ~ .scene .wall { --lineStep: 22; }
+.line24:hover ~ .scene .wall { --lineStep: 23; }
+.line25:hover ~ .scene .wall { --lineStep: 24; }
+.line26:hover ~ .scene .wall { --lineStep: 25; }
+.line27:hover ~ .scene .wall { --lineStep: 26; }
+.line28:hover ~ .scene .wall { --lineStep: 27; }
+.line29:hover ~ .scene .wall { --lineStep: 28; }
+.line30:hover ~ .scene .wall { --lineStep: 29; }
+.line31:hover ~ .scene .wall { --lineStep: 30; }
+.line32:hover ~ .scene .wall { --lineStep: 31; }
+.line33:hover ~ .scene .wall { --lineStep: 32; }
+.line34:hover ~ .scene .wall { --lineStep: 33; }
+.line35:hover ~ .scene .wall { --lineStep: 34; }
+.line36:hover ~ .scene .wall { --lineStep: 35; }
+.line37:hover ~ .scene .wall { --lineStep: 36; }
+.line38:hover ~ .scene .wall { --lineStep: 37; }
+.line39:hover ~ .scene .wall { --lineStep: 38; }
+.line40:hover ~ .scene .wall { --lineStep: 39; }
+.line41:hover ~ .scene .wall { --lineStep: 40; }
+.line42:hover ~ .scene .wall { --lineStep: 41; }
+.line43:hover ~ .scene .wall { --lineStep: 42; }
+.line44:hover ~ .scene .wall { --lineStep: 43; }
+.line45:hover ~ .scene .wall { --lineStep: 44; }
+.line46:hover ~ .scene .wall { --lineStep: 45; }
+.line47:hover ~ .scene .wall { --lineStep: 46; }
+.line48:hover ~ .scene .wall { --lineStep: 47; }
+.line49:hover ~ .scene .wall { --lineStep: 48; }
+.line50:hover ~ .scene .wall { --lineStep: 49; }
+.line51:hover ~ .scene .wall { --lineStep: 50; }
+.line52:hover ~ .scene .wall { --lineStep: 51; }
+.line53:hover ~ .scene .wall { --lineStep: 52; }
+.line54:hover ~ .scene .wall { --lineStep: 53; }
+.line55:hover ~ .scene .wall { --lineStep: 54; }
+.line56:hover ~ .scene .wall { --lineStep: 55; }
+.line57:hover ~ .scene .wall { --lineStep: 56; }
+.line58:hover ~ .scene .wall { --lineStep: 57; }
+.line59:hover ~ .scene .wall { --lineStep: 58; }
+.line60:hover ~ .scene .wall { --lineStep: 59; }
+.line61:hover ~ .scene .wall { --lineStep: 60; }
+.line62:hover ~ .scene .wall { --lineStep: 61; }
+.line63:hover ~ .scene .wall { --lineStep: 62; }
+.line64:hover ~ .scene .wall { --lineStep: 63; }
+.line65:hover ~ .scene .wall { --lineStep: 64; }
+.line66:hover ~ .scene .wall { --lineStep: 65; }
+.line67:hover ~ .scene .wall { --lineStep: 66; }
+.line68:hover ~ .scene .wall { --lineStep: 67; }
+.line69:hover ~ .scene .wall { --lineStep: 68; }
+.line70:hover ~ .scene .wall { --lineStep: 69; }
+.line71:hover ~ .scene .wall { --lineStep: 70; }
+.line72:hover ~ .scene .wall { --lineStep: 71; }
+.line73:hover ~ .scene .wall { --lineStep: 72; }
+.line74:hover ~ .scene .wall { --lineStep: 73; }
+.line75:hover ~ .scene .wall { --lineStep: 74; }
+.line76:hover ~ .scene .wall { --lineStep: 75; }
+.line77:hover ~ .scene .wall { --lineStep: 76; }
+.line78:hover ~ .scene .wall { --lineStep: 77; }
+.line79:hover ~ .scene .wall { --lineStep: 78; }
+.line80:hover ~ .scene .wall { --lineStep: 79; }
+.line81:hover ~ .scene .wall { --lineStep: 80; }
+.line82:hover ~ .scene .wall { --lineStep: 81; }
+.line83:hover ~ .scene .wall { --lineStep: 82; }
+.line84:hover ~ .scene .wall { --lineStep: 83; }
+.line85:hover ~ .scene .wall { --lineStep: 84; }
+.line86:hover ~ .scene .wall { --lineStep: 85; }
+.line87:hover ~ .scene .wall { --lineStep: 86; }
+.line88:hover ~ .scene .wall { --lineStep: 87; }
+.line89:hover ~ .scene .wall { --lineStep: 88; }
+.line90:hover ~ .scene .wall { --lineStep: 89; }
+.line91:hover ~ .scene .wall { --lineStep: 90; }
+.line92:hover ~ .scene .wall { --lineStep: 91; }
+.line93:hover ~ .scene .wall { --lineStep: 92; }
+.line94:hover ~ .scene .wall { --lineStep: 93; }
+.line95:hover ~ .scene .wall { --lineStep: 94; }
+.line96:hover ~ .scene .wall { --lineStep: 95; }
+.line97:hover ~ .scene .wall { --lineStep: 96; }
+.line98:hover ~ .scene .wall { --lineStep: 97; }
+.line99:hover ~ .scene .wall { --lineStep: 98; }
+.line100:hover ~ .scene .wall { --lineStep: 99; }

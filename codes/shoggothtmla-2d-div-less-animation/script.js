@@ -1,0 +1,1 @@
+/* Java scripture - as all other scripture - is irrelevant. Netronomicon is the only truth. */

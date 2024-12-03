@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>tarotjack</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css'><link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<br/>
+<div id="input" class="container-fluid">
+  <div class="row">
+
+    <div class="col col-6 alert alert-secondary">
+
+             <table class="table text-center">
+          <thead>
+            <tr>
+              <th style="width:5%;"></th>
+              <th colspan=3 style="width:15%;">Status</th>
+              <th>Next Level</th>
+            </tr>
+          </thead>
+          <tr id="progress-❤️" class="progress-ui">
+            <td>❤️</td>
+            <td class="face">😐</td>
+            <td class="level">0</td>
+            <td class="direction">0</td>
+            <td class="bar">
+              <div class="progress">
+                <div class="progress-bar bg-danger" role="progressbar"></div>
+                              <div class="next">0</div>
+              </div>
+
+            </td>
+          </tr>
+          <tr id="progress-🏠" class="progress-ui">
+            <td>🏠</td>
+            <td class="face">😐</td>
+            <td class="level">0</td>
+            <td class="direction">0</td>
+            <td class="bar">
+              <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar"></div>
+                                              <div class="next">0</div>
+              </div>
+            </td>
+          </tr>
+          <tr id="progress-🧠" class="progress-ui">
+            <td>🧠</td>
+            <td class="face">😐</td>
+            <td class="level">0</td>
+            <td class="direction">0</td>
+            <td class="bar">
+              <div class="progress">
+                <div class="progress-bar bg-warning" role="progressbar"></div>
+                                              <div class="next">0</div>
+              </div>
+            </td>
+          </tr>
+          <tr id="progress-💰" class="progress-ui">
+            <td>💰</td>
+            <td class="face">😐</td>
+            <td class="level">0</td>
+            <td class="direction">0</td>
+            <td class="bar">
+              <div class="progress">
+                <div class="progress-bar bg-primary" role="progressbar"></div>
+                                              <div class="next">0</div>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+      <div id="cards" class="row d-flex">
+        <div id="card-1" class="card flex-fill d-flex flex-column active">
+          <div class="flex-fill flop">
+          </div>
+          <button class="btn btn-primary card-btn" onclick="ensure(event, this)">🔒</button>
+
+        </div>
+        <div id="card-2" class="card flex-fill d-flex flex-column active">
+          <div class="flex-fill flop">
+          </div>
+          <button class="btn btn-primary card-btn" onclick="ensure(event, this)">🔒</button>
+
+        </div>
+        <div id="card-3" class="card flex-fill d-flex flex-column active">
+          <div class="flex-fill flop">
+          </div>
+          <button class="btn btn-primary card-btn" onclick="ensure(event, this)">🔒</button>
+
+        </div>
+        <div id="card-4" class="card flex-fill d-flex flex-column active">
+          <div class="flex-fill flop">
+
+          </div>
+          <button class="btn btn-primary card-btn" onclick="ensure(event, this)">🔒</button>
+
+        </div>
+                <div id="card-5" class="card flex-fill d-flex flex-column active">
+          <div class="flex-fill flop">
+
+          </div>
+          <button class="btn btn-primary card-btn" onclick="ensure(event, this)">🔒</button>
+
+        </div>
+                        <div id="card-6" class="card flex-fill d-flex flex-column active">
+          <div class="flex-fill flop">
+          </div>
+          <button class="btn btn-primary card-btn" onclick="ensure(event, this)">🔒</button>
+
+        </div>
+        
+      </div>
+    </div>
+        <div id="hud" class="col-2 d-flex flex-column alert alert-secondary">
+      <div class="flex-fill">
+        Current Balance:
+        <div class="money">
+          <span id="current-balance"></span>
+         💵</div>
+      </div>
+      <div id="this-round-holder" class="flex-fill">
+        This Round:
+        <div class="money">
+          <span id="this-round"></span>
+          💸
+          <span id="animate-betting">
+            💸</span>
+        </div>
+      </div>
+      <div>
+        <p>Place you bets before the crystal ball picks a card.</p>
+        <p>Winning bets add, losing bets subtract, from momentum. </p>
+      </div>
+    </div>
+    <div class="col alert alert-secondary">
+      <div class="d-flex">
+        <div class="flex-fill">
+          <div id="hero-holder-holder">
+          <div id="hero-holder">
+        <div id="hero">😐</div>
+          </div>
+          </div>
+          
+                <div id="reader" class=" d-flex justify-content-around">
+        <div class="hand left-hand">
+          ✋
+        </div>
+        <div class="ball">
+          🔮
+        </div>
+        <div class="hand right-hand">
+          🤚
+        </div>
+      </div>
+          
+          <br/>
+                <div id="timer">
+                      <div class="progress">
+                <div class="progress-bar bg-purple" role="progressbar" style="width: 100%"></div>
+              </div>
+      </div>
+        </div>
+      </div>
+      <div>
+ 
+      </div>
+    </div>
+  </div>
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>

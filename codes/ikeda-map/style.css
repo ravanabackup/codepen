@@ -1,0 +1,12 @@
+body,
+html {
+  background: #000;
+}
+canvas {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, 0%);
+  width: 300px;
+  height: 300px;
+}

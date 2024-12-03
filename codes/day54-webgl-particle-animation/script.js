@@ -239,13 +239,14 @@ function drawScene() {
   gl.lineWidth(1);
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW);
 
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  
 
   //gl.drawArrays( gl.LINES_STRIP, 0, numLines );
   gl.drawArrays(gl.LINES, 0, numLines);
   //gl.drawArrays( gl.QUAD_STRIP, 0, numLines );
 
-  gl.flush();
+  //gl.flush();
 }
 
 // ===================================

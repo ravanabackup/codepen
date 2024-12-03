@@ -1,0 +1,86 @@
+body {
+  margin: 0;
+  height: 100vh;
+  container-type: size;
+  display: grid;
+  place-items: center;
+  background-image: radial-gradient(at 100% 100%, #660, #030, #001);
+  overflow: hidden;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  aspect-ratio: 1;
+}
+
+body::before {
+  --tentacle: white calc(50% - 15cqmin), black, white calc(50% + 15cqmin);
+  background-image:
+    radial-gradient(transparent 0cqmin, #fff5 50cqmin, #fff 0), 
+    repeating-radial-gradient(transparent calc(0cqmin + 1em) calc(4cqmin + 1em),#fff3 0 calc(8cqmin + 1em)), 
+    linear-gradient(0deg, var(--tentacle)), 
+    linear-gradient(45deg, var(--tentacle)), 
+    linear-gradient(90deg, var(--tentacle)), 
+    linear-gradient(135deg, var(--tentacle));
+  filter: blur(1cqmin) contrast(60);
+  background-blend-mode: normal, normal, multiply, multiply, multiply, multiply;
+  animation: crawl 2s linear infinite, roll 72s linear infinite;
+  mix-blend-mode: multiply;
+}
+
+@keyframes roll {
+  100% {
+    rotate: 1turn;
+  }
+}
+
+body::after {
+  animation: 
+    blink 3s ease-in alternate infinite,
+    /* crawl 1s linear alternate infinite, */
+    socket 6s linear infinite alternate,
+    grin 6s linear infinite alternate;
+}
+
+@keyframes crawl {
+  0% {
+    font-size: 0cqmin;
+  }
+  100% {
+    font-size: 8cqmin;
+  }
+}
+
+@keyframes blink {
+  0% {
+    clip-path: ellipse(18cqmin 18cqmin);
+  }
+  100% {
+    clip-path: ellipse(18cqmin 0cqmin);
+  }
+}
+
+@keyframes socket {
+  0%, 50% {
+    background-image: radial-gradient(#000 calc(3cqmin + 1em/2), transparent 0 calc(7cqmin - 1em/4), #ff0 0 calc(7.5cqmin - 1em/4), #f00 0), repeating-conic-gradient(#0f0 0 5deg, #00f 0 10deg);
+    background-size: 100% 100%;
+  }
+  50.001%, 100% {
+    background-image: linear-gradient(transparent, black), repeating-conic-gradient(from -2deg at 50% 100%, #f00, #ff0, #f00 4deg);
+  }
+}
+
+@keyframes grin {
+  0%, 49.999% {
+    filter: none;
+  }
+  50% {
+    filter: brightness(.5) contrast(50);
+  }
+  100% {
+    filter: brightness(4) contrast(50);
+  }
+}

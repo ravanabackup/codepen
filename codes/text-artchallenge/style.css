@@ -1,0 +1,54 @@
+*,
+::before,
+::after {
+	padding: 0;
+	margin: 0;
+}
+
+:root {
+	--bg: #000301;
+	--text: #00ff55;
+}
+
+body {
+	background: var(--bg);
+	height: 100vh;
+	/* font: https://modernfontstacks.com */
+	font-family: Inter, Roboto, "Helvetica Neue", "Arial Nova", "Nimbus Sans",
+		Arial, sans-serif;
+	letter-spacing: 0.1ch;
+	font-weight: bold;
+	user-select: none;
+	overflow: hidden;
+}
+
+.title {
+	color: transparent;
+	position: fixed;
+	display: grid;
+	place-items: center;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	font-size: 70vmin;
+	text-shadow: var(--text) 0 0 4vmin;
+}
+
+.background {
+	color: var(--text);
+	background: var(--bg);
+	font-size: 7vmin;
+	height: 120vmin;
+	width: 120ch;
+	line-height: 6vmin;
+	line-break: anywhere;
+	mix-blend-mode: darken;
+	animation: translate 2s infinite linear;
+}
+
+@keyframes translate {
+	to {
+		translate: -2.4ch -12vmin;
+	}
+}
