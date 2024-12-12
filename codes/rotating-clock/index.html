@@ -2,24 +2,24 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>CodePen - Rotating Clock</title>
-  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Montserrat:400,700'>
-<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=PT+Mono'><link rel="stylesheet" href="./style.css">
+  <title>Rotating Clock</title>
+  <link rel="stylesheet" href="./style.css">
 
 </head>
 <body>
 <!-- partial:index.partial.html -->
-<h1 class="off">C<span>LOCK</span></h1>
-<div id="clock">
-  <ul id="s">
-  </ul>
-  <ul id="m">
-  </ul>
-  <ul id="h">
-  </ul>
-</div>
+<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://esm.sh/three@0.155.0/build/three.module.js",
+      "three/addons/": "https://esm.sh/three@0.155.0/examples/jsm/",
+			"threeasy": "https://esm.sh/threeasy@0.1.13/build/threeasy.min.js"
+    }
+  }
+</script>
 <!-- partial -->
-  <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script><script  src="./script.js"></script>
+  <script type="module" src="./script.js"></script>
 
 </body>
 </html>

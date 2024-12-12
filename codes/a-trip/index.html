@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>a trip</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<canvas id="glcanvas"></canvas>
+  <script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec2 a_position;
+    void main() {
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+  </script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+uniform float u_terrainHeight;
+uniform float u_terrainNoise;
+uniform float u_camPosY;
+uniform float u_lookAtY;
+uniform float u_speedZ;
+
+vec3 palette( float t ) {
+    vec3 a = vec3(0.5, 0.5, 0.0);
+    vec3 b = vec3(0.5, 0.5, 0.5);
+    vec3 c = vec3(1.0, 1.0, 1.0);
+    vec3 d = vec3(0.25,0.4,0.55);
+
+    return a + b*cos( 6.28318*(c*t+d) );
+}
+vec3 palette2( float t ) {
+    vec3 a = vec3(0.5, 0.5, 0.5);
+    vec3 b = vec3(0.5, 0.5, 0.5);
+    vec3 c = vec3(1.0, 1.0, 1.0);
+    vec3 d = vec3(0.25,0.4,0.55);
+
+    return a + b*cos( 6.28318*(c*t+d) );
+}
+float hash(vec3 p) {
+    p = 50.0 * fract(p * 0.3183099 + vec3(0.71, 0.113, 0.5));
+    return -1.0 + 2.0 * fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+}
+
+float noiseF(vec3 p) {
+    vec3 i = floor(p);
+    vec3 f = fract(p);
+    float a = hash(i);
+    float b = hash(i + vec3(1.0, 0.0, 0.0));
+    float c = hash(i + vec3(0.0, 1.0, 0.0));
+    float d = hash(i + vec3(1.0, 1.0, 0.0));
+    float e = hash(i + vec3(0.0, 0.0, 1.0));
+    float f1 = hash(i + vec3(1.0, 0.0, 1.0));
+    float g = hash(i + vec3(0.0, 1.0, 1.0));
+    float h = hash(i + vec3(1.0, 1.0, 1.0));
+    vec3 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(mix(a, b, u.x), mix(c, d, u.x), u.y), mix(mix(e, f1, u.x), mix(g, h, u.x), u.y), u.z);
+}
+vec3 warp(vec3 p) {
+    vec3 offset = vec3(noiseF(p + u_time));
+    return p + offset;
+}
+vec2 rotate(vec2 pos, float angle) {
+    float cosAngle = cos(angle);
+    float sinAngle = sin(angle);
+    mat2 rotationMatrix = mat2(cosAngle, -sinAngle, sinAngle, cosAngle);
+    return rotationMatrix * pos;
+}
+
+vec3 getRayDirection(vec2 uv, vec3 camPos, vec3 camForward, vec3 camRight, vec3 camUp, float fov) {
+    vec3 dir = camForward + uv.x * camRight * fov + uv.y * camUp * fov;
+    return normalize(dir);
+}
+float oscillate(float time, float minVal, float maxVal) {
+    float sineWave = sin(time);
+    float normalizedSine = (sineWave + 1.0) / 2.0;
+    return mix(minVal, maxVal, normalizedSine);
+}
+float waveX(float z){
+    return sin((z + u_time) * 0.1) * 10.0;
+}
+float waveXOffset(float z, float zOffset) {
+    return sin((z + zOffset + u_time) * 0.1) * 10.0;
+}
+
+float boxSDF(vec3 p, vec3 bsize) {
+    p.x += waveX(p.z);
+    vec3 d = vec3(mod(p.x, 3.0) - 1.5, p.y * 2.0, mod(p.z, 3.0) - 1.5);
+    d = abs(d) - bsize;
+        if (p.x < -3.0 || p.x > 3.0) {
+        return 100.0;
+    }
+    return length(max(d, 0.0)) + min(max(d.x, max(d.y, d.z)), 0.0);
+}
+float roadSDF(vec3 p, vec3 bsize) {
+    p.x += waveX(p.z);
+    vec3 repeatedPos = vec3(p.x, p.y, mod(p.z, 6.0) - 3.0);
+    vec3 d = abs(repeatedPos) - bsize;
+    return length(max(d, 0.0)) + min(max(d.x, max(d.y, d.z)), 0.0);
+}
+float sphereSDF( vec3 p, float size )
+{
+  float noise = noiseF(p + u_time);
+  p = mod(p + noise, 100.0) - 50.0 * 0.5;
+  return length(p)-size;
+}
+float terrainSDF(vec3 p) {
+    float scale = u_terrainNoise;
+    float height = u_terrainHeight;
+    p.x += waveX(p.z);
+    float baseTerrainHeight = max(0.0, noiseF(vec3(p.x * scale, 0.0, p.z * scale)) * height);
+    float detailNoise1 = max(0.0, noiseF(vec3(p.x * scale * 2.0, 0.0, p.z * scale * 2.0)) * height * 0.5);
+    float detailNoise2 = max(0.0, noiseF(vec3(p.x * scale * 4.0, 0.0, p.z * scale * 4.0)) * height * 0.25);
+    float detailNoise3 = max(0.0, noiseF(vec3(p.x * scale * 6.0, 0.0, p.z * scale * 6.0)) * height * 0.1);
+    float totalHeight = baseTerrainHeight + detailNoise1 + detailNoise2 + detailNoise3;
+    float distanceFromCenter = abs(p.x) - 20.0;
+    float terrain = p.y - totalHeight;
+    return max(terrain, -distanceFromCenter);
+}
+vec3 sky(vec2 uv) {
+    uv.x += noiseF(vec3(uv.x * 0.5, uv.y * 0.5, uv.y * 0.5));
+    uv.y += noiseF(vec3(uv.x * 0.5, uv.y * 0.5, uv.y * 0.5));
+    float angle = atan(uv.y, uv.x);
+    float radius = length(uv);
+    float spiral = sin(radius * u_time * 0.001 - u_time * 2.0 + angle * 4.0);
+    float t = 5.0 + 0.1 * spiral + u_time * 0.1 + radius * 0.4;
+    vec3 color = palette2(t + u_time/200.0) * 0.2;
+    return color;
+}
+
+float sceneSDF(vec3 p, vec3 camPos) {
+    float road = roadSDF(p, vec3(20.0, 0.0, 10.0));
+    float stripes = boxSDF(p, vec3(0.2, 0.0, 1.0)); 
+    float terrain = terrainSDF(p);
+    return min(road, min(terrain, stripes));
+}
+vec3 getColor(vec3 worldPos, vec3 camPos) {
+    float roadDist = roadSDF(worldPos, vec3(10.0, 0.0, 10.0));
+    float stripeDist = boxSDF(worldPos, vec3(0.2, 1.0, 1.0));
+    float reverseWave = waveXOffset(camPos.z, -25.0);
+    float terrainDist = terrainSDF(worldPos);
+    float closestDist = min(terrainDist, min(roadDist, stripeDist));
+    if(closestDist == terrainDist){
+        return palette(exp(length((worldPos.y)* 0.02)) + u_time/50.0);
+    }
+	if (closestDist == roadDist) {
+        worldPos.x += waveX(worldPos.z);
+        return palette(exp(-length((worldPos.x )* 0.011)) + u_time/20.0);
+    } else if (closestDist == stripeDist) {
+        worldPos.x += waveX(worldPos.z);
+        return palette(exp(length((worldPos.x )* 0.11)) + u_time/20.0);
+    }
+    return vec3(0.0);
+}
+
+float rayMarch(vec3 ro, vec3 rd) {
+    float t = 0.0;
+    float maxDist = 400.0;
+    float hitThreshold = 0.003;
+    
+    for (int i = 0; i < 400; i++) {
+        vec3 p = ro + rd * t;
+        float dist = sceneSDF(p, ro);
+        
+        if (dist < hitThreshold) {
+            return t;
+        }
+        t += dist * 0.5;
+        if (t > maxDist) break;
+    }
+    return maxDist;
+}
+
+void main() {
+    vec2 uv = (gl_FragCoord.xy / u_resolution.xy) * 2.0 - 1.0;
+    uv.x *= u_resolution.x / u_resolution.y;
+    vec3 camPos = vec3(0.0 , u_camPosY, u_time * u_speedZ);
+    camPos.x = waveXOffset(camPos.z, -25.0);
+    vec3 camForward = normalize(vec3(waveXOffset(camPos.z, -5.0), u_lookAtY, 20.0));
+    vec3 camRight = normalize(cross(camForward, vec3(0.0, 1.0, 0.0)));
+    vec3 camUp = cross(camRight, camForward);
+    
+    vec3 rayDir = getRayDirection(uv, camPos, camForward, camRight, camUp, 1.5);
+
+    float dist = rayMarch(camPos, rayDir);
+    vec3 color = vec3(0.0);
+    if (dist < 200.0) {
+        vec3 worldPos = camPos + rayDir * dist;
+        color += getColor(worldPos, camPos);
+    }else {
+        color += sky(uv);
+    }
+	gl_FragColor = vec4(color, 1.0);
+}
+</script>
+<!-- partial -->
+  <script type="module" src="./script.js"></script>
+
+</body>
+</html>
