@@ -1427,3 +1427,16 @@ https://ravanabackup.github.io/codepen/codes/svg-circle-clock/index.html
 https://ravanabackup.github.io/codepen/codes/tarotjack/index.html
 https://ravanabackup.github.io/codepen/codes/text-artchallenge/index.html
 https://ravanabackup.github.io/codepen/codes/three-js-procedural-clouds/index.html
+https://ravanabackup.github.io/codepen/codes/rotating-clock/index.html
+https://ravanabackup.github.io/codepen/codes/stand-out/index.html
+https://ravanabackup.github.io/codepen/codes/vercel/index.html
+https://ravanabackup.github.io/codepen/codes/a-trip/index.html
+https://ravanabackup.github.io/codepen/codes/car-at-night/index.html
+https://ravanabackup.github.io/codepen/codes/color-fields/index.html
+https://ravanabackup.github.io/codepen/codes/doodle/index.html
+https://ravanabackup.github.io/codepen/codes/doodle (1)/index.html
+https://ravanabackup.github.io/codepen/codes/floodrgb/index.html
+https://ravanabackup.github.io/codepen/codes/fun-red-shader/index.html
+https://ravanabackup.github.io/codepen/codes/lightspeed/index.html
+https://ravanabackup.github.io/codepen/codes/qlocktwotime-in-wordsmulti-language/index.html
+https://ravanabackup.github.io/codepen/codes/red-moonmove-vertices/index.html
