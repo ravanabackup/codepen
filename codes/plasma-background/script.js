@@ -157,4 +157,4 @@ c.addEventListener( 'click', function(e){
 	opts.cx = e.clientX;
 	opts.cy = e.clientY;
 	
-})
+l
