@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Mario Bros Block Timer 🍄🕰️</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Matt Cannon">
+  <meta name="contact" content="mc@mattcannon.design">
+  <meta name="description" content="A Super Mario themed timer because, why not?”>
+  <meta name=" keywords" content="codepenchallenge, cpc-timers, countdown, timer, super mario, mario bros“>
+  <meta name=" last-modified" content="2024-09-13">
+  <meta http-equiv="Content-Language" content="en">
+  <meta name="generator" content="HTML5, CSS3, JavaScript">
+
+<body>
+  <div class="mario-wrapper">
+    <div class="mario" data-count="0"></div>
+    <div class="timer-counter">0</div>
+  </div>
+
+  <script>
+    let count = 0;
+    const timerCounter = document.querySelector('.timer-counter');
+    const mario = document.querySelector('.mario');
+    setInterval(() => {
+      count++;
+      timerCounter.textContent = count;
+      mario.setAttribute('data-count', count % 10 || 10); // Display 1-10 instead of 0-9
+    }, 1500); // Match the $time variable in CSS
+  </script>
+</body>
+<!-- partial -->
+  
+</body>
+</html>

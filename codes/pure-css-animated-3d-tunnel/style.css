@@ -1,0 +1,301 @@
+html {
+  perspective: 500px;
+  background: rgb(10,25,10);
+  -webkit-animation: rodar 20s infinite;
+          animation: rodar 20s infinite;
+}
+
+html, html::before, html::after,
+head, head::before, head::after,
+body, body::before, body::after
+{
+  padding:0;
+  margin:0;
+  display:block;
+  content: "";
+  position: absolute;
+  top:0;
+  left:0;
+  background-size: 400px;
+}
+
+html {
+  width: 200px;
+  height: 200px;
+  left: 50%;
+  top: 50%;  
+  margin: -100px;
+  -webkit-animation: 20s move ease-in-out alternate infinite;
+          animation: 20s move ease-in-out alternate infinite;
+}
+
+/* left shadow */
+body {
+  z-index: 99;
+  top: 50%;
+  left: 50%;
+  width: 1200px;
+  height: 200px;
+  margin: -100px -600px;  
+  background: linear-gradient(90deg, rgba(0,0,0,0), rgba(10,20,10,.75) 20%, rgba(10,25,10,1) 800px);
+  transform: translateX(-99px) rotateY(90deg);
+  transform-style: preserve-3d;
+  box-shadow: inset 0 0 10px 2px rgba(10,25,10,1);
+}
+
+/* left */
+body::after {
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background-image: url(https://66.media.tumblr.com/1a865fd86874131f97f77002a9aaf5aa/tumblr_o5exx0r6GR1tfo5n4o1_1280.jpg);
+  transform: translateZ(-1px);
+  -webkit-animation: 2s left linear infinite;
+          animation: 2s left linear infinite;
+  -webkit-animation-delay:5s;
+          animation-delay:5s;
+}
+
+/* right shadow */
+body::before {
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background: linear-gradient(90deg, rgba(0,0,0,0), rgba(10,20,10,.75) 20%, rgba(10,25,10,1) 800px);
+  transform: translateZ(198px);
+  z-index:1;
+  box-shadow: inset 0 0 10px 2px rgba(10,25,10,1);
+}
+
+/* ceiling shadow */
+head {
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 1200px;
+  margin: -600px -100px;  
+  background: linear-gradient(0deg, rgba(0,0,0,0), rgba(10,20,10,.75) 20%, rgba(10,25,10,1) 800px);
+  transform: translateY(-99px) rotateX(90deg);
+  transform-style: preserve-3d;
+  box-shadow: inset 0 0 10px 2px rgba(10,25,10,1);
+}
+
+/* right */
+head::before {
+  z-index:0;
+  top:0px;
+  left:0;
+  width: 1200px;
+  height: 200px;
+  transform:  translateX(-400px) translateY(600px) translateZ(-100px) rotateY(90deg) rotateZ(90deg);
+  background-image: url(https://66.media.tumblr.com/1a865fd86874131f97f77002a9aaf5aa/tumblr_o5exx0r6GR1tfo5n4o1_1280.jpg);
+  -webkit-animation: 16s right linear infinite;
+          animation: 16s right linear infinite;
+  -webkit-animation-delay:5s;
+          animation-delay:5s;
+}
+
+/* ceiling */
+head::after {
+  top:0px;
+  left:-10px;
+  right:-10px;
+  bottom:0px;
+  background-image: url(https://st.depositphotos.com/2007501/2659/i/950/depositphotos_26590645-stock-photo-grey-wall-background-old-concrete.jpg);
+  transform: translateZ(1px);
+  -webkit-animation: 2s top linear infinite;
+          animation: 2s top linear infinite;
+  -webkit-animation-delay:5s;
+          animation-delay:5s;
+}
+
+/* floor */
+html::before {
+  z-index: 99;
+  top: 50%;
+  left: 50%;
+  width: 210px;
+  height: 1200px;
+  margin: -600px -110px;  
+  background-image: url(https://s-media-cache-ak0.pinimg.com/564x/ef/99/10/ef99101d996485379a18c21b4be72ef0.jpg);
+  transform: translateY(101px) rotateX(90deg);
+	-webkit-animation: 2s bottom linear infinite;
+	        animation: 2s bottom linear infinite;
+  -webkit-animation-delay:5s;
+          animation-delay:5s;
+}
+
+/* floor shadow */
+html::after {
+  z-index:999;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 1200px;
+  margin: -600px -100px;  
+  background: linear-gradient(0deg, rgba(0,0,0,0), rgba(10,20,10,.75) 20%, rgba(10,25,10,1) 800px);
+  transform: translateY(99px) rotateX(90deg);
+  box-shadow: inset 0 0 10px 2px rgba(10,25,10,1);
+}
+
+@-webkit-keyframes left {
+  0% {
+    transform: translateZ(-1px)
+  }
+  100% {
+    transform: translateZ(-1px) translateX(-400px)
+  }
+}
+
+@keyframes left {
+  0% {
+    transform: translateZ(-1px)
+  }
+  100% {
+    transform: translateZ(-1px) translateX(-400px)
+  }
+}
+
+@-webkit-keyframes top {
+	0% {
+    transform: translateZ(1px);
+  }
+	100% {
+    transform: translateY(400px) translateZ(1px);
+  }
+}
+
+@keyframes top {
+	0% {
+    transform: translateZ(1px);
+  }
+	100% {
+    transform: translateY(400px) translateZ(1px);
+  }
+}
+
+@-webkit-keyframes bottom {
+	0% {
+    transform: translateY(101px) rotateX(90deg);
+  }
+	100% {
+    transform:  translateZ(400px) translateY(101px) rotateX(90deg);
+  }
+}
+
+@keyframes bottom {
+	0% {
+    transform: translateY(101px) rotateX(90deg);
+  }
+	100% {
+    transform:  translateZ(400px) translateY(101px) rotateX(90deg);
+  }
+}
+ 
+@-webkit-keyframes right {
+	0% {
+    transform: translateX(-400px) translateY(600px) translateZ(-100px) rotateY(90deg) rotateZ(90deg);
+    width: 1200px;
+  }
+  25%{
+     transform: translateX(-400px) translateY(1400px) translateZ(-100px) rotateY(90deg) rotateZ(90deg);
+    width: 1200px;
+  }
+  50%{
+    transform: translateX(-400px) translateY(2200px) translateZ(-100px) rotateY(90deg) rotateZ(90deg);
+  }
+  
+  51%{
+    transform: translateX(-400px) translateY(600px) translateZ(-800px) rotateY(90deg) rotateZ(90deg);
+    visibility:hidden;
+  }
+  100%{
+     transform: translateX(-400px) translateY(600px) translateZ(-100px) rotateY(90deg) rotateZ(90deg);
+    width: 1200px;
+  }
+}
+ 
+@keyframes right {
+	0% {
+    transform: translateX(-400px) translateY(600px) translateZ(-100px) rotateY(90deg) rotateZ(90deg);
+    width: 1200px;
+  }
+  25%{
+     transform: translateX(-400px) translateY(1400px) translateZ(-100px) rotateY(90deg) rotateZ(90deg);
+    width: 1200px;
+  }
+  50%{
+    transform: translateX(-400px) translateY(2200px) translateZ(-100px) rotateY(90deg) rotateZ(90deg);
+  }
+  
+  51%{
+    transform: translateX(-400px) translateY(600px) translateZ(-800px) rotateY(90deg) rotateZ(90deg);
+    visibility:hidden;
+  }
+  100%{
+     transform: translateX(-400px) translateY(600px) translateZ(-100px) rotateY(90deg) rotateZ(90deg);
+    width: 1200px;
+  }
+}
+
+@-webkit-keyframes move {
+  0% {
+    transform: translateX(-00px) translateY(150px) scale(.8) rotateZ(5deg);
+  }
+  13% {
+    transform: translateX(-450px) translateY(150px) scale(.8) rotateZ(5deg);
+  }
+  20% {
+    transform: translateX(250px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-0deg);
+  }
+  45% {
+    transform: translateX(0px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-0deg);
+  }
+  60% {
+    transform: translateX(250px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-170deg);
+  }
+  66%{
+    transform: translateX(500px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-170deg);
+  }
+  75% {
+    transform: translateX(250px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-170deg);
+  }
+  90% {
+     transform: translateX(-00px) translateY(150px) scale(.8) rotateZ(5deg);
+  }
+  100% {
+     transform: translateX(200px) translateY(150px) scale(.8) rotateZ(5deg);
+  } 
+}
+
+@keyframes move {
+  0% {
+    transform: translateX(-00px) translateY(150px) scale(.8) rotateZ(5deg);
+  }
+  13% {
+    transform: translateX(-450px) translateY(150px) scale(.8) rotateZ(5deg);
+  }
+  20% {
+    transform: translateX(250px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-0deg);
+  }
+  45% {
+    transform: translateX(0px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-0deg);
+  }
+  60% {
+    transform: translateX(250px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-170deg);
+  }
+  66%{
+    transform: translateX(500px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-170deg);
+  }
+  75% {
+    transform: translateX(250px)  translateY(-150px) scale(.8) rotateZ(-5deg) rotate(-170deg);
+  }
+  90% {
+     transform: translateX(-00px) translateY(150px) scale(.8) rotateZ(5deg);
+  }
+  100% {
+     transform: translateX(200px) translateY(150px) scale(.8) rotateZ(5deg);
+  } 
+}

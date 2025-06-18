@@ -1,0 +1,88 @@
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: black;
+}
+
+.window {
+  width: 20rem;
+  height: 20rem;
+  position: relative;
+  background: linear-gradient(to bottom, #5086c4 0%, #a5d0ff 22%, #68b0dd 46%, #68b0dd 46%, #68b0dd 71%);
+  border-radius: 50%;
+  overflow: hidden;
+}
+.window .scene, .window .scene6, .window .scene5, .window .scene4, .window .scene3, .window .scene2, .window .scene1 {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  animation-fill-mode: forwards;
+  animation-duration: 3s;
+  animation-name: fade;
+  animation-timing-function: linear;
+}
+.window .scene1 {
+  animation-delay: 15s;
+  background: linear-gradient(to bottom, #3778c6 1%, #73b6d6 21%, #ffffff 39%, #68b0dd 73%);
+}
+.window .scene2 {
+  animation-delay: 12s;
+  background: linear-gradient(to bottom, #3778c6 1%, #6e98cc 21%, #ffffff 48%, #bcd2e0 73%);
+}
+.window .scene3 {
+  animation-delay: 9s;
+  background: linear-gradient(to bottom, #254487 0%, #406d9e 20%, #8298e5 40%, #ffde8c 80%);
+}
+.window .scene4 {
+  animation-delay: 6s;
+  background: linear-gradient(to bottom, #060716 0%, #123063 9%, #d084e8 48%, #ffd154 88%);
+}
+.window .scene5 {
+  animation-delay: 3s;
+  background: linear-gradient(to bottom, #060716 0%, #123063 31%, #f48bb0 73%, #ffbb00 100%);
+}
+.window .scene6 {
+  background: linear-gradient(to bottom, #000000 31%, #123063 65%, #2782f9 84%, #ff7aa8 100%);
+}
+
+@keyframes fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.sun {
+  width: 10rem;
+  height: 10rem;
+  z-index: 1;
+  position: absolute;
+  border-radius: 50%;
+  left: calc(50% - 5rem);
+  bottom: 0;
+  mix-blend-mode: color-dodge;
+  animation-fill-mode: forwards;
+  animation-duration: 18s;
+  animation-name: sun;
+  animation-timing-function: linear;
+}
+
+@keyframes sun {
+  0% {
+    transform: translateY(10rem);
+    filter: blur(20px);
+    background-color: orange;
+  }
+  100% {
+    transform: translateY(-20rem);
+    filter: blur(2px);
+    background-color: white;
+  }
+}
